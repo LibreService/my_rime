@@ -1,0 +1,9 @@
+[submodule "librime"]
+	path = librime
+	url = https://github.com/rime/librime
+[submodule "boost"]
+	path = boost
+	url = https://github.com/boostorg/boost
+[submodule "bzip2"]
+	path = bzip2
+	url = https://gitlab.com/bzip2/bzip2

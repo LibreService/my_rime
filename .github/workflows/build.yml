@@ -1,0 +1,48 @@
+name: build
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install RIME dependencies
+        run: |
+          sudo apt install -y libboost-dev \
+            libboost-filesystem-dev \
+            libboost-regex-dev \
+            libboost-system-dev \
+            libyaml-cpp-dev \
+            libleveldb-dev \
+            libmarisa-dev \
+            libopencc-dev
+      - name: Use Node.js latest
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+      - name: Install node dependencies
+        run: |
+          npm i -g pnpm
+          pnpm i
+      - name: Get submodules
+        run: |
+          pnpm run submodule
+      - name: Run lint
+        run: |
+          pnpm run lint
+      - name: Install emsdk
+        run: |
+          git clone https://github.com/emscripten-core/emsdk.git
+          cd emsdk
+          ./emsdk install latest
+          ./emsdk activate latest
+      - name: Build wasm
+        run: |
+          . emsdk/emsdk_env.sh
+          pnpm run native
+          pnpm run lib
+          pnpm run wasm
+      - name: Build
+        run: |
+          pnpm run build
