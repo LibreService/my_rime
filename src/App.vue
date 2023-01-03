@@ -2,12 +2,14 @@
 import { NConfigProvider, NH1, darkTheme, useOsTheme } from 'naive-ui'
 import { MyLayout, MyHeader, MyFooter } from '@libreservice/my-widget'
 import MainView from './views/MainView.vue'
+import MyPwa from './components/MyPwa.vue'
 import { homepage } from '../package.json'
 
 const osThemeRef = useOsTheme()
 </script>
 
 <template>
+  <my-pwa />
   <n-config-provider :theme="osThemeRef === 'dark' ? darkTheme : null">
     <my-layout>
       <template #header>
@@ -28,7 +30,7 @@ const osThemeRef = useOsTheme()
           :homepage="homepage"
           commit="__COMMIT__"
           build-date="__BUILD_DATE__"
-          copyright="2022 Qijia Liu"
+          copyright="2022-2023 Qijia Liu"
         />
       </template>
     </my-layout>
