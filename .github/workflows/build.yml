@@ -46,3 +46,7 @@ jobs:
       - name: Build
         run: |
           pnpm run build
+      - name: Test
+        run: |
+          npx playwright install-deps
+          pnpm run test
