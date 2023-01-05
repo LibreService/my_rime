@@ -52,20 +52,21 @@ const RIME_KEY_MAP = {
   ArrowLeft: 'Left'
 }
 
-function insert (start: number, end: number, toInsert: string) {
-  updateText(text.value.slice(0, start) + toInsert + text.value.slice(end))
+function insert (toInsert: string) {
+  const textarea = getTextarea(textareaSelector)
+  const { selectionStart, selectionEnd } = textarea
+  updateText(text.value.slice(0, selectionStart) + toInsert + text.value.slice(selectionEnd))
   nextTick(() => {
-    getTextarea(textareaSelector).selectionEnd = start + toInsert.length
+    textarea.selectionEnd = selectionStart + toInsert.length
   })
 }
 
 async function input (rimeKey: string) {
-  const { selectionStart, selectionEnd } = getTextarea(textareaSelector)
   const result = JSON.parse(await process(rimeKey)) as RIME_RESULT
   if (result.state === 0) { // COMMITTED
     editing.value = false
     dragged.value = false
-    insert(selectionStart, selectionEnd, result.committed)
+    insert(result.committed)
   } else if (result.state === 1) { // ACCEPTED
     editing.value = true
     preEditHead.value = result.head
@@ -82,7 +83,7 @@ async function input (rimeKey: string) {
     if (editing.value) {
       editing.value = false
     } else {
-      insert(selectionStart, selectionEnd, rimeKey)
+      insert(rimeKey)
     }
   }
   getTextarea(textareaSelector).focus()
