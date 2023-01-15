@@ -63,6 +63,11 @@ pnpm run test
 ```sh
 pnpm run preview
 ```
+### Deploy
+```sh
+export LIBRESERVICE_CDN=https://cdn.jsdelivr.net/npm/@libreservice/my-rime@VERSION/dist/ # optional
+vercel build --prod
+vercel deploy --prebuilt --prod
 
 ## License
 AGPLv3+

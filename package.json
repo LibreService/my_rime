@@ -1,6 +1,9 @@
 {
-  "name": "my-rime",
+  "name": "@libreservice/my-rime",
   "version": "0.1.0",
+  "files": [
+    "dist"
+  ],
   "homepage": "https://github.com/LibreService/my_rime",
   "author": {
     "name": "Qijia Liu",
@@ -24,7 +27,7 @@
   },
   "devDependencies": {
     "@libreservice/my-widget": "^0.1.2",
-    "@libreservice/my-worker": "^0.2.2",
+    "@libreservice/my-worker": "^0.3.0",
     "@playwright/test": "^1.29.1",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-replace": "^5.0.2",
