@@ -20,4 +20,4 @@ cmake librime -B build/librime_native \
 make -C build/librime_native -j $n
 
 cd build/librime_native/bin && echo | ./rime_console
-bzip2 --best build/luna_pinyin.table.bin
+bzip2 --best -f build/luna_pinyin.table.bin
