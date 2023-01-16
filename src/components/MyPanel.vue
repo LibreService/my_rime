@@ -37,6 +37,7 @@ const prevDisabled = ref<boolean>(true)
 const nextDisabled = ref<boolean>(false)
 
 const editing = ref<boolean>(false)
+const showMenu = ref<boolean>(false)
 const exclusiveShift = ref<boolean>(false)
 
 const modifiers = ['Control', 'Alt']
@@ -52,6 +53,10 @@ const RIME_KEY_MAP = {
   ArrowLeft: 'Left'
 }
 
+function isPrintable (key: string) {
+  return /^[a-z0-9!"#$%&'()*+,./:;<=>?@[\] ^_`{|}~\\-]$/i.test(key)
+}
+
 function insert (toInsert: string) {
   const textarea = getTextarea(textareaSelector)
   const { selectionStart, selectionEnd } = textarea
@@ -65,10 +70,10 @@ async function input (rimeKey: string) {
   const result = JSON.parse(await process(rimeKey)) as RIME_RESULT
   if (result.state === 0) { // COMMITTED
     editing.value = false
+    showMenu.value = false
     dragged.value = false
     insert(result.committed)
   } else if (result.state === 1) { // ACCEPTED
-    editing.value = true
     preEditHead.value = result.head
     preEditBody.value = result.body
     preEditTail.value = result.tail
@@ -79,24 +84,29 @@ async function input (rimeKey: string) {
     }))
     prevDisabled.value = result.page === 0
     nextDisabled.value = result.isLastPage
+    showMenu.value = true
   } else { // REJECTED
-    if (editing.value) {
-      editing.value = false
-    } else {
+    editing.value = false
+    showMenu.value = false
+    if (isPrintable(rimeKey)) {
       insert(rimeKey)
     }
   }
   getTextarea(textareaSelector).focus()
 }
 
-async function onKeydown (e: KeyboardEvent) {
-  if (e.key === 'Shift') {
+function onKeydown (e: KeyboardEvent) {
+  const { key } = e
+  if (key === 'Shift') {
     exclusiveShift.value = true
     return
   }
   exclusiveShift.value = false
+  const isPrintableKey = isPrintable(key)
   const textarea = getTextarea(textareaSelector)
-  if (document.activeElement !== textarea && !editing.value) {
+  // In edit mode, rime handles every keydown;
+  // In non-edit mode, only when the textarea is focused and a printable key is down will activate rime.
+  if (!editing.value && (document.activeElement !== textarea || !isPrintableKey)) {
     return
   }
   for (const modifier of modifiers) {
@@ -104,11 +114,10 @@ async function onKeydown (e: KeyboardEvent) {
       return
     }
   }
-  const { key } = e
   let rimeKey: string | undefined
-  if (/^[a-z0-9!"#$%&'()*+,./:;<=>?@[\] ^_`{|}~\\-]$/i.test(key)) {
+  if (isPrintableKey) {
     rimeKey = key
-  } else if (editing.value) {
+  } else {
     for (const [k, v] of Object.entries(RIME_KEY_MAP)) {
       if (key === k) {
         rimeKey = `{${v}}`
@@ -124,6 +133,7 @@ async function onKeydown (e: KeyboardEvent) {
     x.value = box.x + caret.left
     y.value = box.y + caret.top + caret.height - textarea.scrollTop
   }
+  editing.value = true
   e.preventDefault()
   input(rimeKey)
 }
@@ -203,7 +213,7 @@ onUnmounted(() => { // Cleanup for HMR
 
 <template>
   <n-popover
-    :show="editing"
+    :show="showMenu"
     :show-arrow="false"
     :x="x"
     :y="y"
