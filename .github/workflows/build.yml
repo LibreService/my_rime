@@ -1,6 +1,10 @@
 name: build
 
-on: push
+on:
+  push:
+    branches:
+      - master
+  pull_request:
 
 jobs:
   build:
@@ -46,7 +50,41 @@ jobs:
       - name: Build
         run: |
           pnpm run build
+      - name: Upload artifact
+        if: ${{ github.ref == 'refs/heads/master' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js latest
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+      - name: Install node dependencies
+        run: |
+          npm i -g pnpm
+          pnpm i
+          npx playwright install-deps
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: dist
       - name: Test
         run: |
-          npx playwright install-deps
           pnpm run test
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mv dist my-rime-dist
+          zip -r my-rime-dist.zip my-rime-dist
+          gh release upload latest my-rime-dist.zip --clobber

@@ -5,6 +5,9 @@ Chinese IME powered by RIME.
 
 https://my-rime.vercel.app/
 
+## Self host
+Download latest [artifact](https://github.com/LibreService/my_rime/releases/download/latest/my-rime-dist.zip) built by GitHub Actions.
+
 ## Development workflow
 My RIME can be built on Linux.
 
