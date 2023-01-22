@@ -1,23 +1,8 @@
-import { test, expect, Page } from '@playwright/test'
-
-const baseURL = 'http://localhost:4173/'
-
-function textarea (page: Page) {
-  return page.locator('textarea')
-}
-
-async function input (page: Page, sequence: string) {
-  for (const key of sequence) {
-    await page.keyboard.press(key)
-  }
-}
+import { test, Page } from '@playwright/test'
+import { baseURL, textarea, input, expectValue } from './util'
 
 function changeWidth (page: Page) {
   return page.getByRole('group').nth(0).getByRole('button').nth(2).click()
-}
-
-function expectValue (page: Page, value: string) {
-  return expect(textarea(page)).toHaveValue(value)
 }
 
 test('Simplified', async ({ page }) => {
