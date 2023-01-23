@@ -135,7 +135,7 @@ function onKeydown (e: KeyboardEvent) {
     const box = textarea.getBoundingClientRect()
     const caret: { top: number, left: number, height: number } = getCaretCoordinates(textarea, textarea.selectionStart)
     x.value = box.x + caret.left
-    y.value = box.y + caret.top + caret.height - textarea.scrollTop
+    y.value = isMobile.value ? 8 : box.y + caret.top + caret.height - textarea.scrollTop
   }
   editing.value = true
   e.preventDefault()
@@ -160,6 +160,9 @@ function singleTouch (e: TouchEvent) {
 function handleDown (clientX: number, clientY: number) {
   mouseX.value = clientX
   mouseY.value = clientY
+  // As flip is turned on, update x to actual position to avoid layout shift on click
+  const panel = document.querySelector('.n-popover')!
+  x.value = panel.getBoundingClientRect().left
   dragging.value = true
 }
 

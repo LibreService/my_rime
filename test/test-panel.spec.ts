@@ -1,9 +1,5 @@
 import { test, Page, expect } from '@playwright/test'
-import { baseURL, expectValue, input, textarea } from './util'
-
-function panel (page: Page) {
-  return page.locator('.n-popover')
-}
+import { baseURL, expectValue, input, textarea, panel } from './util'
 
 function item (page: Page, text: string) {
   return panel(page).locator(`text=${text}`)

@@ -22,7 +22,7 @@
     "lint:fix": "eslint --ext .ts,.js,.vue --fix src test",
     "check": "vue-tsc --noEmit",
     "build": "pnpm run check && rm -rf public/*.js.map && NODE_ENV=production pnpm run worker && vite build",
-    "test": "playwright test --browser all test",
+    "test": "playwright test --browser all test/ && playwright test test-device/",
     "preview": "vite preview --host"
   },
   "devDependencies": {
