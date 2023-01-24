@@ -121,6 +121,8 @@ function onKeydown (e: KeyboardEvent) {
   let rimeKey: string | undefined
   if (isPrintableKey) {
     rimeKey = key
+  } else if (e.getModifierState('Shift') && key === 'Delete') {
+    rimeKey = '{Shift+Delete}'
   } else {
     for (const [k, v] of Object.entries(RIME_KEY_MAP)) {
       if (key === k) {

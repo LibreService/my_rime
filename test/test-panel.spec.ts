@@ -95,3 +95,31 @@ test('Switch page', async ({ page }) => {
   await page.keyboard.press('PageUp')
   await expect(item(page, '1 翻页')).toBeVisible()
 })
+
+test('Delete candidate', async ({ page }) => {
+  await page.goto(baseURL)
+
+  await textarea(page).click()
+  await input(page, 'zzc')
+  await expect(item(page, '1 自助餐')).toBeVisible()
+  await expect(item(page, '2 制造出')).toBeVisible()
+  await input(page, '2')
+  await expectValue(page, '制造出')
+  await input(page, 'zizaoci42')
+  await expectValue(page, '制造出自造词')
+
+  await input(page, 'zzc')
+  await expect(item(page, '1 自造词')).toBeVisible()
+  await expect(item(page, '2 制造出')).toBeVisible()
+  await expect(item(page, '3 自助餐')).toBeVisible()
+
+  await page.keyboard.press('ArrowDown')
+  await page.keyboard.press('Shift+Delete')
+  await expect(item(page, '1 自造词')).toBeVisible()
+  await expect(item(page, '2 自助餐')).toBeVisible()
+  await expect(item(page, '3 制造出')).toBeVisible()
+
+  await page.keyboard.press('Shift+Delete')
+  await expect(item(page, '1 自助餐')).toBeVisible()
+  await expect(item(page, '2 制造出')).toBeVisible()
+})
