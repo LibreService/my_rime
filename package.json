@@ -44,6 +44,7 @@
     "eslint-plugin-n": "^15.6.0",
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-vue": "^9.8.0",
+    "idb": "^7.1.1",
     "naive-ui": "^2.34.3",
     "playwright": "^1.29.1",
     "rollup": "^3.8.1",

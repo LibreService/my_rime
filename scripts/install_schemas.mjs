@@ -34,7 +34,10 @@ const fileNames = readdirSync('build')
 for (const fileName of fileNames) {
   const id = fileName.split('.')[0]
   if (id in schemaFiles) {
-    schemaFiles[id].push(fileName)
+    const md5 = spawnSync('md5sum', [`build/${fileName}`], {
+      encoding: 'utf-8'
+    }).stdout.slice(0, 32)
+    schemaFiles[id].push({ name: fileName, md5 })
   }
 }
 chdir(root)

@@ -1,4 +1,4 @@
-import { test, Page } from '@playwright/test'
+import { test, Page, Request } from '@playwright/test'
 import { baseURL, textarea, input, expectValue } from './util'
 
 function changeWidth (page: Page) {
@@ -89,4 +89,42 @@ test('Symbol', async ({ page }) => {
   await textarea(page).click()
   await input(page, '/fh ')
   await expectValue(page, '©')
+})
+
+test('IndexedDB cache', async ({ page }) => {
+  const resource = '/luna_pinyin.schema.yaml'
+  let resolveDownload: (request: Request) => void
+  let rejectDownload: (request: Request) => void
+  let promise = new Promise(resolve => {
+    resolveDownload = request => {
+      if (request.url().endsWith(resource)) {
+        resolve(null)
+      }
+    }
+  })
+  // @ts-ignore
+  page.on('request', resolveDownload)
+  await page.goto(baseURL)
+  await promise
+  // @ts-ignore
+  page.off('request', resolveDownload)
+
+  await textarea(page).click()
+  await input(page, 'wangluo ')
+  await expectValue(page, '网络')
+
+  promise = new Promise((resolve, reject) => {
+    rejectDownload = request => {
+      if (request.url().endsWith(resource)) {
+        reject(new Error('IndexedDB is not used.'))
+      }
+    }
+  })
+  // @ts-ignore
+  page.on('request', rejectDownload)
+
+  await page.reload()
+  await textarea(page).click()
+  await input(page, 'huancun ')
+  await Promise.race([expectValue(page, '缓存'), promise])
 })
