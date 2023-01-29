@@ -13,7 +13,7 @@ function changeLanguage () {
 
 function changeFont () {
   isSimplified.value = !isSimplified.value
-  setOption('zh_simp', isSimplified.value)
+  setOption('simplification', isSimplified.value)
 }
 
 function changeWidth () {

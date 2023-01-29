@@ -1,7 +1,7 @@
 set -e
 
-git submodule update --init bzip2
 git submodule update --init --recursive librime
+git submodule update --init plum
 git submodule update --init boost
 cd boost
 git submodule update --init tools

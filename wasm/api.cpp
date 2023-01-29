@@ -2,28 +2,6 @@
 #include <string>
 #include <boost/json/src.hpp>
 #include <rime_api.h>
-#include <bzlib.h>
-
-#define OBUF_LEN 5000
-
-void uncompress(const char *input_path, const char *output_path) {
-    FILE *output = fopen(output_path, "wb");
-    FILE *input = fopen(input_path, "rb");
-    int bzerr;
-    BZFILE* bzf = BZ2_bzReadOpen(NULL, input, 0, 0, NULL, 0);
-
-    do {
-        char obuf[OBUF_LEN];
-        int nread = BZ2_bzRead(&bzerr, bzf, obuf, OBUF_LEN);
-        if (nread > 0) {
-            fwrite(obuf, 1, nread, output);
-        }
-    } while(bzerr == BZ_OK);
-
-    BZ2_bzReadClose(NULL, bzf);
-    fclose(input);
-    fclose(output);
-}
 
 enum {
     COMMITTED, ACCEPTED, REJECTED
@@ -45,11 +23,10 @@ extern "C" {
     }
 
     void init() {
-        uncompress("build/luna_pinyin.table.bin.bz2", "build/luna_pinyin.table.bin");
         RimeSetup(NULL);
         RimeInitialize(NULL);
         session_id = RimeCreateSession();
-        set_option("zh_simp", 1);
+        set_option("simplification", 1);
         RIME_STRUCT_INIT(RimeCommit, commit);
         RIME_STRUCT_INIT(RimeContext, context);
     }
@@ -85,5 +62,9 @@ extern "C" {
         }
         obj["state"] = REJECTED;
         return to_json(obj);
+    }
+
+    void set_ime(const char *ime) {
+        RimeSelectSchema(session_id, ime);
     }
 }

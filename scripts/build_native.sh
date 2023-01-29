@@ -19,5 +19,7 @@ cmake librime -B build/librime_native \
   -DCMAKE_BUILD_TYPE:STRING="Release"
 make -C build/librime_native -j $n
 
-cd build/librime_native/bin && echo | ./rime_console
-bzip2 --best -f build/luna_pinyin.table.bin
+rime_dir=build/librime_native/bin plum/rime-install prelude essay
+node scripts/install_schemas.mjs
+cp -r build/librime_native/bin/build public/ime
+rm public/ime/default.yaml

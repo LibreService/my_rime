@@ -28,8 +28,10 @@ pnpm-lock.yaml
 *.wasm
 public/rime.js
 public/rime.data
+public/ime
 build
 
 *.js.map
 public/worker.js
 .vercel
+schema-files.json

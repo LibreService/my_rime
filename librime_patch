@@ -1,12 +1,23 @@
-diff --git a/data/minimal/default.yaml b/data/minimal/default.yaml
-index d10c253..9a32700 100644
---- a/data/minimal/default.yaml
-+++ b/data/minimal/default.yaml
-@@ -6,7 +6,6 @@ config_version: "0.15.minimal"
+diff --git a/tools/CMakeLists.txt b/tools/CMakeLists.txt
+index 18e3407..b79a0c1 100644
+--- a/tools/CMakeLists.txt
++++ b/tools/CMakeLists.txt
+@@ -44,18 +44,3 @@ install(TARGETS rime_dict_manager DESTINATION ${BIN_INSTALL_DIR})
+ endif()
  
- schema_list:
-   - schema: luna_pinyin
--  - schema: cangjie5
- 
- switcher:
-   caption: 〔方案選單〕
+ install(TARGETS rime_patch DESTINATION ${BIN_INSTALL_DIR})
+-
+-file(COPY ${PROJECT_SOURCE_DIR}/data/minimal/default.yaml
+-     DESTINATION ${EXECUTABLE_OUTPUT_PATH})
+-file(COPY ${PROJECT_SOURCE_DIR}/data/minimal/symbols.yaml
+-     DESTINATION ${EXECUTABLE_OUTPUT_PATH})
+-file(COPY ${PROJECT_SOURCE_DIR}/data/minimal/essay.txt
+-     DESTINATION ${EXECUTABLE_OUTPUT_PATH})
+-file(COPY ${PROJECT_SOURCE_DIR}/data/minimal/luna_pinyin.dict.yaml
+-     DESTINATION ${EXECUTABLE_OUTPUT_PATH})
+-file(COPY ${PROJECT_SOURCE_DIR}/data/minimal/luna_pinyin.schema.yaml
+-     DESTINATION ${EXECUTABLE_OUTPUT_PATH})
+-file(COPY ${PROJECT_SOURCE_DIR}/data/minimal/cangjie5.dict.yaml
+-     DESTINATION ${EXECUTABLE_OUTPUT_PATH})
+-file(COPY ${PROJECT_SOURCE_DIR}/data/minimal/cangjie5.schema.yaml
+-     DESTINATION ${EXECUTABLE_OUTPUT_PATH})

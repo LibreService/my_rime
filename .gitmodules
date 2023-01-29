@@ -4,6 +4,6 @@
 [submodule "boost"]
 	path = boost
 	url = https://github.com/boostorg/boost
-[submodule "bzip2"]
-	path = bzip2
-	url = https://gitlab.com/bzip2/bzip2
+[submodule "plum"]
+	path = plum
+	url = https://github.com/rime/plum

@@ -19,4 +19,9 @@ function expectValue (page: Page, value: string) {
   return expect(textarea(page)).toHaveValue(value)
 }
 
-export { baseURL, textarea, panel, input, expectValue }
+async function selectIME (page: Page, ime: string) {
+  await page.locator('.n-select').click()
+  return page.locator('.n-base-select-option').getByText(ime).click()
+}
+
+export { baseURL, textarea, panel, input, expectValue, selectIME }

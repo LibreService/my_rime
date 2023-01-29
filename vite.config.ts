@@ -8,7 +8,6 @@ import { VitePWA, VitePWAOptions } from 'vite-plugin-pwa'
 const resources = ['rime.data', 'rime.js', 'rime.wasm']
 
 const workbox: VitePWAOptions["workbox"] = {
-  maximumFileSizeToCacheInBytes: 5242880,
   globPatterns: [
     '**/*.{js,css,html}',
     'apple-touch-icon.png',

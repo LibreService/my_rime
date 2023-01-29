@@ -1,5 +1,10 @@
 declare global {
   const Module: {
+    FS: {
+      lookupPath: (path: string) => void
+      mkdir: (path: string) => void
+      writeFile: (path: string, content: Uint8Array) => void
+    }
     ccall: (name: string, returnType: string, argsType: string[], args: any[]) => any
   }
   type RIME_COMMITTED = {
@@ -20,7 +25,7 @@ declare global {
     state: 2
   }
   type RIME_RESULT = RIME_COMMITTED | RIME_ACCEPTED | RIME_REJECTED
-  type RIME_OPTION = 'ascii_mode' | 'zh_simp' | 'full_shape' | 'ascii_punct'
+  type RIME_OPTION = 'ascii_mode' | 'simplification' | 'full_shape' | 'ascii_punct'
 }
 
 export {}

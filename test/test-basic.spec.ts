@@ -82,3 +82,11 @@ test('Middle insertion', async ({ page }) => {
   await input(page, 'zhongjian ')
   await expectValue(page, '左中间右')
 })
+
+test('Symbol', async ({ page }) => {
+  await page.goto(baseURL)
+
+  await textarea(page).click()
+  await input(page, '/fh ')
+  await expectValue(page, '©')
+})

@@ -55,11 +55,3 @@ emcmake cmake librime -B build/librime_wasm \
   -DCMAKE_BUILD_TYPE:STRING="Release" \
   -DCMAKE_INSTALL_PREFIX:PATH=/usr/local
 make DESTDIR=$root/build/sysroot -C build/librime_wasm install -j $n
-
-emcmake cmake bzip2 -B build/bzip2 \
-  -DENABLE_APP:BOOL=OFF \
-  -DENABLE_STATIC_LIB:BOOL=ON \
-  -DENABLE_SHARED_LIB:BOOL=OFF \
-  -DCMAKE_BUILD_TYPE:STRING="Release" \
-  -DCMAKE_INSTALL_PREFIX:PATH=/usr/local
-make DESTDIR=$root/build/sysroot -C build/bzip2 install -j $n
