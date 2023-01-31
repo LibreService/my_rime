@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, Ref, computed } from 'vue'
 import { NButton, NButtonGroup, NIcon, NSpace, NSelect } from 'naive-ui'
 import { WeatherMoon16Regular, Circle16Regular } from '@vicons/fluent'
-import { isEnglish, isSimplified, isFullWidth, isEnglishPunctuation, changeLanguage, changeFont, changeWidth, changePunctuation } from '../control'
+import { SIMPLIFICATION, isEnglish, isFullWidth, isEnglishPunctuation, changeLanguage, changeVariant, changeWidth, changePunctuation } from '../control'
 import { getTextarea } from '../util'
 import { setIME } from '../workerAPI'
 import schemas from '../../schemas.json'
@@ -10,6 +10,63 @@ import schemas from '../../schemas.json'
 const luna = 'luna_pinyin'
 
 const ime = ref<string>(luna)
+
+const schemaVariants: {
+  [key: string]: {
+    id: string
+    name: string
+    value: boolean
+  }[]
+} = {}
+const schemaVariantsIndex: {
+  [key: string]: Ref<number>
+} = {}
+
+for (const schema of schemas as {
+  id: string
+  variants?: {
+    id: string
+    name: string
+  }[]
+}[]) {
+  schemaVariantsIndex[schema.id] = ref<number>(0)
+  if (schema.variants) {
+    schemaVariants[schema.id] = []
+    for (const variant of schema.variants) {
+      schemaVariants[schema.id].push({
+        ...variant,
+        value: true
+      })
+    }
+  } else {
+    schemaVariants[schema.id] = [
+      {
+        id: SIMPLIFICATION,
+        name: '简',
+        value: true
+      },
+      {
+        id: SIMPLIFICATION,
+        name: '繁',
+        value: false
+      }
+    ]
+  }
+}
+
+const variants = computed(() => schemaVariants[ime.value])
+
+const variantIndex = computed({
+  get () {
+    return schemaVariantsIndex[ime.value].value
+  },
+  set (newIndex) {
+    schemaVariantsIndex[ime.value].value = newIndex
+  }
+})
+
+const variantLabel = computed(() => variants.value[variantIndex.value].name)
+
 const options = (schemas as {
   id: string
   name: string
@@ -25,10 +82,18 @@ async function selectIME (targetIME: string) {
   try {
     await setIME(targetIME)
     ime.value = targetIME
+    const variant = variants.value[variantIndex.value]
+    changeVariant(variant.id, variant.value)
   } catch (e) {
     console.error(e)
   }
   loading.value = false
+}
+
+function switchVariant () {
+  variantIndex.value = (variantIndex.value + 1) % variants.value.length
+  const variant = variants.value[variantIndex.value]
+  changeVariant(variant.id, variant.value)
 }
 
 const props = defineProps<{
@@ -62,9 +127,9 @@ function resetFocus () {
       <n-button
         secondary
         :disabled="isEnglish"
-        @click="changeFont"
+        @click="switchVariant"
       >
-        {{ isSimplified ? '简' : '繁' }}
+        {{ variantLabel }}
       </n-button>
       <n-button
         secondary

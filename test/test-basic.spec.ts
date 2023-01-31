@@ -1,9 +1,5 @@
-import { test, Page, Request } from '@playwright/test'
-import { baseURL, textarea, input, expectValue } from './util'
-
-function changeWidth (page: Page) {
-  return page.getByRole('group').nth(0).getByRole('button').nth(2).click()
-}
+import { test, Request } from '@playwright/test'
+import { baseURL, textarea, input, expectValue, changeVariant, changeWidth } from './util'
 
 test('Simplified', async ({ page }) => {
   await page.goto(baseURL)
@@ -17,7 +13,7 @@ test('Traditional', async ({ page }) => {
   await page.goto(baseURL)
 
   await textarea(page).click()
-  await page.getByRole('button', { name: '简' }).click()
+  await changeVariant(page, '繁')
   await input(page, 'fanti ')
   await expectValue(page, '繁體')
 })

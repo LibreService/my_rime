@@ -25,7 +25,6 @@ declare global {
     state: 2
   }
   type RIME_RESULT = RIME_COMMITTED | RIME_ACCEPTED | RIME_REJECTED
-  type RIME_OPTION = 'ascii_mode' | 'simplification' | 'full_shape' | 'ascii_punct'
 }
 
 export {}

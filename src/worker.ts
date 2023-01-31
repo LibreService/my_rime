@@ -49,7 +49,7 @@ const readyPromise = loadWasm('rime.js', {
 
 expose({
   setIME,
-  setOption (option: RIME_OPTION, value: boolean): void {
+  setOption (option: string, value: boolean): void {
     return Module.ccall('set_option', 'null', ['string', 'number'], [option, value])
   },
   process (input: string): string {

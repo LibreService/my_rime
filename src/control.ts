@@ -1,8 +1,9 @@
 import { ref } from 'vue'
 import { setOption } from './workerAPI'
 
+const SIMPLIFICATION = 'simplification'
+
 const isEnglish = ref<boolean>(false)
-const isSimplified = ref<boolean>(true)
 const isFullWidth = ref<boolean>(false)
 const isEnglishPunctuation = ref<boolean>(false)
 
@@ -11,9 +12,11 @@ function changeLanguage () {
   setOption('ascii_mode', isEnglish.value)
 }
 
-function changeFont () {
-  isSimplified.value = !isSimplified.value
-  setOption('simplification', isSimplified.value)
+function changeVariant (key: string, value: boolean) {
+  if (key !== SIMPLIFICATION) {
+    setOption(SIMPLIFICATION, false)
+  }
+  setOption(key, value)
 }
 
 function changeWidth () {
@@ -26,4 +29,4 @@ function changePunctuation () {
   setOption('ascii_punct', isEnglishPunctuation.value)
 }
 
-export { isEnglish, isSimplified, isFullWidth, isEnglishPunctuation, changeLanguage, changeFont, changeWidth, changePunctuation }
+export { SIMPLIFICATION, isEnglish, isFullWidth, isEnglishPunctuation, changeLanguage, changeVariant, changeWidth, changePunctuation }
