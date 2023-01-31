@@ -40,7 +40,7 @@ const editing = ref<boolean>(false)
 const showMenu = ref<boolean>(false)
 const exclusiveShift = ref<boolean>(false)
 
-const modifiers = ['Control', 'Alt']
+const modifiers = ['Control', 'Alt', 'Meta']
 
 const RIME_KEY_MAP = {
   Escape: 'Escape',
