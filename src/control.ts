@@ -12,11 +12,13 @@ function changeLanguage () {
   setOption('ascii_mode', isEnglish.value)
 }
 
-function changeVariant (key: string, value: boolean) {
-  if (key !== SIMPLIFICATION) {
-    setOption(SIMPLIFICATION, false)
+async function changeVariant (keys: string[], key: string, value: boolean) {
+  for (const k of keys) {
+    if (k !== key) {
+      await setOption(k, false)
+    }
   }
-  setOption(key, value)
+  return setOption(key, value)
 }
 
 function changeWidth () {

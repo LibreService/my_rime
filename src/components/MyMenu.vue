@@ -83,7 +83,7 @@ async function selectIME (targetIME: string) {
     await setIME(targetIME)
     ime.value = targetIME
     const variant = variants.value[variantIndex.value]
-    changeVariant(variant.id, variant.value)
+    await changeVariant(variants.value.map(v => v.id), variant.id, variant.value)
   } catch (e) {
     console.error(e)
   }
@@ -93,7 +93,7 @@ async function selectIME (targetIME: string) {
 function switchVariant () {
   variantIndex.value = (variantIndex.value + 1) % variants.value.length
   const variant = variants.value[variantIndex.value]
-  changeVariant(variant.id, variant.value)
+  changeVariant(variants.value.map(v => v.id), variant.id, variant.value)
 }
 
 const props = defineProps<{

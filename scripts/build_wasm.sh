@@ -7,6 +7,10 @@ em++ \
   --preload-file build/sysroot/usr/local/share/opencc/t2s.json@/usr/local/share/opencc/t2s.json \
   --preload-file build/sysroot/usr/local/share/opencc/TSPhrases.ocd2@/usr/local/share/opencc/TSPhrases.ocd2 \
   --preload-file build/sysroot/usr/local/share/opencc/TSCharacters.ocd2@/usr/local/share/opencc/TSCharacters.ocd2 \
+  --preload-file build/sysroot/usr/local/share/opencc/t2hkf.json@/usr/local/share/opencc/t2hkf.json \
+  --preload-file build/sysroot/usr/local/share/opencc/HKVariantsFull.txt@/usr/local/share/opencc/HKVariantsFull.txt \
+  --preload-file build/sysroot/usr/local/share/opencc/t2tw.json@/usr/local/share/opencc/t2tw.json \
+  --preload-file build/sysroot/usr/local/share/opencc/TWVariants.ocd2@/usr/local/share/opencc/TWVariants.ocd2 \
   -I build/sysroot/usr/local/include \
   -o public/rime.js \
   wasm/api.cpp \

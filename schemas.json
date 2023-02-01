@@ -6,6 +6,30 @@
     "license": "LGPL-3.0-only"
   },
   {
+    "id": "jyut6ping3",
+    "name": "粤语拼音",
+    "target": "cantonese",
+    "variants": [
+      {
+        "id": "simplification",
+        "name": "简"
+      },
+      {
+        "id": "variants_hk",
+        "name": "港"
+      },
+      {
+        "id": "trad_tw",
+        "name": "臺"
+      },
+      {
+        "id": "noop",
+        "name": "繁"
+      }
+    ],
+    "license": "LGPL-3.0-only"
+  },
+  {
     "id": "cangjie5",
     "name": "仓颉五代",
     "target": "cangjie",
