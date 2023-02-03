@@ -24,7 +24,7 @@ function expectValue (page: Page, value: string) {
 async function selectIME (page: Page, ime: string) {
   const select = page.locator('.n-select')
   await select.click()
-  await page.locator('.n-base-select-option').getByText(ime).click()
+  await page.locator('.n-base-select-option').getByText(ime, { exact: true }).click()
   return expect(select).toHaveText(ime) // ensure changed
 }
 

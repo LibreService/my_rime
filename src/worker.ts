@@ -13,7 +13,21 @@ const dbPromise = openDB('ime', 1, {
 })
 
 async function setIME (ime: string) {
-  const files = (schemaFiles as {[key: string]: { name: string, md5: string }[]})[ime]
+  function getFiles (key: string) {
+    const files: {
+      name: string
+      md5: string
+    }[] = []
+    for (const item of (schemaFiles as {[key: string]: ({ name: string, md5: string } | string)[]})[key]) {
+      if (typeof item === 'string') { // root schema_id
+        files.push(...getFiles(item))
+      } else {
+        files.push(item)
+      }
+    }
+    return files
+  }
+  const files = getFiles(ime)
   const db = await dbPromise.catch(() => undefined) // not available in Firefox Private Browsing
   await Promise.all(files.map(async ({ name, md5 }) => {
     const path = `build/${name}`

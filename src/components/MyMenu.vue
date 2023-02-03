@@ -22,13 +22,27 @@ const schemaVariantsIndex: {
   [key: string]: Ref<number>
 } = {}
 
+const options: {
+  label: string
+  value: string
+}[] = []
+
 for (const schema of schemas as {
   id: string
+  name: string
+  family?: {
+    id: string,
+    name: string
+  }[]
   variants?: {
     id: string
     name: string
   }[]
 }[]) {
+  options.push({
+    label: schema.name,
+    value: schema.id
+  })
   schemaVariantsIndex[schema.id] = ref<number>(0)
   if (schema.variants) {
     schemaVariants[schema.id] = []
@@ -52,7 +66,18 @@ for (const schema of schemas as {
       }
     ]
   }
+  if (schema.family) {
+    for (const { id, name } of schema.family) {
+      options.push({
+        label: name,
+        value: id
+      })
+      schemaVariantsIndex[id] = ref<number>(0)
+      schemaVariants[id] = schemaVariants[schema.id]
+    }
+  }
 }
+console.log(schemaVariants)
 
 const variants = computed(() => schemaVariants[ime.value])
 
@@ -67,13 +92,6 @@ const variantIndex = computed({
 
 const variantLabel = computed(() => variants.value[variantIndex.value].name)
 
-const options = (schemas as {
-  id: string
-  name: string
-}[]).map(schema => ({
-  label: schema.name,
-  value: schema.id
-}))
 const loading = ref<boolean>(false)
 
 async function selectIME (targetIME: string) {

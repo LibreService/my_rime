@@ -3,6 +3,12 @@
     "id": "luna_pinyin",
     "name": "朙月拼音",
     "target": "luna-pinyin",
+    "family": [
+      {
+        "id": "luna_pinyin_fluency",
+        "name": "朙月拼音·语句流"
+      }
+    ],
     "license": "LGPL-3.0-only"
   },
   {
