@@ -1,5 +1,7 @@
 set -e
 
+: "${ENABLE_LOGGING:=OFF}"
+
 root=$PWD
 n=`nproc --all`
 
@@ -46,12 +48,26 @@ emcmake cmake librime/deps/opencc -B build/opencc_wasm \
   -DCMAKE_INSTALL_PREFIX:PATH=/usr/local
 make DESTDIR=$root/build/sysroot -C build/opencc_wasm install -j $n
 
+if [[ $ENABLE_LOGGING == 'ON' ]]; then
+  pushd librime/deps/glog
+  git pull https://github.com/google/glog master
+  popd
+  emcmake cmake librime/deps/glog -B build/glog \
+    DBUILD_SHARED_LIBS:BOOL=OFF \
+    -DBUILD_TESTING:BOOL=OFF \
+    -DWITH_GFLAGS:BOOL=OFF \
+    -DWITH_UNWIND:BOOL=OFF \
+    -DCMAKE_BUILD_TYPE:STRING="Release" \
+    -DCMAKE_INSTALL_PREFIX:PATH=/usr/local
+  make DESTDIR=$root/build/sysroot -C build/glog install -j $n
+fi
+
 emcmake cmake librime -B build/librime_wasm \
   -DCMAKE_FIND_ROOT_PATH:PATH=$root/build/sysroot/usr/local \
   -DBUILD_SHARED_LIBS:BOOL=OFF \
   -DBUILD_STATIC:BOOL=ON \
   -DBUILD_TEST:BOOL=OFF \
-  -DENABLE_LOGGING:BOOL=OFF \
+  -DENABLE_LOGGING:BOOL=$ENABLE_LOGGING \
   -DCMAKE_BUILD_TYPE:STRING="Release" \
   -DCMAKE_INSTALL_PREFIX:PATH=/usr/local
 make DESTDIR=$root/build/sysroot -C build/librime_wasm install -j $n

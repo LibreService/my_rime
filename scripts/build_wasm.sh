@@ -1,3 +1,7 @@
+if [[ $ENABLE_LOGGING == 'ON' ]]; then
+  glog_option="-l glog"
+fi
+
 em++ \
   -std=c++14 \
   -O2 \
@@ -17,4 +21,4 @@ em++ \
   -L build/sysroot/usr/local/lib \
   -l rime \
   -l:libboost_filesystem.bc \
-  -l yaml-cpp -l leveldb -l marisa -l opencc
+  -l yaml-cpp -l leveldb -l marisa -l opencc $glog_option

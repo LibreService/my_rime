@@ -39,6 +39,7 @@ pnpm run submodule
 ### Build wasm
 ```sh
 pnpm run native
+export ENABLE_LOGGING=ON # optional
 pnpm run lib
 pnpm run wasm
 ```
