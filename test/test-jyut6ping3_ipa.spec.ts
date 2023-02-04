@@ -12,3 +12,12 @@ test('IPA', async ({ page }) => {
   await input(page, ' ')
   await expectValue(page, '粤拼')
 })
+
+test('Commit tone', async ({ page }) => {
+  await page.goto(baseURL)
+
+  await selectIME(page, ime)
+  await input(page, 'jyut', 'ping')
+  await page.keyboard.press('Shift+Enter')
+  await expectValue(page, 'jyːt̚.pʰeŋ')
+})
