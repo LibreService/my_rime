@@ -65,5 +65,11 @@
     "name": "快速仓颉",
     "target": "scj",
     "license": "GPL-3.0-only"
+  },
+  {
+    "id": "quick5",
+    "name": "速成",
+    "target": "quick",
+    "license": "LGPL-3.0-only"
   }
 ]
