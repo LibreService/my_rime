@@ -12,7 +12,7 @@ RimeCommit commit;
 RimeContext context;
 std::string json_string;
 
-const char *to_json(boost::json::object &obj) {
+inline const char *to_json(boost::json::object &obj) {
     json_string = boost::json::serialize(obj);
     return json_string.c_str();
 }
@@ -35,10 +35,9 @@ extern "C" {
         boost::json::object obj;
         RimeSimulateKeySequence(session_id, input);
         RimeFreeCommit(&commit);
-        if (RimeGetCommit(session_id, &commit)) {
-            obj["state"] = COMMITTED;
+        Bool hasCommitted = RimeGetCommit(session_id, &commit);
+        if (hasCommitted) {
             obj["committed"] = commit.text;
-            return to_json(obj);
         }
         RimeFreeContext(&context);
         RimeGetContext(session_id, &context);
@@ -58,9 +57,11 @@ extern "C" {
                 candidates.push_back(menu.candidates[i].text);
             }
             obj["candidates"] = candidates;
-            return to_json(obj);
+        } else if (hasCommitted) {
+            obj["state"] = COMMITTED;
+        } else {
+            obj["state"] = REJECTED;
         }
-        obj["state"] = REJECTED;
         return to_json(obj);
     }
 

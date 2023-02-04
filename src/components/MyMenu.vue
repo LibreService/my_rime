@@ -77,7 +77,6 @@ for (const schema of schemas as {
     }
   }
 }
-console.log(schemaVariants)
 
 const variants = computed(() => schemaVariants[ime.value])
 

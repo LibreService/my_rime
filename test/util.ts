@@ -11,6 +11,10 @@ function panel (page: Page) {
   return page.locator('.n-popover')
 }
 
+function item (page: Page, text: string) {
+  return panel(page).locator(`text=${text}`)
+}
+
 async function input (page: Page, sequence: string) {
   for (const key of sequence) {
     await page.keyboard.press(key)
@@ -42,4 +46,4 @@ function changeWidth (page: Page) {
   return menu(page).nth(2).click()
 }
 
-export { baseURL, luna, textarea, panel, input, expectValue, selectIME, changeVariant, changeWidth }
+export { baseURL, luna, textarea, panel, item, input, expectValue, selectIME, changeVariant, changeWidth }

@@ -39,6 +39,12 @@
     "id": "cangjie5",
     "name": "仓颉五代",
     "target": "cangjie",
+    "family": [
+      {
+        "id": "cangjie5_express",
+        "name": "仓颉五代·快打"
+      }
+    ],
     "license": "LGPL-3.0-only"
   }
 ]

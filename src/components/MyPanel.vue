@@ -89,6 +89,9 @@ async function input (rimeKey: string) {
     prevDisabled.value = result.page === 0
     nextDisabled.value = result.isLastPage
     showMenu.value = true
+    if (result.committed) {
+      insert(result.committed)
+    }
   } else { // REJECTED
     editing.value = false
     showMenu.value = false

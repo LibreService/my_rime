@@ -13,6 +13,7 @@ declare global {
   }
   type RIME_ACCEPTED = {
     state: 1
+    committed?: string,
     head: string
     body: string,
     tail: string,
