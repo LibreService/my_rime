@@ -15,6 +15,7 @@
     "submodule": "bash scripts/update_submodule.sh",
     "worker": "rollup -c rollup.worker-config.mjs",
     "native": "bash scripts/build_native.sh",
+    "schema": "bash scripts/install_schemas.sh",
     "lib": "bash scripts/build_lib.sh",
     "wasm": "bash scripts/build_wasm.sh",
     "dev": "vite --host",

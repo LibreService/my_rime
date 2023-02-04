@@ -45,6 +45,7 @@ jobs:
         run: |
           . emsdk/emsdk_env.sh
           pnpm run native
+          pnpm run schema
           pnpm run lib
           pnpm run wasm
       - name: Build
@@ -64,7 +65,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        browser: [chromium, firefox, webkit]
+        browser: [chromium, firefox] # webkit has random error
         include:
           - os: macos-latest
             browser: webkit

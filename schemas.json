@@ -33,6 +33,12 @@
         "name": "繁"
       }
     ],
+    "family": [
+      {
+        "id": "jyut6ping3_ipa",
+        "name": "粤语拼音·IPA"
+      }
+    ],
     "license": "LGPL-3.0-only"
   },
   {
