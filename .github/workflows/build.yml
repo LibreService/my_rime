@@ -59,9 +59,16 @@ jobs:
 
   test:
     needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        browser: [chromium, firefox, webkit]
+        include:
+          - os: macos-latest
+            browser: webkit
+
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js latest
@@ -79,8 +86,26 @@ jobs:
           name: dist
           path: dist
       - name: Test
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |
-          pnpm run test
+          npx playwright test --browser ${{ matrix.browser }} test/
+      - name: Test device
+        if: ${{ matrix.os == 'macos-latest' }}
+        run: |
+          npx playwright test --browser ${{ matrix.browser }} test-device/
+
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: dist
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
