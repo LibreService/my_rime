@@ -15,9 +15,11 @@ function item (page: Page, text: string) {
   return panel(page).locator(`text=${text}`)
 }
 
-async function input (page: Page, sequence: string) {
-  for (const key of sequence) {
-    await page.keyboard.press(key)
+async function input (page: Page, ...sequences: string[]) {
+  for (const sequence of sequences) {
+    for (const key of sequence) {
+      await page.keyboard.press(key)
+    }
   }
 }
 
@@ -46,4 +48,4 @@ function changeWidth (page: Page) {
   return menu(page).nth(2).click()
 }
 
-export { baseURL, luna, textarea, panel, item, input, expectValue, selectIME, changeVariant, changeWidth }
+export { baseURL, luna, textarea, panel, item, menu, input, expectValue, selectIME, changeVariant, changeWidth }

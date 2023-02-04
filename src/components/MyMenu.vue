@@ -45,12 +45,17 @@ for (const schema of schemas as {
   })
   schemaVariantsIndex[schema.id] = ref<number>(0)
   if (schema.variants) {
-    schemaVariants[schema.id] = []
-    for (const variant of schema.variants) {
-      schemaVariants[schema.id].push({
+    if (schema.variants.length) {
+      schemaVariants[schema.id] = schema.variants.map(variant => ({
         ...variant,
         value: true
-      })
+      }))
+    } else {
+      schemaVariants[schema.id] = [{
+        id: '',
+        name: '',
+        value: true
+      }]
     }
   } else {
     schemaVariants[schema.id] = [
@@ -90,6 +95,7 @@ const variantIndex = computed({
 })
 
 const variantLabel = computed(() => variants.value[variantIndex.value].name)
+const singleVariant = computed(() => variants.value.length === 1)
 
 const loading = ref<boolean>(false)
 
@@ -143,7 +149,7 @@ function resetFocus () {
       </n-button>
       <n-button
         secondary
-        :disabled="isEnglish"
+        :disabled="isEnglish || singleVariant"
         @click="switchVariant"
       >
         {{ variantLabel }}

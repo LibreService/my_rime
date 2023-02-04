@@ -52,5 +52,12 @@
       }
     ],
     "license": "LGPL-3.0-only"
+  },
+  {
+    "id": "stroke",
+    "name": "五笔画",
+    "target": "stroke",
+    "variants": [],
+    "license": "LGPL-3.0-only"
   }
 ]

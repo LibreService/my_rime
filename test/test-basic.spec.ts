@@ -5,7 +5,7 @@ test('Simplified', async ({ page }) => {
   await page.goto(baseURL)
 
   await textarea(page).click()
-  await input(page, 'jianti ')
+  await input(page, 'jian', 'ti ')
   await expectValue(page, '简体')
 })
 
@@ -14,7 +14,7 @@ test('Traditional', async ({ page }) => {
 
   await textarea(page).click()
   await changeVariant(page, '繁')
-  await input(page, 'fanti ')
+  await input(page, 'fan', 'ti ')
   await expectValue(page, '繁體')
 })
 
@@ -27,7 +27,7 @@ test('English/Chinese', async ({ page }) => {
   await expectValue(page, 'English')
 
   await page.getByRole('button', { name: 'En' }).click()
-  await input(page, 'zhongwen ')
+  await input(page, 'zhong', 'wen ')
   await expectValue(page, 'English中文')
 })
 
@@ -62,9 +62,9 @@ test('Punctuation', async ({ page }) => {
 test('No action', async ({ page }) => {
   await page.goto(baseURL)
 
-  await input(page, 'wuxiao ')
+  await input(page, 'wu', 'xiao ')
   await textarea(page).click() // Due to delay, expecting empty string here always succeeds.
-  await input(page, 'youxiao ')
+  await input(page, 'you', 'xiao ')
   await expectValue(page, '有效')
 })
 
@@ -72,10 +72,10 @@ test('Middle insertion', async ({ page }) => {
   await page.goto(baseURL)
 
   await textarea(page).click()
-  await input(page, 'zuoyou ')
+  await input(page, 'zuo', 'you ')
   await expectValue(page, '左右') // Due to async handler, ArrowLeft may happen when previous event isn't fully handled (still in edit mode), so rime will eat it.
   await page.keyboard.press('ArrowLeft')
-  await input(page, 'zhongjian ')
+  await input(page, 'zhong', 'jian ')
   await expectValue(page, '左中间右')
 })
 
@@ -106,7 +106,7 @@ test('IndexedDB cache', async ({ page }) => {
   page.off('request', resolveDownload)
 
   await textarea(page).click()
-  await input(page, 'wangluo ')
+  await input(page, 'wang', 'luo ')
   await expectValue(page, '网络')
 
   promise = new Promise((resolve, reject) => {
@@ -121,6 +121,6 @@ test('IndexedDB cache', async ({ page }) => {
 
   await page.reload()
   await textarea(page).click()
-  await input(page, 'huancun ')
+  await input(page, 'huan', 'cun ')
   await Promise.race([expectValue(page, '缓存'), promise])
 })

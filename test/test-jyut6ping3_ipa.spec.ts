@@ -7,7 +7,7 @@ test('IPA', async ({ page }) => {
   await page.goto(baseURL)
 
   await selectIME(page, ime)
-  await input(page, 'jyutping')
+  await input(page, 'jyut', 'ping')
   await expect(panel(page).locator('text=jyːt̚.pʰeŋ')).toBeVisible()
   await input(page, ' ')
   await expectValue(page, '粤拼')

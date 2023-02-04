@@ -6,11 +6,11 @@ test('Esc', async ({ page }) => {
 
   await textarea(page).click()
   await expect(panel(page)).not.toBeVisible()
-  await input(page, 'linshi')
+  await input(page, 'lin', 'shi')
   await expect(panel(page)).toBeVisible()
   await page.keyboard.press('Escape')
   await expect(panel(page)).not.toBeVisible()
-  await input(page, 'houxu ')
+  await input(page, 'hou', 'xu ')
   await expectValue(page, '后续')
 })
 
@@ -18,7 +18,7 @@ test('Enter', async ({ page }) => {
   await page.goto(baseURL)
 
   await textarea(page).click()
-  await input(page, 'shangping')
+  await input(page, 'shang', 'ping')
   await page.keyboard.press('Enter')
   await expectValue(page, 'shangping')
 })
@@ -40,7 +40,7 @@ test('Arrow Up/Down', async ({ page }) => {
   await page.goto(baseURL)
 
   await textarea(page).click()
-  await input(page, 'shangxia')
+  await input(page, 'shang', 'xia')
   await page.keyboard.press('PageDown')
   await page.keyboard.press('ArrowUp')
   await page.keyboard.press(' ')
@@ -53,7 +53,7 @@ test('Arrow Left/Right', async ({ page }) => {
   await page.goto(baseURL)
 
   await textarea(page).click()
-  await input(page, 'zuoyou')
+  await input(page, 'zuo', 'you')
   await page.keyboard.press('ArrowLeft')
   await page.keyboard.press(' ')
   await page.keyboard.press('ArrowRight')
@@ -67,7 +67,7 @@ test('Select', async ({ page }) => {
   await page.goto(baseURL)
 
   await textarea(page).click()
-  await input(page, 'shuzidianji2')
+  await input(page, 'shu', 'zi', 'dian', 'ji', '2')
   await item(page, '1 点击').click()
   await expectValue(page, '数字点击')
 })
@@ -76,7 +76,7 @@ test('Switch page', async ({ page }) => {
   await page.goto(baseURL)
 
   await textarea(page).click()
-  await input(page, 'fanye')
+  await input(page, 'fan', 'ye')
   await expect(item(page, '1 翻页')).toBeVisible()
   await input(page, '=')
   await expect(item(page, '1 烦')).toBeVisible()
@@ -101,7 +101,7 @@ test('Delete candidate', async ({ page }) => {
   await expect(item(page, '2 制造出')).toBeVisible()
   await input(page, '2')
   await expectValue(page, '制造出')
-  await input(page, 'zizaoci42')
+  await input(page, 'zi', 'zao', 'ci', '42')
   await expectValue(page, '制造出自造词')
 
   await input(page, 'zzc')
