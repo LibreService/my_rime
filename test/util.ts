@@ -31,7 +31,7 @@ async function selectIME (page: Page, ime: string) {
   const select = page.locator('.n-select')
   await select.click()
   const options = page.locator('.n-base-select-option')
-  await expect(options.getByText(luna, { exact: true })).toBeVisible()
+  await expect(options.nth(1)).toBeVisible()
   const target = options.getByText(ime, { exact: true })
   while (!await target.isVisible()) {
     await page.keyboard.press('ArrowDown')

@@ -42,6 +42,18 @@
     "license": "LGPL-3.0-only"
   },
   {
+    "id": "zyenpheng",
+    "name": "中古全拼",
+    "target": "middle-chinese",
+    "family": [
+      {
+        "id": "sampheng",
+        "name": "中古三拼"
+      }
+    ],
+    "license": "GPL-3.0-only"
+  },
+  {
     "id": "cangjie5",
     "name": "仓颉五代",
     "target": "cangjie",
