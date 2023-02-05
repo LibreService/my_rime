@@ -30,7 +30,13 @@ function expectValue (page: Page, value: string) {
 async function selectIME (page: Page, ime: string) {
   const select = page.locator('.n-select')
   await select.click()
-  await page.locator('.n-base-select-option').getByText(ime, { exact: true }).click()
+  const options = page.locator('.n-base-select-option')
+  await expect(options.getByText(luna, { exact: true })).toBeVisible()
+  const target = options.getByText(ime, { exact: true })
+  while (!await target.isVisible()) {
+    await page.keyboard.press('ArrowDown')
+  }
+  await target.click()
   return expect(select).toHaveText(ime) // ensure changed
 }
 
