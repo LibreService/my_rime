@@ -61,6 +61,18 @@
     "license": "LGPL-3.0-only"
   },
   {
+    "id": "wugniu_lopha",
+    "name": "上海吴语·老派",
+    "target": "wugniu",
+    "family": [
+      {
+        "id": "wugniu",
+        "name": "上海吴语·新派"
+      }
+    ],
+    "license": "GPL-3.0-only"
+  },
+  {
     "id": "soutzoe",
     "name": "苏州吴语",
     "target": "soutzoe",

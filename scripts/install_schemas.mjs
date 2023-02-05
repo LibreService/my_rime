@@ -46,7 +46,7 @@ for (const fileName of fileNames) {
       encoding: 'utf-8'
     }).stdout.slice(0, 32)
     schemaFiles[id].push({ name: fileName, md5 })
-    if (id in rootMap) {
+    if (id in rootMap && !schemaFiles[id].includes(rootMap[id])) {
       schemaFiles[id].push(rootMap[id])
     }
   }
