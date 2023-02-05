@@ -61,6 +61,12 @@
     "license": "LGPL-3.0-only"
   },
   {
+    "id": "array30",
+    "name": "行列30",
+    "target": "array",
+    "license": "GPL-3.0-only"
+  },
+  {
     "id": "wugniu_lopha",
     "name": "上海吴语·老派",
     "target": "wugniu",
