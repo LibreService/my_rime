@@ -61,6 +61,12 @@
     "license": "LGPL-3.0-only"
   },
   {
+    "id": "stenotype",
+    "name": "打字速记法",
+    "target": "stenotype",
+    "license": "GPL-3.0-only"
+  },
+  {
     "id": "scj6",
     "name": "快速仓颉",
     "target": "scj",
