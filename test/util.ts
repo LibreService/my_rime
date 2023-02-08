@@ -23,6 +23,17 @@ async function input (page: Page, ...sequences: string[]) {
   }
 }
 
+async function inputCombo (page: Page, ...sequences: string[]) {
+  for (const sequence of sequences) {
+    for (const key of sequence) {
+      await page.keyboard.down(key)
+    }
+    for (const key of sequence) {
+      await page.keyboard.up(key)
+    }
+  }
+}
+
 function expectValue (page: Page, value: string) {
   return expect(textarea(page)).toHaveValue(value)
 }
@@ -54,4 +65,4 @@ function changeWidth (page: Page) {
   return menu(page).nth(2).click()
 }
 
-export { baseURL, luna, textarea, panel, item, menu, input, expectValue, selectIME, changeVariant, changeWidth }
+export { baseURL, luna, textarea, panel, item, menu, input, inputCombo, expectValue, selectIME, changeVariant, changeWidth }

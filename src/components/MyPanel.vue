@@ -57,6 +57,12 @@ const RIME_KEY_MAP = {
   ArrowLeft: 'Left'
 }
 
+const RIME_RELEASE_KEY_MAP = {
+  ' ': 'space',
+  ',': 'comma',
+  '.': 'period'
+}
+
 function isPrintable (key: string) {
   return /^[a-z0-9!"#$%&'()*+,./:;<=>?@[\] ^_`{|}~\\-]$/i.test(key)
 }
@@ -154,10 +160,15 @@ function onKeydown (e: KeyboardEvent) {
 }
 
 function onKeyup (e: KeyboardEvent) {
-  if (e.key === 'Shift' && exclusiveShift.value) {
+  const { key } = e
+  if (key === 'Shift' && exclusiveShift.value) {
     changeLanguage()
   }
   exclusiveShift.value = false
+  if (isPrintable(key)) {
+    // @ts-ignore
+    input(`{Release+${RIME_RELEASE_KEY_MAP[key] || key}}`)
+  }
 }
 
 function onClick (key: string) {

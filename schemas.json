@@ -48,6 +48,26 @@
     "license": "LGPL-3.0-only"
   },
   {
+    "id": "combo_pinyin",
+    "name": "宫保拼音·七指禅",
+    "target": "combo-pinyin",
+    "family": [
+      {
+        "id": "combo_pinyin_8",
+        "name": "宫保拼音·八指禅"
+      },
+      {
+        "id": "combo_pinyin_9",
+        "name": "宫保拼音·九指禅"
+      },
+      {
+        "id": "combo_pinyin_10",
+        "name": "宫保拼音·十指禅"
+      }
+    ],
+    "license": "GPL-3.0-only"
+  },
+  {
     "id": "zyenpheng",
     "name": "中古全拼",
     "target": "middle-chinese",
