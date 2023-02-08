@@ -79,6 +79,32 @@ test('Middle insertion', async ({ page }) => {
   await expectValue(page, '左中间右')
 })
 
+test('Control shortcut', async ({ page }) => {
+  function Control (key: string) {
+    const CONTROL = process.platform === 'darwin' ? 'Meta' : 'Control'
+    return `${CONTROL}+${key}`
+  }
+
+  await page.goto(baseURL)
+
+  await textarea(page).click()
+  await input(page, 'quan', 'xuan ')
+  await expectValue(page, '全选')
+  await page.keyboard.press(Control('a'))
+  await page.keyboard.press(Control('x'))
+  await expectValue(page, '')
+  await page.keyboard.press(Control('v'))
+  await expectValue(page, '全选')
+  await page.keyboard.down('Shift')
+  await page.keyboard.down('ArrowLeft')
+  await page.keyboard.up('ArrowLeft')
+  await page.keyboard.up('Shift')
+  await page.keyboard.press(Control('c'))
+  await page.keyboard.press('Home')
+  await page.keyboard.press(Control('v'))
+  await expectValue(page, '选全选')
+})
+
 test('Symbol', async ({ page }) => {
   await page.goto(baseURL)
 

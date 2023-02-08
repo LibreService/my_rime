@@ -67,7 +67,7 @@ export default defineConfig({
   plugins,
   server: {
     watch: {
-      ignored: ['**/boost/**', '**/build/**', '**/librime/**', '**/scripts/**', '**/wasm/**'],
+      ignored: ['**/boost/**', '**/build/**', '**/dist/**', '**/librime/**', '**/scripts/**', '**/wasm/**'],
     },
   }
 })

@@ -117,15 +117,21 @@ function onKeydown (e: KeyboardEvent) {
     return
   }
   for (const modifier of modifiers) {
-    if (e.getModifierState(modifier)) {
+    if (e.getModifierState(modifier) && isPrintableKey) {
       return
     }
   }
+  const controlled = e.getModifierState('Control')
+  const shifted = e.getModifierState('Shift')
   let rimeKey: string | undefined
   if (isPrintableKey) {
     rimeKey = key
-  } else if (e.getModifierState('Shift') && (key === 'Delete' || key === 'Enter')) {
-    rimeKey = `{Shift+${RIME_KEY_MAP[key]}}`
+  } else if (shifted && key === 'Delete') {
+    rimeKey = '{Shift+Delete}'
+  } else if (controlled && shifted && key === 'Enter') {
+    rimeKey = '{Control+Shift+Return}'
+  } else if ((controlled || shifted) && key === 'Enter') {
+    rimeKey = '{Shift+Return}'
   } else {
     for (const [k, v] of Object.entries(RIME_KEY_MAP)) {
       if (key === k) {
