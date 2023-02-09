@@ -7,9 +7,7 @@ import { getTextarea } from '../util'
 import { setIME } from '../workerAPI'
 import schemas from '../../schemas.json'
 
-const luna = 'luna_pinyin'
-
-const ime = ref<string>(luna)
+const ime = ref<string>(schemas[0].id)
 
 const schemaVariants: {
   [key: string]: {

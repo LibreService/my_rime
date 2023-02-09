@@ -59,7 +59,7 @@ const readyPromise = loadWasm('rime.js', {
     Module.ccall('init', 'null', [], [])
     Module.FS.mkdir('build')
   }
-}).then(() => setIME('luna_pinyin'))
+}).then(() => setIME(Object.keys(schemaFiles)[0]))
 
 expose({
   setIME,
