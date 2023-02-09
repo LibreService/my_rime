@@ -48,6 +48,33 @@
     "license": "LGPL-3.0-only"
   },
   {
+    "id": "bopomofo",
+    "name": "注音",
+    "target": "bopomofo",
+    "dependency": "terra_pinyin",
+    "variants": [
+      {
+        "id": "zh_hans",
+        "name": "简"
+      },
+      {
+        "id": "zh_hant_tw",
+        "name": "臺"
+      },
+      {
+        "id": "zh_hant",
+        "name": "繁"
+      }
+    ],
+    "family": [
+      {
+        "id": "bopomofo_express",
+        "name": "注音·快打"
+      }
+    ],
+    "license": "LGPL-3.0-only"
+  },
+  {
     "id": "combo_pinyin",
     "name": "宫保拼音·七指禅",
     "target": "combo-pinyin",

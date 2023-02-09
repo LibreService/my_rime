@@ -53,7 +53,7 @@ if [[ $ENABLE_LOGGING == 'ON' ]]; then
   git pull https://github.com/google/glog master
   popd
   emcmake cmake librime/deps/glog -B build/glog \
-    DBUILD_SHARED_LIBS:BOOL=OFF \
+    -DBUILD_SHARED_LIBS:BOOL=OFF \
     -DBUILD_TESTING:BOOL=OFF \
     -DWITH_GFLAGS:BOOL=OFF \
     -DWITH_UNWIND:BOOL=OFF \

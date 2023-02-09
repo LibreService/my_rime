@@ -14,6 +14,9 @@ const rootMap = {}
 for (const schema of schemas) {
   ids.push(schema.id)
   schemaFiles[schema.id] = []
+  if (schema.dependency) {
+    rootMap[schema.id] = schema.dependency
+  }
   if (schema.family) {
     for (const { id } of schema.family) {
       ids.push(id)
