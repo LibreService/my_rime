@@ -48,6 +48,18 @@
     "license": "LGPL-3.0-only"
   },
   {
+    "id": "ipa_xsampa",
+    "name": "X-SAMPA",
+    "target": "ipa",
+    "license": "LGPL-3.0-only"
+  },
+  {
+    "id": "ipa_yunlong",
+    "name": "云龙国际音标",
+    "target": "ipa",
+    "license": "LGPL-3.0-only"
+  },
+  {
     "id": "bopomofo",
     "name": "注音",
     "target": "bopomofo",
