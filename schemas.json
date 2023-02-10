@@ -42,6 +42,13 @@
     "license": "LGPL-3.0-only"
   },
   {
+    "id": "pinyin_simp",
+    "name": "袖珍简拼",
+    "target": "pinyin-simp",
+    "variants": [],
+    "license": "Apache-2.0"
+  },
+  {
     "id": "terra_pinyin",
     "name": "地球拼音",
     "target": "terra-pinyin",
