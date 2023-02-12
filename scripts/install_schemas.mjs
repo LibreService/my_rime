@@ -11,6 +11,14 @@ const schemaFiles = {} // maps schema_id to a list of files with hash, and optio
 const ids = []
 const rootMap = {}
 
+function install (arg) {
+  spawnSync('plum/rime-install', [arg], {
+    env: {
+      rime_dir: RIME_DIR
+    }
+  })
+}
+
 for (const schema of schemas) {
   ids.push(schema.id)
   schemaFiles[schema.id] = []
@@ -24,11 +32,10 @@ for (const schema of schemas) {
       rootMap[id] = schema.id
     }
   }
-  spawnSync('plum/rime-install', [schema.target], {
-    env: {
-      rime_dir: RIME_DIR
-    }
-  })
+  install(schema.target)
+  if (schema.emoji) {
+    install(`emoji:customize:schema=${schema.id}`)
+  }
 }
 
 const patch = ids.map(id => `  - schema: ${id}`).join('\n') + '\n'

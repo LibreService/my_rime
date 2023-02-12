@@ -113,6 +113,14 @@ test('Symbol', async ({ page }) => {
   await expectValue(page, '©')
 })
 
+test('Emoji', async ({ page }) => {
+  await page.goto(baseURL)
+
+  await textarea(page).click()
+  await input(page, 'chou', 'you', '2')
+  await expectValue(page, '🦨')
+})
+
 test('IndexedDB cache', async ({ page }) => {
   const resource = '/luna_pinyin.schema.yaml'
   let resolveDownload: (request: Request) => void

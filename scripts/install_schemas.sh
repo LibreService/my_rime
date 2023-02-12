@@ -1,6 +1,6 @@
 set -e
 
-rime_dir=build/librime_native/bin plum/rime-install prelude essay
+rime_dir=build/librime_native/bin plum/rime-install prelude essay emoji
 node scripts/install_schemas.mjs
 rm -rf public/ime
 cp -r build/librime_native/bin/build public/ime

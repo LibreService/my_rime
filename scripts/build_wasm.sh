@@ -25,6 +25,9 @@ em++ \
   `preload s2t.json` \
   `preload STPhrases.ocd2` \
   `preload STCharacters.ocd2` \
+  `preload emoji.json` \
+  `preload emoji_word.txt` \
+  `preload emoji_category.txt` \
   -I build/sysroot/usr/local/include \
   -o public/rime.js \
   wasm/api.cpp \

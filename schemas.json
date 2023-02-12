@@ -2,6 +2,7 @@
   {
     "id": "luna_pinyin",
     "name": "朙月拼音",
+    "emoji": true,
     "target": "luna-pinyin",
     "family": [
       {
