@@ -39,6 +39,34 @@
         "name": "粤语拼音·IPA"
       }
     ],
+    "license": "CC-BY-4.0"
+  },
+  {
+    "id": "wubi86",
+    "name": "86五笔",
+    "target": "wubi",
+    "dependency": "pinyin_simp",
+    "variants": [],
+    "family": [
+      {
+        "id": "wubi_pinyin",
+        "name": "86五笔·拼音"
+      },
+      {
+        "id": "wubi_trad",
+        "name": "86五笔·繁体",
+        "variants": [
+          {
+            "id": "zh_trad",
+            "name": "繁"
+          },
+          {
+            "id": "zh_simp",
+            "name": "简"
+          }
+        ]
+      }
+    ],
     "license": "LGPL-3.0-only"
   },
   {

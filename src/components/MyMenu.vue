@@ -25,58 +25,63 @@ const options: {
   value: string
 }[] = []
 
+type Variants = {
+  id: string,
+  name: string
+}[]
+
+function convertVariants (variants: Variants | undefined) {
+  if (variants) {
+    if (variants.length) {
+      return variants.map(variant => ({
+        ...variant,
+        value: true
+      }))
+    }
+    return [{
+      id: '',
+      name: '',
+      value: true
+    }]
+  }
+  return [
+    {
+      id: SIMPLIFICATION,
+      name: '简',
+      value: true
+    },
+    {
+      id: SIMPLIFICATION,
+      name: '繁',
+      value: false
+    }
+  ]
+}
+
 for (const schema of schemas as {
   id: string
   name: string
   family?: {
     id: string,
-    name: string
+    name: string,
+    variants?: Variants
   }[]
-  variants?: {
-    id: string
-    name: string
-  }[]
+  variants?: Variants
 }[]) {
   options.push({
     label: schema.name,
     value: schema.id
   })
   schemaVariantsIndex[schema.id] = ref<number>(0)
-  if (schema.variants) {
-    if (schema.variants.length) {
-      schemaVariants[schema.id] = schema.variants.map(variant => ({
-        ...variant,
-        value: true
-      }))
-    } else {
-      schemaVariants[schema.id] = [{
-        id: '',
-        name: '',
-        value: true
-      }]
-    }
-  } else {
-    schemaVariants[schema.id] = [
-      {
-        id: SIMPLIFICATION,
-        name: '简',
-        value: true
-      },
-      {
-        id: SIMPLIFICATION,
-        name: '繁',
-        value: false
-      }
-    ]
-  }
+  schemaVariants[schema.id] = convertVariants(schema.variants)
   if (schema.family) {
-    for (const { id, name } of schema.family) {
+    for (const { id, name, variants } of schema.family) {
       options.push({
         label: name,
         value: id
       })
       schemaVariantsIndex[id] = ref<number>(0)
-      schemaVariants[id] = schemaVariants[schema.id]
+      schemaVariants[id] = variants ? convertVariants(variants) : schemaVariants[schema.id]
     }
   }
 }
