@@ -1,11 +1,5 @@
-import { test, Page, expect, devices } from '@playwright/test'
-import { baseURL, textarea, panel, input, expectValue } from '../test/util'
-
-async function panelBox(page: Page) {
-  const element = panel(page)
-  await expect(element).toBeVisible()
-  return (await element.boundingBox())!
-}
+import { test, expect, devices } from '@playwright/test'
+import { baseURL, textarea, panelBox, input, expectValue } from '../test/util'
 
 test.use({
   ...devices['iPhone 13 Mini']

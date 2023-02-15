@@ -8,6 +8,11 @@
       {
         "id": "luna_pinyin_fluency",
         "name": "朙月拼音·语句流"
+      },
+      {
+        "id": "luna_quanpin",
+        "name": "朙月全拼",
+        "disabled": true
       }
     ],
     "license": "LGPL-3.0-only"

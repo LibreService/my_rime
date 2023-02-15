@@ -20,7 +20,10 @@ declare global {
     page: number
     isLastPage: boolean
     highlighted: number
-    candidates: string[]
+    candidates: {
+      text: string
+      comment: string
+    }[]
   }
   type RIME_REJECTED = {
     state: 2

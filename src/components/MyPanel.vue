@@ -38,6 +38,7 @@ const nextDisabled = ref<boolean>(false)
 
 const editing = ref<boolean>(false)
 const showMenu = ref<boolean>(false)
+const xOverflow = ref<boolean>(false)
 const exclusiveShift = ref<boolean>(false)
 
 const modifiers = ['Control', 'Alt', 'Meta']
@@ -67,6 +68,10 @@ function isPrintable (key: string) {
   return /^[a-z0-9!"#$%&'()*+,./:;<=>?@[\] ^_`{|}~\\-]$/i.test(key)
 }
 
+function isEmoji (c: string) {
+  return /[\u{1f300}-\u{1f5ff}\u{1f900}-\u{1f9ff}\u{1f600}-\u{1f64f}\u{1f680}-\u{1f6ff}\u{2600}-\u{26ff}\u{2700}-\u{27bf}\u{1f1e6}-\u{1f1ff}\u{1f191}-\u{1f251}\u{1f004}\u{1f0cf}\u{1f170}-\u{1f171}\u{1f17e}-\u{1f17f}\u{1f18e}\u{3030}\u{2b50}\u{2b55}\u{2934}-\u{2935}\u{2b05}-\u{2b07}\u{2b1b}-\u{2b1c}\u{3297}\u{3299}\u{303d}\u{00a9}\u{00ae}\u{2122}\u{23f3}\u{24c2}\u{23e9}-\u{23ef}\u{25b6}\u{23f8}-\u{23fa}]/ug.test(c)
+}
+
 function insert (toInsert: string) {
   const textarea = getTextarea(textareaSelector)
   const { selectionStart, selectionEnd } = textarea
@@ -77,6 +82,7 @@ function insert (toInsert: string) {
 }
 
 async function input (rimeKey: string) {
+  const textarea = getTextarea(textareaSelector)
   const result = JSON.parse(await process(rimeKey)) as RIME_RESULT
   if (result.state === 0) { // COMMITTED
     editing.value = false
@@ -88,13 +94,25 @@ async function input (rimeKey: string) {
     preEditBody.value = result.body
     preEditTail.value = result.tail
     highlighted.value = (result.highlighted + 1).toString()
-    menuOptions.value = result.candidates.map((candidate, i) => ({
-      label: `${i + 1} ${candidate}`,
-      key: (i + 1).toString()
-    }))
+    menuOptions.value = result.candidates.map((candidate, i) => {
+      let label = `${i + 1} ${candidate.text}`
+      if (!isEmoji(candidate.text)) {
+        label += ' ' + candidate.comment
+      }
+      return { label, key: (i + 1).toString() }
+    })
     prevDisabled.value = result.page === 0
     nextDisabled.value = result.isLastPage
-    showMenu.value = true
+    if (!showMenu.value) {
+      showMenu.value = true
+      xOverflow.value = false
+    }
+    nextTick(() => {
+      const panelWidth = document.querySelector('.n-popover')!.getBoundingClientRect().width
+      if (panelWidth > textarea.getBoundingClientRect().width) {
+        xOverflow.value = true
+      }
+    })
     if (result.committed) {
       insert(result.committed)
     }
@@ -105,7 +123,7 @@ async function input (rimeKey: string) {
       insert(rimeKey)
     }
   }
-  getTextarea(textareaSelector).focus()
+  textarea.focus()
 }
 
 function onKeydown (e: KeyboardEvent) {
@@ -264,7 +282,7 @@ onUnmounted(() => { // Cleanup for HMR
     <n-menu
       v-show="menuOptions.length"
       :options="menuOptions"
-      :mode="isMobile ? 'vertical' : 'horizontal'"
+      :mode="isMobile || xOverflow ? 'vertical' : 'horizontal'"
       :value="highlighted"
       @update:value="onClick"
     />
@@ -289,3 +307,9 @@ onUnmounted(() => { // Cleanup for HMR
     </n-button>
   </n-popover>
 </template>
+
+<style>
+.n-menu-item-content-header {
+  overflow: visible!important;
+}
+</style>

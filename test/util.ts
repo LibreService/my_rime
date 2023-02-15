@@ -11,6 +11,12 @@ function panel (page: Page) {
   return page.locator('.n-popover')
 }
 
+async function panelBox (page: Page) {
+  const element = panel(page)
+  await expect(element).toBeVisible()
+  return (await element.boundingBox())!
+}
+
 function item (page: Page, text: string) {
   return panel(page).locator(`text=${text}`)
 }
@@ -65,4 +71,4 @@ function changeWidth (page: Page) {
   return menu(page).nth(2).click()
 }
 
-export { baseURL, luna, textarea, panel, item, menu, input, inputCombo, expectValue, selectIME, changeVariant, changeWidth }
+export { baseURL, luna, textarea, panel, panelBox, item, menu, input, inputCombo, expectValue, selectIME, changeVariant, changeWidth }

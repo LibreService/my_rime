@@ -64,6 +64,7 @@ for (const schema of schemas as {
   family?: {
     id: string,
     name: string,
+    disabled: boolean,
     variants?: Variants
   }[]
   variants?: Variants
@@ -75,7 +76,10 @@ for (const schema of schemas as {
   schemaVariantsIndex[schema.id] = ref<number>(0)
   schemaVariants[schema.id] = convertVariants(schema.variants)
   if (schema.family) {
-    for (const { id, name, variants } of schema.family) {
+    for (const { id, name, disabled, variants } of schema.family) {
+      if (disabled) {
+        continue
+      }
       options.push({
         label: name,
         value: id

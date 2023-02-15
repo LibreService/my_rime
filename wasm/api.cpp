@@ -54,7 +54,10 @@ extern "C" {
             obj["highlighted"] = menu.highlighted_candidate_index;
             boost::json::array candidates;
             for (int i = 0; i < menu.num_candidates; ++i) {
-                candidates.push_back(menu.candidates[i].text);
+                boost::json::object candidate;
+                candidate["text"] = menu.candidates[i].text;
+                candidate["comment"] = menu.candidates[i].comment;
+                candidates.push_back(candidate);
             }
             obj["candidates"] = candidates;
         } else if (hasCommitted) {
