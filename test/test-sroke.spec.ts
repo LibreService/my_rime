@@ -22,7 +22,7 @@ test('Traditional', async ({ page }) => {
   await expectValue(page, '五筆畫')
 })
 
-test('Reverse lookup', async ({ page }) => {
+test('Reverse lookup luna_pinyin', async ({ page }) => {
   await page.goto(baseURL)
 
   await selectIME(page, ime)

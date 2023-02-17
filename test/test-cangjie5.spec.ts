@@ -1,5 +1,5 @@
-import { test } from '@playwright/test'
-import { baseURL, luna, input, expectValue, selectIME, changeVariant } from './util'
+import { test, expect } from '@playwright/test'
+import { baseURL, luna, item, input, expectValue, selectIME, changeVariant } from './util'
 
 const ime = '仓颉五代'
 
@@ -40,4 +40,13 @@ test('Variant restored', async ({ page }) => {
   await selectIME(page, ime)
   await input(page, 'okvif', 'bbtwt ')
   await expectValue(page, '繁體')
+})
+
+test('Reverse lookup luna_quanpin', async ({ page }) => {
+  await page.goto(baseURL)
+
+  await selectIME(page, ime)
+  await changeVariant(page, '繁')
+  await input(page, '`', 'fan')
+  await expect(item(page, '1 飯 人戈竹水')).toBeVisible()
 })

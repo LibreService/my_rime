@@ -40,3 +40,11 @@ test('Commit candidate tone', async ({ page }) => {
   await page.keyboard.press('Control+Shift+Enter')
   await expectValue(page, 'shù shì')
 })
+
+test('Reverse lookup stroke', async ({ page }) => {
+  await page.goto(baseURL)
+
+  await selectIME(page, ime)
+  await input(page, '`', 'ppzn')
+  await expect(item(page, '1 反 fǎn')).toBeVisible()
+})

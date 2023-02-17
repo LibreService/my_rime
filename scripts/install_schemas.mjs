@@ -22,14 +22,14 @@ function install (arg) {
 for (const schema of schemas) {
   ids.push(schema.id)
   schemaFiles[schema.id] = []
-  if (schema.dependency) {
-    rootMap[schema.id] = schema.dependency
+  if (schema.dependencies) {
+    rootMap[schema.id] = schema.dependencies
   }
   if (schema.family) {
     for (const { id } of schema.family) {
       ids.push(id)
       schemaFiles[id] = []
-      rootMap[id] = schema.id
+      rootMap[id] = [schema.id]
     }
   }
   install(schema.target)
@@ -56,8 +56,10 @@ for (const fileName of fileNames) {
       encoding: 'utf-8'
     }).stdout.slice(0, 32)
     schemaFiles[id].push({ name: fileName, md5 })
-    if (id in rootMap && !schemaFiles[id].includes(rootMap[id])) {
-      schemaFiles[id].push(rootMap[id])
+    for (const schemaId of rootMap[id] || []) {
+      if (!schemaFiles[id].includes(schemaId)) {
+        schemaFiles[id].push(schemaId)
+      }
     }
   }
 }

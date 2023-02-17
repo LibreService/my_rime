@@ -48,12 +48,23 @@ async function selectIME (page: Page, ime: string) {
   const select = page.locator('.n-select')
   await select.click()
   const options = page.locator('.n-base-select-option')
-  await expect(options.nth(1)).toBeVisible()
-  const target = options.getByText(ime, { exact: true })
-  while (!await target.isVisible()) {
+  const first = options.getByText(luna, { exact: true })
+  const klass = 'n-base-select-option--pending'
+  const current = page.locator(`.${klass}`)
+  await expect(current).toBeVisible()
+  do {
+    const focusedIME = (await current.textContent())!
+    if (focusedIME === ime) {
+      break
+    }
     await page.keyboard.press('ArrowDown')
-  }
-  await target.click()
+    const prev = options.getByText(focusedIME, { exact: true })
+    await Promise.race([
+      expect(prev).not.toHaveClass(new RegExp(`.*${klass}.*`)),
+      expect(first).toBeVisible() // from bottom to top
+    ])
+  } while (true)
+  await current.click()
   return expect(select).toHaveText(ime) // ensure changed
 }
 

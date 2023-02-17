@@ -4,6 +4,7 @@
     "name": "朙月拼音",
     "emoji": true,
     "target": "luna-pinyin",
+    "dependencies": ["stroke"],
     "family": [
       {
         "id": "luna_pinyin_fluency",
@@ -21,6 +22,7 @@
     "id": "jyut6ping3",
     "name": "粤语拼音",
     "target": "cantonese",
+    "dependencies": ["luna_pinyin", "stroke", "cangjie5"],
     "variants": [
       {
         "id": "simplification",
@@ -81,7 +83,7 @@
     "id": "wubi86",
     "name": "86五笔",
     "target": "wubi",
-    "dependency": "pinyin_simp",
+    "dependencies": ["pinyin_simp"],
     "variants": [],
     "family": [
       {
@@ -116,6 +118,7 @@
     "id": "terra_pinyin",
     "name": "地球拼音",
     "target": "terra-pinyin",
+    "dependencies": ["stroke"],
     "license": "LGPL-3.0-only"
   },
   {
@@ -134,7 +137,7 @@
     "id": "bopomofo",
     "name": "注音",
     "target": "bopomofo",
-    "dependency": "terra_pinyin",
+    "dependencies": ["terra_pinyin", "stroke"],
     "variants": [
       {
         "id": "zh_hans",
@@ -181,6 +184,7 @@
     "id": "zyenpheng",
     "name": "中古全拼",
     "target": "middle-chinese",
+    "dependencies": ["luna_pinyin"],
     "family": [
       {
         "id": "sampheng",
@@ -193,6 +197,7 @@
     "id": "cangjie5",
     "name": "仓颉五代",
     "target": "cangjie",
+    "dependencies": ["luna_quanpin"],
     "family": [
       {
         "id": "cangjie5_express",
@@ -205,6 +210,7 @@
     "id": "stroke",
     "name": "五笔画",
     "target": "stroke",
+    "dependencies": ["luna_pinyin"],
     "variants": [],
     "license": "LGPL-3.0-only"
   },
@@ -212,12 +218,14 @@
     "id": "array30",
     "name": "行列30",
     "target": "array",
+    "dependencies": ["luna_quanpin"],
     "license": "GPL-3.0-only"
   },
   {
     "id": "wugniu_lopha",
     "name": "上海吴语·老派",
     "target": "wugniu",
+    "dependencies": ["luna_pinyin"],
     "family": [
       {
         "id": "wugniu",
@@ -230,6 +238,7 @@
     "id": "soutzoe",
     "name": "苏州吴语",
     "target": "soutzoe",
+    "dependencies": ["luna_pinyin"],
     "license": "GPL-3.0-only"
   },
   {
@@ -242,12 +251,14 @@
     "id": "scj6",
     "name": "快速仓颉",
     "target": "scj",
+    "dependencies": ["luna_quanpin"],
     "license": "GPL-3.0-only"
   },
   {
     "id": "quick5",
     "name": "速成",
     "target": "quick",
+    "dependencies": ["luna_quanpin"],
     "license": "LGPL-3.0-only"
   }
 ]

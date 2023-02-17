@@ -13,7 +13,12 @@ const dbPromise = openDB('ime', 1, {
 })
 
 async function setIME (ime: string) {
+  const fetched: string[] = []
   function getFiles (key: string) {
+    if (fetched.includes(key)) {
+      return []
+    }
+    fetched.push(key)
     const files: {
       name: string
       md5: string

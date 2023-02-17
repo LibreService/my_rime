@@ -44,3 +44,11 @@ test('Space/ABCDE', async ({ page }) => {
   await input(page, 'A\n')
   await expectValue(page, '拍')
 })
+
+test('Reverse lookup stroke', async ({ page }) => {
+  await page.goto(baseURL)
+
+  await selectIME(page, ime)
+  await input(page, '`', 'ppzn')
+  await expect(item(page, '1 反 ㄈㄢˇ')).toBeVisible()
+})

@@ -1,5 +1,5 @@
-import { test, Request } from '@playwright/test'
-import { baseURL, textarea, input, expectValue, changeVariant, changeWidth } from './util'
+import { test, Request, expect } from '@playwright/test'
+import { baseURL, textarea, item, input, expectValue, changeVariant, changeWidth } from './util'
 
 test('Simplified', async ({ page }) => {
   await page.goto(baseURL)
@@ -119,6 +119,14 @@ test('Emoji', async ({ page }) => {
   await textarea(page).click()
   await input(page, 'chou', 'you', '2')
   await expectValue(page, '🦨')
+})
+
+test('Reverse lookup stroke', async ({ page }) => {
+  await page.goto(baseURL)
+
+  await textarea(page).click()
+  await input(page, '`', 'ppzn')
+  await expect(item(page, '1 反 fan')).toBeVisible()
 })
 
 test('IndexedDB cache', async ({ page }) => {
