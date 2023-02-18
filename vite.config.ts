@@ -5,9 +5,10 @@ import replace from '@rollup/plugin-replace'
 import { run } from 'vite-plugin-run'
 import { VitePWA, VitePWAOptions } from 'vite-plugin-pwa'
 
-const resources = ['rime.data', 'rime.js', 'rime.wasm']
+const resources = ['rime.data', 'rime.js', 'rime.wasm', 'HanaMinB.woff2']
 
 const workbox: VitePWAOptions["workbox"] = {
+  maximumFileSizeToCacheInBytes: 13631488,
   globPatterns: [
     '**/*.{js,css,html}',
     'apple-touch-icon.png',
@@ -30,6 +31,7 @@ if (process.env.LIBRESERVICE_CDN) {
 
 const plugins = [
   replace({
+    __LIBRESERVICE_CDN__: process.env.LIBRESERVICE_CDN || '',
     __COMMIT__: execSync('git rev-parse HEAD').toString().trim(),
     __BUILD_DATE__: new Date().toLocaleString()
   }),

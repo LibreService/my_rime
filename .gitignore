@@ -35,3 +35,4 @@ build
 public/worker.js
 .vercel
 schema-files.json
+*.woff2

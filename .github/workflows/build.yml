@@ -32,6 +32,9 @@ jobs:
       - name: Get submodules
         run: |
           pnpm run submodule
+      - name: Get font
+        run: |
+          pnpm run font
       - name: Run lint
         run: |
           pnpm run lint

@@ -1,7 +1,7 @@
 # My RIME
 ![](https://img.shields.io/github/license/LibreService/my_rime)
 
-Chinese IME powered by RIME.
+Chinese IME powered by [RIME](https://github.com/rime/librime).
 
 https://my-rime.vercel.app/
 
@@ -35,6 +35,11 @@ https://emscripten.org/docs/getting_started/downloads.html
 It's not recommended to clone recursively, as many boost libs are not needed.
 ```sh
 pnpm run submodule
+```
+### Get font
+Uncommon characters are rendered using [花园明朝](https://github.com/max32002/max-hana).
+```sh
+pnpm run font
 ```
 ### Build wasm
 ```sh

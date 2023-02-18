@@ -14,6 +14,7 @@
   "scripts": {
     "submodule": "bash scripts/update_submodule.sh",
     "worker": "rollup -c rollup.worker-config.mjs",
+    "font": "bash scripts/download_font.sh",
     "native": "bash scripts/build_native.sh",
     "schema": "bash scripts/install_schemas.sh",
     "lib": "bash scripts/build_lib.sh",
