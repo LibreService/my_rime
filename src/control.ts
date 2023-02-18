@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref, Ref } from 'vue'
 import { setOption } from './workerAPI'
 
 const SIMPLIFICATION = 'simplification'
@@ -7,10 +7,15 @@ const isEnglish = ref<boolean>(false)
 const isFullWidth = ref<boolean>(false)
 const isEnglishPunctuation = ref<boolean>(false)
 
-function changeLanguage () {
-  isEnglish.value = !isEnglish.value
-  setOption('ascii_mode', isEnglish.value)
+const toggle = (option: string, box: Ref<boolean>) => async () => {
+  const newValue = !box.value
+  await setOption(option, newValue)
+  box.value = newValue
 }
+
+const changeLanguage = toggle('ascii_mode', isEnglish)
+const changeWidth = toggle('full_shape', isFullWidth)
+const changePunctuation = toggle('ascii_punct', isEnglishPunctuation)
 
 async function changeVariant (keys: string[], key: string, value: boolean) {
   for (const k of keys) {
@@ -19,16 +24,6 @@ async function changeVariant (keys: string[], key: string, value: boolean) {
     }
   }
   return setOption(key, value)
-}
-
-function changeWidth () {
-  isFullWidth.value = !isFullWidth.value
-  setOption('full_shape', isFullWidth.value)
-}
-
-function changePunctuation () {
-  isEnglishPunctuation.value = !isEnglishPunctuation.value
-  setOption('ascii_punct', isEnglishPunctuation.value)
 }
 
 export { SIMPLIFICATION, isEnglish, isFullWidth, isEnglishPunctuation, changeLanguage, changeVariant, changeWidth, changePunctuation }

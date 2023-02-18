@@ -7,7 +7,9 @@ import { getTextarea } from '../util'
 import { setIME } from '../workerAPI'
 import schemas from '../../schemas.json'
 
-const ime = ref<string>(schemas[0].id)
+const _ime = ref<string>(schemas[0].id) // internal
+const ime = ref<string>(_ime.value) // visual
+const showVariant = ref<boolean>(true)
 
 const schemaVariants: {
   [key: string]: {
@@ -90,40 +92,45 @@ for (const schema of schemas as {
   }
 }
 
-const variants = computed(() => schemaVariants[ime.value])
+const variants = computed(() => schemaVariants[_ime.value])
 
 const variantIndex = computed({
   get () {
-    return schemaVariantsIndex[ime.value].value
+    return schemaVariantsIndex[_ime.value].value
   },
   set (newIndex) {
-    schemaVariantsIndex[ime.value].value = newIndex
+    schemaVariantsIndex[_ime.value].value = newIndex
   }
 })
 
-const variantLabel = computed(() => variants.value[variantIndex.value].name)
+const variantLabel = computed(() => showVariant.value ? variants.value[variantIndex.value].name : '')
 const singleVariant = computed(() => variants.value.length === 1)
 
 const loading = ref<boolean>(false)
 
 async function selectIME (targetIME: string) {
   resetFocus()
+  showVariant.value = false
   loading.value = true
   try {
     await setIME(targetIME)
-    ime.value = targetIME
+    _ime.value = targetIME
     const variant = variants.value[variantIndex.value]
     await changeVariant(variants.value.map(v => v.id), variant.id, variant.value)
   } catch (e) {
     console.error(e)
   }
+  ime.value = targetIME // update UI after variant properly set
+  showVariant.value = true
   loading.value = false
 }
 
-function switchVariant () {
+async function switchVariant () {
+  showVariant.value = false
   variantIndex.value = (variantIndex.value + 1) % variants.value.length
   const variant = variants.value[variantIndex.value]
-  changeVariant(variants.value.map(v => v.id), variant.id, variant.value)
+  await changeVariant(variants.value.map(v => v.id), variant.id, variant.value)
+  showVariant.value = true
 }
 
 const props = defineProps<{
