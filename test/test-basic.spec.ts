@@ -129,16 +129,20 @@ test('Reverse lookup stroke', async ({ page }) => {
   await expect(item(page, '1 反 fan')).toBeVisible()
 })
 
+function callOnDownload (callback: (param?: any) => void, resource: string, param?: any) {
+  return (request: Request) => {
+    if (request.url().endsWith(resource)) {
+      callback(param)
+    }
+  }
+}
+
 test('IndexedDB cache', async ({ page }) => {
   const resource = '/luna_pinyin.schema.yaml'
   let resolveDownload: (request: Request) => void
   let rejectDownload: (request: Request) => void
   let promise = new Promise(resolve => {
-    resolveDownload = request => {
-      if (request.url().endsWith(resource)) {
-        resolve(null)
-      }
-    }
+    resolveDownload = callOnDownload(resolve, resource)
   })
   // @ts-ignore
   page.on('request', resolveDownload)
@@ -152,11 +156,7 @@ test('IndexedDB cache', async ({ page }) => {
   await expectValue(page, '网络')
 
   promise = new Promise((resolve, reject) => {
-    rejectDownload = request => {
-      if (request.url().endsWith(resource)) {
-        reject(new Error('IndexedDB is not used.'))
-      }
-    }
+    rejectDownload = callOnDownload(reject, resource, new Error('IndexedDB is not used.'))
   })
   // @ts-ignore
   page.on('request', rejectDownload)
@@ -165,4 +165,16 @@ test('IndexedDB cache', async ({ page }) => {
   await textarea(page).click()
   await input(page, 'huan', 'cun ')
   await Promise.race([expectValue(page, '缓存'), promise])
+})
+
+test('Preload font', async ({ page }) => {
+  const resource = '/HanaMinB.woff2'
+  let resolveDownload: (request: Request) => void
+  const promise = new Promise(resolve => {
+    resolveDownload = callOnDownload(resolve, resource)
+  })
+  // @ts-ignore
+  page.on('request', resolveDownload)
+  await page.goto(baseURL)
+  await promise
 })
