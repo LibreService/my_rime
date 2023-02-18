@@ -186,7 +186,7 @@ function onKeyup (e: KeyboardEvent) {
     changeLanguage()
   }
   exclusiveShift.value = false
-  if (isPrintable(key)) {
+  if (editing.value && isPrintable(key)) {
     // @ts-ignore
     input(`{Release+${RIME_RELEASE_KEY_MAP[key] || key}}`)
   }
