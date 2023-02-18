@@ -100,7 +100,7 @@ test('Control shortcut', async ({ page }) => {
   await page.keyboard.up('ArrowLeft')
   await page.keyboard.up('Shift')
   await page.keyboard.press(Control('c'))
-  await page.keyboard.press('Home')
+  await page.keyboard.press('ArrowUp')
   await page.keyboard.press(Control('v'))
   await expectValue(page, '选全选')
 })

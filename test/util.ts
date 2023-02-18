@@ -61,7 +61,10 @@ async function selectIME (page: Page, ime: string) {
     const prev = options.getByText(focusedIME, { exact: true })
     await Promise.race([
       expect(prev).not.toHaveClass(new RegExp(`.*${klass}.*`)),
-      expect(first).toBeVisible() // from bottom to top
+      Promise.all([
+        expect(first).toBeVisible(),
+        expect(prev).not.toBeVisible()
+      ]) // from bottom to top
     ])
   } while (true)
   await current.click()
