@@ -177,4 +177,6 @@ test('Preload font', async ({ page }) => {
   page.on('request', resolveDownload)
   await page.goto(baseURL)
   await promise
+  await textarea(page).fill('𤓰')
+  while (!await page.evaluate(() => document.fonts.check('16px HanaMin')));
 })
