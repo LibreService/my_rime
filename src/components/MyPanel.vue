@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, ref, toRef, onMounted, onUnmounted } from 'vue'
+import { nextTick, ref, toRef, onMounted, onUnmounted, watch } from 'vue'
 import { NPopover, NMenu, MenuOption, NText, NButton, NIcon } from 'naive-ui'
 import { CaretLeft, CaretRight } from '@vicons/fa'
 // @ts-ignore
@@ -129,15 +129,47 @@ async function input (rimeKey: string) {
   textarea.focus()
 }
 
+// begin: code specific to Android Chromium
+let androidChromium = false
+let acStart = 0
+let acEnd = 0
+
+watch(text, (acNewText, acText) => {
+  if (!androidChromium) {
+    return
+  }
+  androidChromium = false
+  if (acText.length + 1 === acNewText.length &&
+      acText.substring(0, acStart) === acNewText.substring(0, acStart) &&
+      acText.substring(acEnd) === acNewText.substring(acEnd + 1)) {
+    const textarea = getTextarea(textareaSelector)
+    updateText(acText)
+    nextTick(() => {
+      editing.value = true
+      textarea.selectionEnd = acStart
+      input(acNewText[acStart])
+    })
+  }
+})
+// end: code specific to Android Chromium
+
 function onKeydown (e: KeyboardEvent) {
   const { key } = e
+  const textarea = getTextarea(textareaSelector)
+  // begin: code specific to Android Chromium
+  if (key === 'Unidentified') {
+    androidChromium = true
+    acStart = textarea.selectionStart
+    acEnd = textarea.selectionEnd
+    return
+  }
+  // end: code specific to Android Chromium
   if (key === 'Shift') {
     exclusiveShift.value = true
     return
   }
   exclusiveShift.value = false
   const isPrintableKey = isPrintable(key)
-  const textarea = getTextarea(textareaSelector)
   // In edit mode, rime handles every keydown;
   // In non-edit mode, only when the textarea is focused and a printable key is down will activate rime.
   if (!editing.value && (document.activeElement !== textarea || !isPrintableKey)) {
