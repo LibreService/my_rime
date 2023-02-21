@@ -5,6 +5,7 @@ const SIMPLIFICATION = 'simplification'
 
 const isEnglish = ref<boolean>(false)
 const isFullWidth = ref<boolean>(false)
+const isExtendedCharset = ref<boolean>(false)
 const isEnglishPunctuation = ref<boolean>(false)
 
 const toggle = (option: string, box: Ref<boolean>) => async () => {
@@ -15,6 +16,7 @@ const toggle = (option: string, box: Ref<boolean>) => async () => {
 
 const changeLanguage = toggle('ascii_mode', isEnglish)
 const changeWidth = toggle('full_shape', isFullWidth)
+const changeCharset = toggle('extended_charset', isExtendedCharset)
 const changePunctuation = toggle('ascii_punct', isEnglishPunctuation)
 
 async function changeVariant (keys: string[], key: string, value: boolean) {
@@ -26,4 +28,4 @@ async function changeVariant (keys: string[], key: string, value: boolean) {
   return setOption(key, value)
 }
 
-export { SIMPLIFICATION, isEnglish, isFullWidth, isEnglishPunctuation, changeLanguage, changeVariant, changeWidth, changePunctuation }
+export { SIMPLIFICATION, isEnglish, isFullWidth, isExtendedCharset, isEnglishPunctuation, changeLanguage, changeVariant, changeWidth, changeCharset, changePunctuation }

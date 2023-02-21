@@ -85,6 +85,7 @@
     "target": "wubi",
     "dependencies": ["pinyin_simp"],
     "variants": [],
+    "extended": true,
     "family": [
       {
         "id": "wubi_pinyin",
@@ -198,6 +199,7 @@
     "name": "仓颉五代",
     "target": "cangjie",
     "dependencies": ["luna_quanpin"],
+    "extended": true,
     "family": [
       {
         "id": "cangjie5_express",
@@ -219,6 +221,7 @@
     "name": "行列30",
     "target": "array",
     "dependencies": ["luna_quanpin"],
+    "extended": true,
     "license": "GPL-3.0-only"
   },
   {

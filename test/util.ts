@@ -75,14 +75,17 @@ function menu (page: Page) {
   return page.getByRole('group').nth(0).getByRole('button')
 }
 
-async function changeVariant (page: Page, variant: string) {
-  const button = menu(page).nth(1)
+const changeCharLabel = (n: number) => async (page: Page, label: string) => {
+  const button = menu(page).nth(n)
   await button.click()
-  return expect(button).toHaveText(variant)
+  return expect(button).toHaveText(label)
 }
+
+const changeVariant = changeCharLabel(1)
+const changeExtendedCharset = changeCharLabel(3)
 
 function changeWidth (page: Page) {
   return menu(page).nth(2).click()
 }
 
-export { baseURL, luna, textarea, panel, panelBox, item, menu, input, inputCombo, expectValue, selectIME, changeVariant, changeWidth }
+export { baseURL, luna, textarea, panel, panelBox, item, menu, input, inputCombo, expectValue, selectIME, changeVariant, changeExtendedCharset, changeWidth }

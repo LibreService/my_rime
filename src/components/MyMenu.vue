@@ -2,7 +2,7 @@
 import { ref, Ref, computed } from 'vue'
 import { NButton, NButtonGroup, NIcon, NSpace, NSelect } from 'naive-ui'
 import { WeatherMoon16Regular, Circle16Regular } from '@vicons/fluent'
-import { SIMPLIFICATION, isEnglish, isFullWidth, isEnglishPunctuation, changeLanguage, changeVariant, changeWidth, changePunctuation } from '../control'
+import { SIMPLIFICATION, isEnglish, isFullWidth, isExtendedCharset, isEnglishPunctuation, changeLanguage, changeVariant, changeWidth, changeCharset, changePunctuation } from '../control'
 import { getTextarea } from '../util'
 import { setIME } from '../workerAPI'
 import schemas from '../../schemas.json'
@@ -10,6 +10,8 @@ import schemas from '../../schemas.json'
 const _ime = ref<string>(schemas[0].id) // internal
 const ime = ref<string>(_ime.value) // visual
 const showVariant = ref<boolean>(true)
+
+const schemaExtended: string[] = []
 
 const schemaVariants: {
   [key: string]: {
@@ -66,10 +68,11 @@ for (const schema of schemas as {
   family?: {
     id: string,
     name: string,
-    disabled: boolean,
+    disabled?: boolean,
     variants?: Variants
   }[]
   variants?: Variants
+  extended?: boolean
 }[]) {
   options.push({
     label: schema.name,
@@ -77,10 +80,16 @@ for (const schema of schemas as {
   })
   schemaVariantsIndex[schema.id] = ref<number>(0)
   schemaVariants[schema.id] = convertVariants(schema.variants)
+  if (schema.extended) {
+    schemaExtended.push(schema.id)
+  }
   if (schema.family) {
     for (const { id, name, disabled, variants } of schema.family) {
       if (disabled) {
         continue
+      }
+      if (schema.extended) {
+        schemaExtended.push(id)
       }
       options.push({
         label: name,
@@ -133,6 +142,8 @@ async function switchVariant () {
   showVariant.value = true
 }
 
+const extendedDisabled = computed(() => ime.value !== _ime.value || !schemaExtended.includes(ime.value))
+
 const props = defineProps<{
   textareaSelector: string
 }>()
@@ -175,6 +186,13 @@ function resetFocus () {
         <template #icon>
           <n-icon :component="isFullWidth ? Circle16Regular : WeatherMoon16Regular" />
         </template>
+      </n-button>
+      <n-button
+        secondary
+        :disabled="extendedDisabled"
+        @click="changeCharset"
+      >
+        {{ isExtendedCharset ? '增' : '常' }}
       </n-button>
       <n-button
         secondary

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { baseURL, luna, item, input, expectValue, selectIME, changeVariant } from './util'
+import { baseURL, luna, item, input, expectValue, selectIME, changeVariant, changeExtendedCharset } from './util'
 
 const ime = '仓颉五代'
 
@@ -18,6 +18,19 @@ test('Traditional', async ({ page }) => {
   await changeVariant(page, '繁')
   await input(page, 'oiar', 'grmbc ')
   await expectValue(page, '倉頡')
+})
+
+test('Extended charset', async ({ page }) => {
+  await page.goto(baseURL)
+
+  await selectIME(page, ime)
+  await input(page, 'tm')
+  await expect(item(page, '3 廿一')).toBeVisible()
+
+  await page.keyboard.press('Escape')
+  await changeExtendedCharset(page, '增')
+  await input(page, 'tm')
+  await expect(item(page, '3 㐀')).toBeVisible()
 })
 
 test('Variant not affected by other IME', async ({ page }) => {
