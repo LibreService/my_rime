@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { NInput, NSpace, NButtonGroup, NButton, NIcon } from 'naive-ui'
-import { Cut20Regular, Copy20Regular } from '@vicons/fluent'
+import { Cut20Regular, Copy20Regular, ClipboardLink20Regular } from '@vicons/fluent'
 import MyMenu from '../components/MyMenu.vue'
 import MyPanel from '../components/MyPanel.vue'
 import { getTextarea } from '../util'
+import { schemaId, variant } from '../control'
 
 const textareaSelector = '#container textarea'
 let savedStart = 0
@@ -37,6 +38,17 @@ async function cut () {
   await copy()
   text.value = ''
 }
+
+async function copyLink () {
+  const usp = new URLSearchParams({
+    schemaId: schemaId.value,
+    variantName: variant.value.name
+  })
+  const url = `${window.location.origin}/?${usp}`
+  await navigator.clipboard.writeText(url)
+  const textarea = getTextarea(textareaSelector)
+  textarea.focus()
+}
 </script>
 
 <template>
@@ -57,17 +69,22 @@ async function cut () {
     <n-button-group class="square-group">
       <n-button
         secondary
-        style="font-size: 24px"
         @click="cut"
       >
         <n-icon :component="Cut20Regular" />
       </n-button>
       <n-button
         secondary
-        style="font-size: 24px"
         @click="copy"
       >
         <n-icon :component="Copy20Regular" />
+      </n-button>
+      <n-button
+        secondary
+        title="Copy link for current IME"
+        @click="copyLink"
+      >
+        <n-icon :component="ClipboardLink20Regular" />
       </n-button>
     </n-button-group>
   </n-space>
@@ -77,3 +94,9 @@ async function cut () {
     :update-text="updateText"
   />
 </template>
+
+<style scoped>
+.n-button {
+  font-size: 24px;
+}
+</style>

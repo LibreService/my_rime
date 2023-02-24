@@ -1,20 +1,19 @@
 import { test, expect } from '@playwright/test'
-import { baseURL, item, input, expectValue, selectIME } from './util'
+import { init, item, input, expectValue } from './util'
 
 const ime = '袖珍简拼'
+const schemaId = 'pinyin_simp'
 
 test('Simplified', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page, ime, schemaId)
 
-  await selectIME(page, ime)
   await input(page, 'xiu', 'zhen', '2')
   await expectValue(page, '袖珍')
 })
 
 test('Reverse lookup stroke', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page, ime, schemaId)
 
-  await selectIME(page, ime)
   await input(page, '`', 'ppzn')
   await expect(item(page, '1 反 fan')).toBeVisible()
 })

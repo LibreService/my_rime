@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { NConfigProvider, NH1, darkTheme, useOsTheme } from 'naive-ui'
 import { MyLayout, MyHeader, MyFooter } from '@libreservice/my-widget'
-import MainView from './views/MainView.vue'
 import MyPwa from './components/MyPwa.vue'
 import MyFont from './components/MyFont.vue'
 import { homepage } from '../package.json'
@@ -24,7 +23,11 @@ const osThemeRef = useOsTheme()
         <div style="cursor: pointer; text-align: center; margin-top: 16px">
           <n-h1>My RIME</n-h1>
         </div>
-        <main-view />
+        <router-view v-slot="{ Component }">
+          <keep-alive>
+            <component :is="Component" />
+          </keep-alive>
+        </router-view>
       </template>
       <template #footer>
         <my-footer

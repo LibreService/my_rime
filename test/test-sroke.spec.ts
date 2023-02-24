@@ -1,12 +1,12 @@
 import { test, expect } from '@playwright/test'
-import { baseURL, menu, input, expectValue, selectIME, item, panelBox } from './util'
+import { init, menu, input, expectValue, item, panelBox } from './util'
 
 const ime = '五笔画'
+const schemaId = 'stroke'
 
 test('Simplified', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page, ime, schemaId)
 
-  await selectIME(page, ime)
   const button = menu(page).nth(1)
   await expect(button).toBeDisabled()
   await expect(button).toHaveText(/^$/)
@@ -15,17 +15,15 @@ test('Simplified', async ({ page }) => {
 })
 
 test('Traditional', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page, ime, schemaId)
 
-  await selectIME(page, ime)
   await input(page, 'hszh', 'phnphnzhhhhs', 'zhhhshszhshh ')
   await expectValue(page, '五筆畫')
 })
 
 test('Reverse lookup luna_pinyin', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page, ime, schemaId)
 
-  await selectIME(page, ime)
   await input(page, '`fan')
   await expect(item(page, '1 飯 ⼃⼂⼀⼄⼀⼀⼄⼂⼀⼃⼄⼂ ⼃⼂⼂⼄⼀⼀⼄⼂⼃⼃⼄⼂')).toBeVisible()
   const box = await panelBox(page)

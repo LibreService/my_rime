@@ -1,12 +1,12 @@
 import { test } from '@playwright/test'
-import { baseURL, input, expectValue, selectIME } from './util'
+import { init, input, expectValue } from './util'
 
 const ime = '86五笔·繁体'
+const schemaId = 'wubi_trad'
 
 test('Traditional', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page, ime, schemaId)
 
-  await selectIME(page, ime)
   await input(page, 'dcg ')
   await expectValue(page, '碼')
 })

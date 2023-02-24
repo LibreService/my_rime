@@ -1,58 +1,53 @@
 import { test, Request, expect } from '@playwright/test'
-import { baseURL, textarea, item, input, expectValue, changeVariant, changeWidth } from './util'
+import { baseURL, browserName, init, textarea, item, input, expectValue, changeLanguage, changeVariant, changeWidth, luna, cut, copy, copyLink } from './util'
 
 test('Simplified', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page)
 
-  await textarea(page).click()
   await input(page, 'jian', 'ti ')
   await expectValue(page, '简体')
 })
 
 test('Traditional', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page)
 
-  await textarea(page).click()
   await changeVariant(page, '繁')
   await input(page, 'fan', 'ti ')
   await expectValue(page, '繁體')
 })
 
 test('English/Chinese', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page)
 
   await page.keyboard.press('Shift')
-  await textarea(page).click()
   await input(page, 'English')
   await expectValue(page, 'English')
 
-  await page.getByRole('button', { name: 'En' }).click()
+  await changeLanguage(page, '中')
   await input(page, 'zhong', 'wen ')
   await expectValue(page, 'English中文')
 })
 
 test('Full width', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page)
 
-  await textarea(page).click()
   await input(page, 'a')
   await page.keyboard.press('Enter')
-  await changeWidth(page)
+  await changeWidth(page, true)
   await input(page, 'a')
   await page.keyboard.press('Enter')
   await expectValue(page, 'aａ')
 
   await page.getByRole('button', { name: '中' }).click()
   await input(page, 'b')
-  await changeWidth(page)
+  await changeWidth(page, false)
   await input(page, 'b')
   await expectValue(page, 'aａｂb')
 })
 
 test('Punctuation', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page)
 
-  await textarea(page).click()
   await input(page, '.')
   await page.getByRole('button', { name: '。' }).click()
   await input(page, '.')
@@ -60,8 +55,9 @@ test('Punctuation', async ({ page }) => {
 })
 
 test('No action', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page)
 
+  await textarea(page).blur()
   await input(page, 'wu', 'xiao ')
   await textarea(page).click() // Due to delay, expecting empty string here always succeeds.
   await input(page, 'you', 'xiao ')
@@ -69,9 +65,8 @@ test('No action', async ({ page }) => {
 })
 
 test('Middle insertion', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page)
 
-  await textarea(page).click()
   await input(page, 'zuo', 'you ')
   await expectValue(page, '左右') // Due to async handler, ArrowLeft may happen when previous event isn't fully handled (still in edit mode), so rime will eat it.
   await page.keyboard.press('ArrowLeft')
@@ -79,15 +74,14 @@ test('Middle insertion', async ({ page }) => {
   await expectValue(page, '左中间右')
 })
 
+function Control (key: string) {
+  const CONTROL = process.platform === 'darwin' ? 'Meta' : 'Control'
+  return `${CONTROL}+${key}`
+}
+
 test('Control shortcut', async ({ page }) => {
-  function Control (key: string) {
-    const CONTROL = process.platform === 'darwin' ? 'Meta' : 'Control'
-    return `${CONTROL}+${key}`
-  }
+  await init(page)
 
-  await page.goto(baseURL)
-
-  await textarea(page).click()
   await input(page, 'quan', 'xuan ')
   await expectValue(page, '全选')
   await page.keyboard.press(Control('a'))
@@ -106,25 +100,22 @@ test('Control shortcut', async ({ page }) => {
 })
 
 test('Symbol', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page)
 
-  await textarea(page).click()
   await input(page, '/fh ')
   await expectValue(page, '©')
 })
 
 test('Emoji', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page)
 
-  await textarea(page).click()
   await input(page, 'chou', 'you', '2')
   await expectValue(page, '🦨')
 })
 
 test('Reverse lookup stroke', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page)
 
-  await textarea(page).click()
   await input(page, '`', 'ppzn')
   await expect(item(page, '1 反 fan')).toBeVisible()
 })
@@ -146,12 +137,11 @@ test('IndexedDB cache', async ({ page }) => {
   })
   // @ts-ignore
   page.on('request', resolveDownload)
-  await page.goto(baseURL)
+  await init(page)
   await promise
   // @ts-ignore
   page.off('request', resolveDownload)
 
-  await textarea(page).click()
   await input(page, 'wang', 'luo ')
   await expectValue(page, '网络')
 
@@ -162,6 +152,7 @@ test('IndexedDB cache', async ({ page }) => {
   page.on('request', rejectDownload)
 
   await page.reload()
+  await expect(page.locator('.n-select')).toHaveText(luna)
   await textarea(page).click()
   await input(page, 'huan', 'cun ')
   await Promise.race([expectValue(page, '缓存'), promise])
@@ -175,8 +166,44 @@ test('Preload font', async ({ page }) => {
   })
   // @ts-ignore
   page.on('request', resolveDownload)
-  await page.goto(baseURL)
+  await init(page)
   await promise
   await textarea(page).fill('𤓰')
   while (!await page.evaluate(() => document.fonts.check('16px HanaMin')));
+})
+
+test('Cut button', async ({ page }) => {
+  test.skip(browserName(page) !== 'chromium')
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write'])
+  await init(page)
+
+  await input(page, 'jian', 'qie ')
+  await expectValue(page, '剪切')
+  await cut(page)
+  while (await page.evaluate(() => navigator.clipboard.readText()) !== '剪切');
+  await expectValue(page, '')
+})
+
+test('Copy button', async ({ page }) => {
+  test.skip(browserName(page) !== 'chromium')
+  page.context().grantPermissions(['clipboard-read', 'clipboard-write'])
+  await init(page)
+
+  await input(page, 'fu', 'zhi ')
+  await expectValue(page, '复制')
+  await copy(page)
+  await expect(textarea(page)).toBeFocused()
+  while (await page.evaluate(() => navigator.clipboard.readText()) !== '复制');
+})
+
+test('Copy link button', async ({ page }) => {
+  test.skip(browserName(page) !== 'chromium')
+  page.context().grantPermissions(['clipboard-read', 'clipboard-write'])
+  await init(page)
+
+  await changeVariant(page, '繁')
+  await copyLink(page)
+  await expect(textarea(page)).toBeFocused()
+  const copiedURL = `${baseURL}?schemaId=luna_pinyin&variantName=%E7%B9%81`
+  while (await page.evaluate(() => navigator.clipboard.readText()) !== copiedURL);
 })

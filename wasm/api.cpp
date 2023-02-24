@@ -26,7 +26,6 @@ extern "C" {
         RimeSetup(NULL);
         RimeInitialize(NULL);
         session_id = RimeCreateSession();
-        set_option("simplification", 1);
         RIME_STRUCT_INIT(RimeCommit, commit);
         RIME_STRUCT_INIT(RimeContext, context);
     }

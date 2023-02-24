@@ -1,12 +1,12 @@
 import { test, expect } from '@playwright/test'
-import { baseURL, item, input, expectValue, selectIME, changeVariant } from './util'
+import { init, item, input, expectValue } from './util'
 
 const ime = '仓颉五代·快打'
+const schemaId = 'cangjie5_express'
 
 test('Simplified', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page, ime, schemaId)
 
-  await selectIME(page, ime)
   await input(page, 'oiar', 'g')
   await expectValue(page, '仓')
   await expect(item(page, '1 土')).toBeVisible()
@@ -15,10 +15,8 @@ test('Simplified', async ({ page }) => {
 })
 
 test('Traditional', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page, ime, schemaId, '繁')
 
-  await selectIME(page, ime)
-  await changeVariant(page, '繁')
   await input(page, 'oiar', 'g')
   await expectValue(page, '倉')
   await expect(item(page, '1 土')).toBeVisible()

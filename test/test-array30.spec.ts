@@ -1,29 +1,26 @@
 import { test, expect } from '@playwright/test'
-import { baseURL, item, input, expectValue, selectIME, changeVariant, changeExtendedCharset } from './util'
+import { init, item, input, expectValue, changeExtendedCharset } from './util'
 
 const ime = '行列30'
+const schemaId = 'array30'
 
 test('Simplified', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page, ime, schemaId)
 
-  await selectIME(page, ime)
   await input(page, 'x ')
   await expectValue(page, '风')
 })
 
 test('Traditional', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page, ime, schemaId, '繁')
 
-  await selectIME(page, ime)
-  await changeVariant(page, '繁')
   await input(page, 'x ')
   await expectValue(page, '風')
 })
 
 test('Extended charset', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page, ime, schemaId)
 
-  await selectIME(page, ime)
   await input(page, 'fai')
   await expect(item(page, '3 荚  8‐')).toBeVisible()
 
@@ -34,9 +31,8 @@ test('Extended charset', async ({ page }) => {
 })
 
 test('Reverse lookup luna_quanpin', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page, ime, schemaId)
 
-  await selectIME(page, ime)
   await input(page, '`', 'fan')
   await expect(item(page, '1 饭 [ 5↓1↓! ][ 8↑5↓9↓5↓ ][ 8↑5↓1↓5↓ ]')).toBeVisible()
 })

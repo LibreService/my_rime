@@ -1,10 +1,9 @@
 import { test, expect } from '@playwright/test'
-import { baseURL, expectValue, input, textarea, panel, item } from './util'
+import { init, expectValue, input, panel, item } from './util'
 
 test('Esc', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page)
 
-  await textarea(page).click()
   await expect(panel(page)).not.toBeVisible()
   await input(page, 'lin', 'shi')
   await expect(panel(page)).toBeVisible()
@@ -15,18 +14,16 @@ test('Esc', async ({ page }) => {
 })
 
 test('Enter', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page)
 
-  await textarea(page).click()
   await input(page, 'shang', 'ping')
   await page.keyboard.press('Enter')
   await expectValue(page, 'shangping')
 })
 
 test('Home/End/Backspace/Delete', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page)
 
-  await textarea(page).click()
   await input(page, 'alub')
   await page.keyboard.press('Home')
   await page.keyboard.press('Delete')
@@ -37,9 +34,8 @@ test('Home/End/Backspace/Delete', async ({ page }) => {
 })
 
 test('Arrow Up/Down', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page)
 
-  await textarea(page).click()
   await input(page, 'shang', 'xia')
   await page.keyboard.press('PageDown')
   await page.keyboard.press('ArrowUp')
@@ -50,9 +46,8 @@ test('Arrow Up/Down', async ({ page }) => {
 })
 
 test('Arrow Left/Right', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page)
 
-  await textarea(page).click()
   await input(page, 'zuo', 'you')
   await page.keyboard.press('ArrowLeft')
   await page.keyboard.press(' ')
@@ -64,18 +59,16 @@ test('Arrow Left/Right', async ({ page }) => {
 })
 
 test('Select', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page)
 
-  await textarea(page).click()
   await input(page, 'shu', 'zi', 'dian', 'ji', '2')
   await item(page, '1 点击').click()
   await expectValue(page, '数字点击')
 })
 
 test('Switch page', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page)
 
-  await textarea(page).click()
   await input(page, 'fan', 'ye')
   await expect(item(page, '1 翻页')).toBeVisible()
   await input(page, '=')
@@ -93,9 +86,8 @@ test('Switch page', async ({ page }) => {
 })
 
 test('Delete candidate', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page)
 
-  await textarea(page).click()
   await input(page, 'zzc')
   await expect(item(page, '1 自助餐')).toBeVisible()
   await expect(item(page, '2 制造出')).toBeVisible()

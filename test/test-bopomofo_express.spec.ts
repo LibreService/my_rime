@@ -1,12 +1,12 @@
 import { test } from '@playwright/test'
-import { baseURL, input, expectValue, selectIME } from './util'
+import { init, input, expectValue } from './util'
 
 const ime = '注音·快打'
+const schemaId = 'bopomofo_express'
 
 test('Omit vowel', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page, ime, schemaId)
 
-  await selectIME(page, ime)
   await input(page, 'j', 'c')
   await page.keyboard.press('Enter')
   await expectValue(page, '武汉')

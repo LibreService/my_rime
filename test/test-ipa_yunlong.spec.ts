@@ -1,12 +1,12 @@
 import { test } from '@playwright/test'
-import { baseURL, input, expectValue, selectIME } from './util'
+import { init, input, expectValue } from './util'
 
 const ime = '云龙国际音标'
+const schemaId = 'ipa_yunlong'
 
 test('IPA', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page, ime, schemaId)
 
-  await selectIME(page, ime)
   await input(page, 'jj ')
   await expectValue(page, 'ʝ')
 })

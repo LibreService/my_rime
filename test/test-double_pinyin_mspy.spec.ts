@@ -1,21 +1,19 @@
 import { test } from '@playwright/test'
-import { baseURL, input, expectValue, selectIME, changeVariant } from './util'
+import { init, input, expectValue } from './util'
 
 const ime = '微软双拼'
+const schemaId = 'double_pinyin_mspy'
 
 test('Simplified', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page, ime, schemaId)
 
-  await selectIME(page, ime)
   await input(page, 'ud', 'pn', 'x; ')
   await expectValue(page, '双拼行')
 })
 
 test('Traditional', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page, ime, schemaId, '繁')
 
-  await selectIME(page, ime)
-  await changeVariant(page, '繁')
   await input(page, 'ud', 'pn', 'x; ')
   await expectValue(page, '雙拼行')
 })
