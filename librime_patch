@@ -1,3 +1,15 @@
+diff --git a/src/rime/config/build_info_plugin.cc b/src/rime/config/build_info_plugin.cc
+index 4df1e65..eaf858c 100644
+--- a/src/rime/config/build_info_plugin.cc
++++ b/src/rime/config/build_info_plugin.cc
+@@ -19,6 +19,7 @@ bool BuildInfoPlugin::ReviewLinkOutput(
+     ConfigCompiler* compiler, an<ConfigResource> resource) {
+   auto build_info = (*resource)["__build_info"];
+   build_info["rime_version"] = RIME_VERSION;
++  return true;
+   auto timestamps = build_info["timestamps"];
+   compiler->EnumerateResources([&](an<ConfigResource> resource) {
+     if (!resource->loaded) {
 diff --git a/tools/CMakeLists.txt b/tools/CMakeLists.txt
 index 18e3407..b79a0c1 100644
 --- a/tools/CMakeLists.txt
