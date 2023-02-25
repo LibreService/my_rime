@@ -55,14 +55,17 @@ const plugins = [
 ]
 
 if (process.env.NODE_ENV !== 'production') {
-  const watchFiles = ['worker.ts', 'schema-files.json']
-  plugins.push(run([
-    {
-      name: 'Transpile worker',
-      run: ['pnpm run worker'],
-      condition: file => watchFiles.some(name => file.includes(name))
-    }
-  ]))
+  const watchFiles = ['worker.ts', 'schema-files.json', 'schema-target.json']
+  plugins.push(run({
+    input: [
+      {
+        name: 'Transpile worker',
+        run: ['pnpm run worker'],
+        condition: file => watchFiles.some(name => file.includes(name))
+      }
+    ],
+    silent: false
+  }))
 }
 
 export default defineConfig({

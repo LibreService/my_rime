@@ -1,9 +1,11 @@
 import { expose, loadWasm } from '@libreservice/my-worker'
 import { openDB } from 'idb'
 import schemaFiles from '../schema-files.json'
+import schemaTarget from '../schema-target.json'
 
 const HASH = 'hash'
 const CONTENT = 'content'
+const prefix = '__RIME_CDN__' || ('__LIBRESERVICE_CDN__' + 'ime/')
 
 const dbPromise = openDB('ime', 1, {
   upgrade (db) {
@@ -12,7 +14,7 @@ const dbPromise = openDB('ime', 1, {
   }
 })
 
-async function setIME (ime: string) {
+async function setIME (schemaId: string) {
   const fetched: string[] = []
   function getFiles (key: string) {
     if (fetched.includes(key)) {
@@ -22,19 +24,20 @@ async function setIME (ime: string) {
     const files: {
       name: string
       md5: string
+      target: string
     }[] = []
     for (const item of (schemaFiles as {[key: string]: ({ name: string, md5: string } | string)[]})[key]) {
       if (typeof item === 'string') { // root schema_id
         files.push(...getFiles(item))
       } else {
-        files.push(item)
+        files.push({ ...item, target: (schemaTarget as {[key: string]: string})[key] })
       }
     }
     return files
   }
-  const files = getFiles(ime)
+  const files = getFiles(schemaId)
   const db = await dbPromise.catch(() => undefined) // not available in Firefox Private Browsing
-  await Promise.all(files.map(async ({ name, md5 }) => {
+  await Promise.all(files.map(async ({ name, target, md5 }) => {
     const path = `build/${name}`
     try {
       Module.FS.lookupPath(path)
@@ -44,7 +47,7 @@ async function setIME (ime: string) {
       if (storedHash === md5) {
         ab = await db!.get(CONTENT, name)
       } else {
-        const response = await fetch('__LIBRESERVICE_CDN__' + `ime/${name}`)
+        const response = await fetch(`${prefix}${target}/${name}`)
         if (!response.ok) {
           throw new Error(`Fail to download ${name}`)
         }
@@ -55,7 +58,7 @@ async function setIME (ime: string) {
       Module.FS.writeFile(path, new Uint8Array(ab))
     }
   }))
-  Module.ccall('set_ime', 'null', ['string'], [ime])
+  Module.ccall('set_ime', 'null', ['string'], [schemaId])
 }
 
 const readyPromise = loadWasm('rime.js', {

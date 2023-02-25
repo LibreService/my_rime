@@ -14,6 +14,7 @@ export default {
   },
   plugins: [
     replace({
+      __RIME_CDN__: process.env.RIME_CDN || '',
       __LIBRESERVICE_CDN__: process.env.LIBRESERVICE_CDN || ''
     }),
     json(),

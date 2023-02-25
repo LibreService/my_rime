@@ -35,4 +35,5 @@ build
 public/worker.js
 .vercel
 schema-files.json
+schema-target.json
 *.woff2

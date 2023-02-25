@@ -75,7 +75,8 @@ pnpm run preview
 ```
 ### Deploy
 ```sh
-export LIBRESERVICE_CDN=https://cdn.jsdelivr.net/npm/@libreservice/my-rime@VERSION/dist/ # optional
+export LIBRESERVICE_CDN=https://cdn.jsdelivr.net/npm/@libreservice/my-rime/dist/ # optional
+export RIME_CDN=https://cdn.jsdelivr.net/npm/@rime-contrib/ # optional
 vercel build --prod
 vercel deploy --prebuilt --prod
 ```

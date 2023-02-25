@@ -1,6 +1,6 @@
 {
   "name": "@libreservice/my-rime",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "files": [
     "dist"
   ],
@@ -23,7 +23,7 @@
     "lint": "eslint --ext .ts,.js,.mjs,.vue scripts src test",
     "lint:fix": "eslint --ext .ts,.js,.mjs,.vue --fix scripts src test",
     "check": "vue-tsc --noEmit",
-    "build": "pnpm run check && rm -rf public/*.js.map && NODE_ENV=production pnpm run worker && vite build",
+    "build": "pnpm run check && rm -rf public/*.js.map && bash scripts/clean_ime.sh && NODE_ENV=production pnpm run worker && vite build",
     "test": "playwright test --browser all test/ && playwright test test-device/",
     "preview": "vite preview --host"
   },
@@ -56,7 +56,7 @@
     "typescript": "^4.9.5",
     "vite": "^4.1.4",
     "vite-plugin-pwa": "^0.14.4",
-    "vite-plugin-run": "^0.3.2",
+    "vite-plugin-run": "^0.4.0",
     "vooks": "^0.2.12",
     "vue": "^3.2.47",
     "vue-router": "^4.1.6",
