@@ -17,6 +17,7 @@ const rootMap = {}
 
 function install (arg) {
   spawnSync('plum/rime-install', [arg], {
+    stdio: 'inherit',
     env: {
       rime_dir: RIME_DIR
     }
@@ -53,6 +54,7 @@ writeFileSync(defaultPath, updatedContent)
 
 chdir(RIME_DIR)
 spawnSync('./rime_console', [], {
+  stdio: ['ignore', 'inherit', 'inherit'],
   input: ''
 })
 
