@@ -5,6 +5,7 @@ Chinese IME powered by [RIME](https://github.com/rime/librime).
 
 https://my-rime.vercel.app/
 
+If you want to distribute your own IME, see [customize](doc/customize.md).
 ## Self host
 Download latest [artifact](https://github.com/LibreService/my_rime/releases/download/latest/my-rime-dist.zip) built by GitHub Actions.
 
@@ -73,11 +74,24 @@ pnpm run test
 ```sh
 pnpm run preview
 ```
-### Deploy
+### Deploy (maintainer only)
 ```sh
-export LIBRESERVICE_CDN=https://cdn.jsdelivr.net/npm/@libreservice/my-rime/dist/ # optional
-export RIME_CDN=https://cdn.jsdelivr.net/npm/@rime-contrib/ # optional
+# publish IMEs
+declare -a packages=(
+  ... # targets output by pnpm run schema
+)
+for package in "${packages[@]}"; do
+  pushd public/ime/$package
+  npm publish
+  popd
+done
+
+# set VERSION to avoid CDN and browser caching old version
+export LIBRESERVICE_CDN=https://cdn.jsdelivr.net/npm/@libreservice/my-rime@VERSION/dist/
+export RIME_CDN=https://cdn.jsdelivr.net/npm/@rime-contrib/
+
 vercel build --prod
+npm publish
 vercel deploy --prebuilt --prod
 ```
 
