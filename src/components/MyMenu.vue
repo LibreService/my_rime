@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import { NButton, NButtonGroup, NIcon, NSpace, NSelect } from 'naive-ui'
 import { WeatherMoon16Regular, Circle16Regular } from '@vicons/fluent'
@@ -11,15 +11,24 @@ const showVariant = ref<boolean>(true)
 
 const route = useRoute()
 
-function stringify (param: any) {
-  return typeof param === 'string' ? param : ''
+function getKey (key: string) {
+  const queryValue = route.query[key]
+  const param = typeof queryValue === 'string' ? queryValue : ''
+  console.log(param || localStorage.getItem(key) || '')
+  return param || localStorage.getItem(key) || ''
 }
-init(stringify(route.query.schemaId), stringify(route.query.variantName)).then(() => {
+
+init(getKey('schemaId'), getKey('variantName')).then(() => {
   ime.value = schemaId.value
 })
 
 const variantLabel = computed(() => showVariant.value ? variant.value.name : '')
 const singleVariant = computed(() => variants.value.length === 1)
+
+watchEffect(() => {
+  localStorage.setItem('schemaId', ime.value)
+  localStorage.setItem('variantName', variantLabel.value)
+})
 
 const loading = ref<boolean>(false)
 
