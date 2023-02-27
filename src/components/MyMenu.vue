@@ -14,7 +14,6 @@ const route = useRoute()
 function getKey (key: string) {
   const queryValue = route.query[key]
   const param = typeof queryValue === 'string' ? queryValue : ''
-  console.log(param || localStorage.getItem(key) || '')
   return param || localStorage.getItem(key) || ''
 }
 

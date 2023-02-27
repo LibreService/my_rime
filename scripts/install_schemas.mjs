@@ -1,6 +1,6 @@
 import { spawnSync } from 'child_process'
 import { readFileSync, writeFileSync, readdirSync, mkdirSync, copyFileSync } from 'fs'
-import { cwd, chdir } from 'process'
+import { cwd, chdir, exit } from 'process'
 
 const root = cwd()
 const { version } = JSON.parse(readFileSync('package.json'))
@@ -45,6 +45,16 @@ for (const schema of schemas) {
   install(schema.target)
   if (schema.emoji) {
     install(`emoji:customize:schema=${schema.id}`)
+  }
+}
+
+// check schemas.json integrity
+for (const [schemaId, dependencies] of Object.entries(rootMap)) {
+  for (const id of dependencies) {
+    if (!(id in schemaFiles)) {
+      console.error(`Integrity check fails. Dependency '${id}' of '${schemaId}' should be defined in schemas.json.`)
+      exit(1)
+    }
   }
 }
 
