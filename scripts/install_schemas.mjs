@@ -19,6 +19,7 @@ function install (arg) {
   spawnSync('plum/rime-install', [arg], {
     stdio: 'inherit',
     env: {
+      ...process.env,
       rime_dir: RIME_DIR
     }
   })
