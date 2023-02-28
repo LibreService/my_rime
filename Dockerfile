@@ -1,11 +1,12 @@
-FROM node:18.14.2-bullseye
+FROM node:18.14.2-bullseye as builder
 
-COPY / /my_rime/
-WORKDIR /
+ARG ENABLE_LOGGING=OFF
+
+ENV ENABLE_LOGGING ${ENABLE_LOGGING}
 
 # Install tools and dependencies
-RUN apt update && apt -y install \
-    nginx cmake \
+RUN apt update && apt install -y \
+    cmake \
     libboost-dev \
     libboost-filesystem-dev \
     libboost-regex-dev \
@@ -17,10 +18,11 @@ RUN apt update && apt -y install \
 
 # Set up Emscripten
 RUN git clone https://github.com/emscripten-core/emsdk.git && \
-          cd emsdk && \
-          ./emsdk install latest && \
-          ./emsdk activate latest
+    cd emsdk && \
+    ./emsdk install latest && \
+    ./emsdk activate latest
 
+COPY / /my_rime
 WORKDIR /my_rime
 
 # Install pnpm and dev dependencies
@@ -32,27 +34,16 @@ RUN pnpm run submodule && \
     pnpm run font
 
 # Build WASM
-RUN export PATH="$PATH:/emsdk" && \
-    export PATH="$PATH:/emsdk/upstream/emscripten" && \
+RUN export PATH="$PATH:/emsdk/upstream/emscripten" && \
     pnpm run native && \
     pnpm run schema && \
-    export ENABLE_LOGGING=ON && \
     pnpm run lib && \
     pnpm run wasm
 
 # Build webapp
 RUN pnpm run build
 
-# Set up Nginx static server
-RUN printf 'server {\n\
-    root /my_rime/dist;\n\
-\n\
-    listen 8080;\n\
-\n\
-    location / {\n\
-        index index.html index.htm;\n\
-    }\n\
-\n}' > /etc/nginx/conf.d/static.conf
 
-# Start Nginx
-CMD nginx -g 'daemon off;'
+FROM nginx:1.23.3-alpine-slim
+
+COPY --from=builder /my_rime/dist /usr/share/nginx/html

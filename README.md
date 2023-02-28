@@ -95,5 +95,14 @@ npm publish
 vercel deploy --prebuilt --prod
 ```
 
+## Docker
+```sh
+docker build \
+  --build-arg ENABLE_LOGGING=ON \
+  -t my-rime .
+docker run --name my-rime -d my-rime
+```
+Let's say the IP address of the container is 172.17.0.2 (got by `docker inspect my-rime | grep IPAddress`), then My RIME is accessible at http://172.17.0.2/.
+
 ## License
 AGPLv3+
