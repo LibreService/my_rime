@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { nextTick, ref, toRef, onMounted, onUnmounted, watch } from 'vue'
-import { NPopover, NMenu, MenuOption, NText, NButton, NIcon } from 'naive-ui'
+import { NPopover, NMenu, MenuOption, NText, NButton, NIcon, NInput } from 'naive-ui'
 import { CaretLeft, CaretRight } from '@vicons/fa'
 // @ts-ignore
 import getCaretCoordinates from 'textarea-caret'
 import emojiRegex from 'emoji-regex'
 import { process } from '../workerAPI'
 import { changeLanguage } from '../control'
-import { isMobile, getTextarea } from '../util'
+import { isMobile, getTextarea, getQueryString } from '../util'
 
 const props = defineProps<{
   textareaSelector: string
@@ -37,10 +37,20 @@ const highlighted = ref<string>('1')
 const prevDisabled = ref<boolean>(true)
 const nextDisabled = ref<boolean>(false)
 
+// Call to librime is async so there's a delay from editing=true to showMenu=true
 const editing = ref<boolean>(false)
 const showMenu = ref<boolean>(false)
 const xOverflow = ref<boolean>(false)
 const exclusiveShift = ref<boolean>(false)
+
+const debugEnabled = Boolean(getQueryString('debug'))
+const debugMode = ref<boolean>(false)
+const debugCode = ref<string>('')
+async function debug (e: KeyboardEvent) {
+  editing.value = true
+  await input(debugCode.value);
+  (e.target as HTMLElement).focus()
+}
 
 const modifiers = ['Control', 'Alt', 'Meta']
 
@@ -154,6 +164,9 @@ watch(text, (acNewText, acText) => {
 // end: code specific to Android Chromium
 
 function onKeydown (e: KeyboardEvent) {
+  if (debugMode.value) {
+    return
+  }
   const { key } = e
   const textarea = getTextarea(textareaSelector)
   // begin: code specific to Android Chromium
@@ -213,6 +226,9 @@ function onKeydown (e: KeyboardEvent) {
 }
 
 function onKeyup (e: KeyboardEvent) {
+  if (debugMode.value) {
+    return
+  }
   const { key } = e
   if (key === 'Shift' && exclusiveShift.value) {
     changeLanguage()
@@ -294,6 +310,15 @@ onUnmounted(() => { // Cleanup for HMR
 </script>
 
 <template>
+  <n-input
+    v-if="debugEnabled"
+    v-model:value="debugCode"
+    clearable
+    placeholder="Send key sequence to librime"
+    @keyup.enter="debug"
+    @focus="debugMode = true"
+    @blur="debugMode = false"
+  />
   <n-popover
     :show="showMenu"
     :show-arrow="false"

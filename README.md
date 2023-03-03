@@ -54,6 +54,9 @@ pnpm run wasm
 ```sh
 pnpm run dev
 ```
+The app is accessible at http://localhost:5173
+
+Optionally, go to http://localhost:5173/?debug=on so that you can send raw key sequences to librime, e.g. `{Shift+Delete}`, `{Release+a}`. This feature is better used when you set `ENABLE_LOGGING=ON` in the previous step.
 ### Lint
 ```sh
 pnpm run lint:fix

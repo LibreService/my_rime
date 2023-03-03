@@ -87,12 +87,12 @@ async function copyLink () {
         <n-icon :component="ClipboardLink20Regular" />
       </n-button>
     </n-button-group>
+    <my-panel
+      :textarea-selector="textareaSelector"
+      :text="text"
+      :update-text="updateText"
+    />
   </n-space>
-  <my-panel
-    :textarea-selector="textareaSelector"
-    :text="text"
-    :update-text="updateText"
-  />
 </template>
 
 <style scoped>

@@ -13,7 +13,8 @@ However, you are more than welcomed to host a customized version of My RIME to d
 * Clone the repo. Do not use `--recurse-submodules`.
 * Replicate build steps locally. You may reference [README](../README.md) or `build` job of [CI script](../.github/workflows/build.yml). Those steps work on Ubuntu latest stable and LTS release.
 * Customize [schemas.json](../schemas.json).
-* Run `pnpm run schema` and test by `pnpm run dev`.
+* Run `pnpm run schema`. If the end of the output asks to run `pnpm run wasm`, please do.
+* Test by `pnpm run dev`.
 * Once everything works fine, run `pnpm run build`.
 * The artifact is in `dist`, and you may deploy it to a static web server.
 
@@ -27,7 +28,7 @@ For each object, here are key and value definitions:
 * `id: string`, the schema id that you place in `default.yaml` for desktop RIME.
 * `name: string`, the label you want to show as IME name for user to select.
 * `emoji?: boolean`, whether integrate [emoji](https://github.com/rime/rime-emoji). Default `false`.
-* `target: string`, the repository name that you use in `rime-install`.
+* `target: string`, the same argument you use when installing by plum: `bash rime-install <target>`.
 * `dependencies?: string[]`, schema ids that are either a hard dependency (e.g. `luna_pinyin` for `double_pinyin`) or a soft (required by reverse-lookup) dependency (e.g. `stroke` for `luna_pinyin`). Make sure you have them defined in other objects. Default `[]`.
 * `variants?: object[]`, simplified/traditional/... variants. Default `undefined` means the table is traditional, and simplified variant is available by OpenCC, e.g. `luna_pinyin`. An empty `[]` means there are no variants and the variant switch button is disabled, e.g. `stroke`.
   * `id: string`, the corresponding `option` in `.schema.yaml`.

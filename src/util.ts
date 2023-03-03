@@ -1,4 +1,5 @@
 import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { useBreakpoint } from 'vooks'
 
 const breakpoint = useBreakpoint()
@@ -8,4 +9,11 @@ function getTextarea (selector: string) {
   return document.querySelector(selector) as HTMLTextAreaElement
 }
 
-export { isMobile, getTextarea }
+function getQueryString (key: string) {
+  const route = useRoute()
+  const queryValue = route.query[key]
+  const param = typeof queryValue === 'string' ? queryValue : ''
+  return param || localStorage.getItem(key) || ''
+}
+
+export { isMobile, getTextarea, getQueryString }

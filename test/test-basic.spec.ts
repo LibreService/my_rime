@@ -207,3 +207,17 @@ test('Copy link button', async ({ page }) => {
   const copiedURL = `${baseURL}?schemaId=luna_pinyin&variantName=%E7%B9%81`
   while (await page.evaluate(() => navigator.clipboard.readText()) !== copiedURL);
 })
+
+test('Debug', async ({ page }) => {
+  await page.goto(`${baseURL}?debug=on`)
+
+  const debugInput = page.locator('input')
+
+  await debugInput.fill('d')
+  await page.keyboard.press('Enter')
+  await expect(item(page, '1 的')).toBeVisible()
+  await expect(debugInput).toBeFocused()
+  await debugInput.fill('{Page_Down}')
+  await page.keyboard.press('Enter')
+  await expect(item(page, '1 等')).toBeVisible()
+})

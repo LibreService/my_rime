@@ -1,23 +1,16 @@
 <script setup lang="ts">
 import { ref, computed, watchEffect } from 'vue'
-import { useRoute } from 'vue-router'
 import { NButton, NButtonGroup, NIcon, NSpace, NSelect } from 'naive-ui'
 import { WeatherMoon16Regular, Circle16Regular } from '@vicons/fluent'
 import { init, schemaId, options, variants, variant, isEnglish, isFullWidth, isExtendedCharset, isEnglishPunctuation, schemaExtended, changeLanguage, changeVariant, changeWidth, changeCharset, changePunctuation, changeIME } from '../control'
-import { getTextarea } from '../util'
+import { getTextarea, getQueryString } from '../util'
 
 const ime = ref<string>('') // visual vs internal
 const showVariant = ref<boolean>(true)
 
-const route = useRoute()
+// const route = useRoute()
 
-function getKey (key: string) {
-  const queryValue = route.query[key]
-  const param = typeof queryValue === 'string' ? queryValue : ''
-  return param || localStorage.getItem(key) || ''
-}
-
-init(getKey('schemaId'), getKey('variantName')).then(() => {
+init(getQueryString('schemaId'), getQueryString('variantName')).then(() => {
   ime.value = schemaId.value
 })
 
