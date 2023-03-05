@@ -16,7 +16,7 @@
     "worker": "rollup -c rollup.worker-config.mjs",
     "font": "bash scripts/download_font.sh",
     "native": "bash scripts/build_native.sh",
-    "schema": "bash scripts/install_schemas.sh",
+    "schema": "node scripts/install_schemas.mjs",
     "lib": "bash scripts/build_lib.sh",
     "wasm": "node scripts/build_wasm.mjs",
     "dev": "vite --host",

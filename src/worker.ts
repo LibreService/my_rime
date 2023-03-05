@@ -2,6 +2,8 @@ import { expose, loadWasm } from '@libreservice/my-worker'
 import { openDB } from 'idb'
 import schemaFiles from '../schema-files.json'
 import schemaTarget from '../schema-target.json'
+import dependencyMap from '../dependency-map.json'
+import targetFiles from '../target-files.json'
 
 const HASH = 'hash'
 const CONTENT = 'content'
@@ -26,11 +28,23 @@ async function setIME (schemaId: string) {
       md5: string
       target: string
     }[] = []
-    for (const item of (schemaFiles as {[key: string]: ({ name: string, md5: string } | string)[]})[key]) {
-      if (typeof item === 'string') { // root schema_id
-        files.push(...getFiles(item))
-      } else {
-        files.push({ ...item, target: (schemaTarget as {[key: string]: string})[key] })
+
+    for (const dependency of (dependencyMap as {[key: string]: string[] | undefined})[key] || []) {
+      files.push(...getFiles(dependency))
+    }
+    const { dict, prism } = (schemaFiles as {[key: string]: { dict?: string, prism?: string }})[key]
+    const dictionary = dict || key
+    const tableBin = `${dictionary}.table.bin`
+    const reverseBin = `${dictionary}.reverse.bin`
+    const prismBin = `${prism || dictionary}.prism.bin`
+    const schemaYaml = `${key}.schema.yaml`
+    const target = (schemaTarget as {[key: string]: string})[key]
+    for (const fileName of [tableBin, reverseBin, prismBin, schemaYaml]) {
+      for (const { name, md5 } of (targetFiles as { [key: string]: { name: string, md5: string }[]})[target]) {
+        if (fileName === name) {
+          files.push({ name, md5, target })
+          break
+        }
       }
     }
     return files

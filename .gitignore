@@ -34,7 +34,9 @@ build
 *.js.map
 public/worker.js
 .vercel
+dependency-map.json
 opencc-configs.json
 schema-files.json
 schema-target.json
+target-files.json
 *.woff2
