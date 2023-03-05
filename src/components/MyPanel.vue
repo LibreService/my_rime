@@ -167,7 +167,7 @@ function onKeydown (e: KeyboardEvent) {
   if (debugMode.value) {
     return
   }
-  const { key } = e
+  const { code, key } = e
   const textarea = getTextarea(textareaSelector)
   // begin: code specific to Android Chromium
   if (key === 'Unidentified') {
@@ -197,7 +197,11 @@ function onKeydown (e: KeyboardEvent) {
   const shifted = e.getModifierState('Shift')
   let rimeKey: string | undefined
   if (isPrintableKey) {
-    rimeKey = key
+    if (code.startsWith('Numpad')) {
+      rimeKey = `{KP_${code.substring(6)}}`
+    } else {
+      rimeKey = key
+    }
   } else if (shifted && key === 'Delete') {
     rimeKey = '{Shift+Delete}'
   } else if (controlled && shifted && key === 'Enter') {
