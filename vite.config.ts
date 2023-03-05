@@ -69,6 +69,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 export default defineConfig({
+  base: '',
   plugins,
   server: {
     watch: {

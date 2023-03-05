@@ -44,7 +44,7 @@ async function copyLink () {
     schemaId: schemaId.value,
     variantName: variant.value.name
   })
-  const url = `${window.location.origin}/?${usp}`
+  const url = `${window.location.origin}${window.location.pathname}?${usp}`
   await navigator.clipboard.writeText(url)
   const textarea = getTextarea(textareaSelector)
   textarea.focus()

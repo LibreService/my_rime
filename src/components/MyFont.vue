@@ -5,7 +5,7 @@ const UbuntuFont = 'Noto Sans CJK SC'
 const WindowsFont = 'Microsoft YaHei'
 const macOSFont = 'PingFang SC'
 const fallbackFont = 'HanaMin'
-const fontURL = '__LIBRESERVICE_CDN__' + 'HanaMinB.woff2'
+const fontURL = ('__LIBRESERVICE_CDN__' || './') + 'HanaMinB.woff2'
 
 const link = document.createElement('link')
 link.rel = 'preload'

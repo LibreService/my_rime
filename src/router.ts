@@ -5,8 +5,12 @@ const routes = [
   { path: '/', name: 'Main', component: MainView }
 ]
 
+function findBaseURL (entryPath: string) {
+  return entryPath.substring(0, entryPath.lastIndexOf('/'))
+}
+
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(findBaseURL(window.location.pathname)),
   routes
 })
 
