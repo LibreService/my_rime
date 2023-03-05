@@ -60,6 +60,7 @@ function convertVariants (variants: Variants | undefined) {
 for (const schema of schemas as {
   id: string
   name: string
+  disabled?: boolean
   family?: {
     id: string,
     name: string,
@@ -69,6 +70,9 @@ for (const schema of schemas as {
   variants?: Variants
   extended?: boolean
 }[]) {
+  if (schema.disabled) {
+    continue
+  }
   options.push({
     label: schema.name,
     value: schema.id

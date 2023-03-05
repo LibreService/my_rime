@@ -54,34 +54,24 @@
     "name": "自然码双拼",
     "target": "double-pinyin",
     "dependencies": ["luna_pinyin"],
-    "license": "GPL-3.0-only"
-  },
-  {
-    "id": "double_pinyin_abc",
-    "name": "智能ABC双拼",
-    "target": "double-pinyin",
-    "dependencies": ["luna_pinyin"],
-    "license": "GPL-3.0-only"
-  },
-  {
-    "id": "double_pinyin_flypy",
-    "name": "小鹤双拼",
-    "target": "double-pinyin",
-    "dependencies": ["luna_pinyin"],
-    "license": "GPL-3.0-only"
-  },
-  {
-    "id": "double_pinyin_mspy",
-    "name": "微软双拼",
-    "target": "double-pinyin",
-    "dependencies": ["luna_pinyin"],
-    "license": "GPL-3.0-only"
-  },
-  {
-    "id": "double_pinyin_pyjj",
-    "name": "拼音加加双拼",
-    "target": "double-pinyin",
-    "dependencies": ["luna_pinyin"],
+    "family": [
+      {
+        "id": "double_pinyin_abc",
+        "name": "智能ABC双拼"
+      },
+      {
+        "id": "double_pinyin_flypy",
+        "name": "小鹤双拼"
+      },
+      {
+        "id": "double_pinyin_mspy",
+        "name": "微软双拼"
+      },
+      {
+        "id": "double_pinyin_pyjj",
+        "name": "拼音加加双拼"
+      }
+    ],
     "license": "GPL-3.0-only"
   },
   {

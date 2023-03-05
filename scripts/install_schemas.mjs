@@ -183,12 +183,13 @@ if (updatedTargets.length) {
     console.log(target)
   }
   writeFileSync('target-files.json', JSON.stringify(targetFiles))
-  writeFileSync('schema-files.json', JSON.stringify(schemaFiles))
-  writeFileSync('schema-target.json', JSON.stringify(schemaTarget))
-  writeFileSync('dependency-map.json', JSON.stringify(dependencyMap))
 } else {
   console.log('All targets are already up to date.')
 }
+
+writeFileSync('schema-files.json', JSON.stringify(schemaFiles))
+writeFileSync('schema-target.json', JSON.stringify(schemaTarget))
+writeFileSync('dependency-map.json', JSON.stringify(dependencyMap))
 
 let oldOpenccConfigs
 try {
