@@ -33,6 +33,15 @@ test('Home/End/Backspace/Delete', async ({ page }) => {
   await expectValue(page, '路')
 })
 
+test('Tab', async ({ page }) => {
+  await init(page)
+
+  await input(page, 'zhibiao')
+  await expect(item(page, '1 指标')).toBeVisible()
+  await page.keyboard.press('Tab')
+  await expect(item(page, '1 之')).toBeVisible()
+})
+
 test('Arrow Up/Down', async ({ page }) => {
   await init(page)
 

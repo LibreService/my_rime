@@ -58,6 +58,7 @@ const RIME_KEY_MAP = {
   Escape: 'Escape',
   Backspace: 'BackSpace',
   Delete: 'Delete',
+  Tab: 'Tab',
   Enter: 'Return',
   Home: 'Home',
   End: 'End',
@@ -212,6 +213,7 @@ function onKeydown (e: KeyboardEvent) {
     for (const [k, v] of Object.entries(RIME_KEY_MAP)) {
       if (key === k) {
         rimeKey = `{${v}}`
+        break
       }
     }
   }
