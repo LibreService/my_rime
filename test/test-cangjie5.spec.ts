@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { init, luna, textarea, item, menu, input, expectValue, selectIME, changeVariant, changeExtendedCharset } from './util'
+import { init, luna, textarea, item, menu, input, expectValue, selectIME, changeLanguage, changeVariant, changeExtendedCharset } from './util'
 
 const ime = '仓颉五代'
 const schemaId = 'cangjie5'
@@ -28,6 +28,16 @@ test('Extended charset', async ({ page }) => {
   await changeExtendedCharset(page, '增')
   await input(page, 'tm')
   await expect(item(page, '3 㐀')).toBeVisible()
+})
+
+test('Reset Chinese after changing IME', async ({ page }) => {
+  await init(page)
+
+  await changeLanguage(page, 'En')
+  await selectIME(page, ime)
+  await expect(menu(page).nth(0)).toHaveText('中')
+  await input(page, 'l ')
+  await expectValue(page, '中')
 })
 
 test('Variant not affected by other IME', async ({ page }) => {

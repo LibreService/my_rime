@@ -163,6 +163,7 @@ async function changeIME (targetIME: string) {
     await setIME(targetIME)
     schemaId.value = targetIME
     await setVariant()
+    isEnglish.value = false // librime resets Chinese
   } catch (e) {
     console.error(e)
   }
