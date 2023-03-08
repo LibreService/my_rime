@@ -2,6 +2,10 @@ import { computed, ref, Ref } from 'vue'
 import { setOption, setIME } from './workerAPI'
 import schemas from '../schemas.json'
 
+const ASCII_MODE = 'ascii_mode'
+const FULL_SHAPE = 'full_shape'
+const EXTENDED_CHARSET = 'extended_charset'
+const ASCII_PUNCT = 'ascii_punct'
 const SIMPLIFICATION = 'simplification'
 
 const schemaId = ref<string>(schemas[0].id)
@@ -133,16 +137,24 @@ const isFullWidth = ref<boolean>(false)
 const isExtendedCharset = ref<boolean>(false)
 const isEnglishPunctuation = ref<boolean>(false)
 
-const toggle = (option: string, box: Ref<boolean>) => async () => {
+const basicOptionMap = {
+  [ASCII_MODE]: isEnglish,
+  [FULL_SHAPE]: isFullWidth,
+  [EXTENDED_CHARSET]: isExtendedCharset,
+  [ASCII_PUNCT]: isEnglishPunctuation
+}
+
+const toggle = (option: keyof typeof basicOptionMap) => async () => {
+  const box = basicOptionMap[option]
   const newValue = !box.value
   await setOption(option, newValue)
   box.value = newValue
 }
 
-const changeLanguage = toggle('ascii_mode', isEnglish)
-const changeWidth = toggle('full_shape', isFullWidth)
-const changeCharset = toggle('extended_charset', isExtendedCharset)
-const changePunctuation = toggle('ascii_punct', isEnglishPunctuation)
+const changeLanguage = toggle(ASCII_MODE)
+const changeWidth = toggle(FULL_SHAPE)
+const changeCharset = toggle(EXTENDED_CHARSET)
+const changePunctuation = toggle(ASCII_PUNCT)
 
 async function setVariant () {
   for (const v of variants.value) {
@@ -169,4 +181,40 @@ async function changeIME (targetIME: string) {
   }
 }
 
-export { init, schemaId, options, variants, variant, isEnglish, isFullWidth, isExtendedCharset, isEnglishPunctuation, schemaExtended, changeLanguage, changeVariant, changeWidth, changeCharset, changePunctuation, changeIME }
+function syncOptions (updatedOptions: string[]) {
+  if (updatedOptions.length === 1) { // global options or binary variant
+    const updatedOption = updatedOptions[0]
+    for (const [option, box] of Object.entries(basicOptionMap)) {
+      if (option === updatedOption) {
+        box.value = true
+        return
+      }
+      if (`!${option}` === updatedOption) {
+        box.value = false
+        return
+      }
+    }
+    if (variants.value.length === 2) {
+      for (const [i, v] of variants.value.entries()) {
+        if ((v.id === updatedOption && v.value) || (`!${v.id}` === updatedOption && !v.value)) {
+          variantIndex.value = i
+          return
+        }
+      }
+    }
+  } else { // n-ary variant
+    for (const updatedOption of updatedOptions) {
+      if (updatedOption.startsWith('!')) {
+        continue
+      }
+      for (const [i, v] of variants.value.entries()) {
+        if (v.id === updatedOption) {
+          variantIndex.value = i
+          return
+        }
+      }
+    }
+  }
+}
+
+export { init, schemaId, options, variants, variant, isEnglish, isFullWidth, isExtendedCharset, isEnglishPunctuation, schemaExtended, changeLanguage, changeVariant, changeWidth, changeCharset, changePunctuation, changeIME, syncOptions }

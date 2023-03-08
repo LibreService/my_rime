@@ -1,5 +1,5 @@
-#include <cstdio>
 #include <string>
+#include <vector>
 #include <boost/json/src.hpp>
 #include <rime_api.h>
 
@@ -11,10 +11,18 @@ RimeSessionId session_id;
 RimeCommit commit;
 RimeContext context;
 std::string json_string;
+bool processing;
+std::vector<std::string> updated_options;
 
 inline const char *to_json(boost::json::object &obj) {
     json_string = boost::json::serialize(obj);
     return json_string.c_str();
+}
+
+void handler(void* context_object, RimeSessionId session_id, const char* message_type, const char* message_value) {
+    if (processing && std::string(message_type) == "option") {
+        updated_options.push_back(message_value);
+    }
 }
 
 extern "C" {
@@ -25,6 +33,7 @@ extern "C" {
     void init() {
         RimeSetup(NULL);
         RimeInitialize(NULL);
+        RimeSetNotificationHandler(handler, NULL);
         session_id = RimeCreateSession();
         RIME_STRUCT_INIT(RimeCommit, commit);
         RIME_STRUCT_INIT(RimeContext, context);
@@ -32,7 +41,17 @@ extern "C" {
 
     const char *process(const char *input) {
         boost::json::object obj;
+        updated_options.clear();
+        processing = true;
         RimeSimulateKeySequence(session_id, input);
+        processing = false;
+        if (updated_options.size()) {
+            boost::json::array options;
+            for (const std::string &s : updated_options) {
+                options.push_back(s.c_str());
+            }
+            obj["updatedOptions"] = options;
+        }
         RimeFreeCommit(&commit);
         Bool hasCommitted = RimeGetCommit(session_id, &commit);
         if (hasCommitted) {

@@ -29,16 +29,16 @@
         "name": "简"
       },
       {
+        "id": "noop",
+        "name": "繁"
+      },
+      {
         "id": "variants_hk",
         "name": "港"
       },
       {
         "id": "trad_tw",
         "name": "臺"
-      },
-      {
-        "id": "noop",
-        "name": "繁"
       }
     ],
     "family": [

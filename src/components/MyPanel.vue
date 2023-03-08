@@ -6,7 +6,7 @@ import { CaretLeft, CaretRight } from '@vicons/fa'
 import getCaretCoordinates from 'textarea-caret'
 import emojiRegex from 'emoji-regex'
 import { process } from '../workerAPI'
-import { changeLanguage } from '../control'
+import { changeLanguage, syncOptions } from '../control'
 import { isMobile, getTextarea, getQueryString } from '../util'
 
 const props = defineProps<{
@@ -98,6 +98,9 @@ function insert (toInsert: string) {
 async function input (rimeKey: string) {
   const textarea = getTextarea(textareaSelector)
   const result = JSON.parse(await process(rimeKey)) as RIME_RESULT
+  if (result.updatedOptions) {
+    syncOptions(result.updatedOptions)
+  }
   if (result.state === 0) { // COMMITTED
     editing.value = false
     showMenu.value = false

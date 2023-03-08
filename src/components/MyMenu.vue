@@ -90,7 +90,7 @@ function resetFocus () {
         :disabled="extendedDisabled"
         @click="changeCharset"
       >
-        {{ isExtendedCharset ? '增' : '常' }}
+        {{ extendedDisabled ? '' : isExtendedCharset ? '增' : '常' }}
       </n-button>
       <n-button
         secondary
