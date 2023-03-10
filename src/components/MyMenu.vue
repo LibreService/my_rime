@@ -6,12 +6,13 @@ import { init, schemaId, options, variants, variant, isEnglish, isFullWidth, isE
 import { getTextarea, getQueryString } from '../util'
 
 const ime = ref<string>('') // visual vs internal
-const showVariant = ref<boolean>(true)
-
-// const route = useRoute()
+const showVariant = ref<boolean>(false)
+const loading = ref<boolean>(true)
 
 init(getQueryString('schemaId'), getQueryString('variantName')).then(() => {
   ime.value = schemaId.value
+  showVariant.value = true
+  loading.value = false
 })
 
 const variantLabel = computed(() => showVariant.value ? variant.value.name : '')
@@ -21,8 +22,6 @@ watchEffect(() => {
   localStorage.setItem('schemaId', ime.value)
   localStorage.setItem('variantName', variantLabel.value)
 })
-
-const loading = ref<boolean>(false)
 
 async function selectIME (targetIME: string) {
   resetFocus()
