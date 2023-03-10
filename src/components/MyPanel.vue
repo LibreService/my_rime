@@ -52,9 +52,7 @@ async function debug (e: KeyboardEvent) {
   (e.target as HTMLElement).focus()
 }
 
-const modifiers = ['Control', 'Alt', 'Meta']
-
-const RIME_KEY_MAP = {
+const RIME_KEY_MAP: {[key: string]: string | undefined} = {
   Escape: 'Escape',
   Backspace: 'BackSpace',
   Delete: 'Delete',
@@ -67,13 +65,40 @@ const RIME_KEY_MAP = {
   ArrowUp: 'Up',
   ArrowRight: 'Right',
   ArrowDown: 'Down',
-  ArrowLeft: 'Left'
-}
-
-const RIME_RELEASE_KEY_MAP = {
-  ' ': 'space',
+  ArrowLeft: 'Left',
+  '~': 'asciitilde',
+  '`': 'quoteleft',
+  '!': 'exclam',
+  '@': 'at',
+  '#': 'numbersign',
+  $: 'dollar',
+  '%': 'percent',
+  '^': 'asciicircum',
+  '&': 'ampersand',
+  '*': 'asterisk',
+  '(': 'parenleft',
+  ')': 'parenright',
+  '-': 'minus',
+  _: 'underscore',
+  '+': 'plus',
+  '=': 'equal',
+  '{': 'braceleft',
+  '[': 'bracketleft',
+  '}': 'braceright',
+  ']': 'bracketright',
+  ':': 'colon',
+  ';': 'semicolon',
+  '"': 'quotedbl',
+  "'": 'apostrophe',
+  '|': 'bar',
+  '\\': 'backslash',
+  '<': 'less',
   ',': 'comma',
-  '.': 'period'
+  '>': 'greater',
+  '.': 'period',
+  '?': 'question',
+  '/': 'slash',
+  ' ': 'space'
 }
 
 function isPrintable (key: string) {
@@ -186,43 +211,53 @@ function onKeydown (e: KeyboardEvent) {
     return
   }
   exclusiveShift.value = false
+
   const isPrintableKey = isPrintable(key)
+  const hasControl = e.getModifierState('Control')
+  const hasMeta = e.getModifierState('Meta')
+  const hasAlt = e.getModifierState('Alt')
+  const hasShift = e.getModifierState('Shift')
+  const isShortcut = hasControl || hasMeta || hasAlt || (hasShift && !isPrintableKey)
+
   // In edit mode, rime handles every keydown;
-  // In non-edit mode, only when the textarea is focused and a printable key is down will activate rime.
-  if (!editing.value && (document.activeElement !== textarea || !isPrintableKey)) {
-    return
-  }
-  for (const modifier of modifiers) {
-    if (e.getModifierState(modifier) && isPrintableKey) {
+  // In non-edit mode, only when the textarea is focused and a printable key is down (w/o modifier) will activate rime.
+  if (!editing.value) {
+    if (document.activeElement !== textarea || !isPrintableKey) {
+      return
+    }
+    // Don't send Control+x, Meta+x, Alt+x to librime, but allow them with Shift
+    if (isShortcut && !hasShift) {
       return
     }
   }
-  const controlled = e.getModifierState('Control')
-  const shifted = e.getModifierState('Shift')
   let rimeKey: string | undefined
-  if (isPrintableKey) {
-    if (code.startsWith('Numpad')) {
-      rimeKey = `{KP_${code.substring(6)}}`
-    } else {
-      rimeKey = key
+  const wrap = (s: string) => `{${s}}`
+  if (isShortcut || !isPrintableKey) {
+    rimeKey = /^[0-9a-z]$/i.test(key) ? key : RIME_KEY_MAP[key]
+    if (rimeKey === undefined) {
+      return
     }
-  } else if (shifted && key === 'Delete') {
-    rimeKey = '{Shift+Delete}'
-  } else if (controlled && shifted && key === 'Enter') {
-    rimeKey = '{Control+Shift+Return}'
-  } else if ((controlled || shifted) && key === 'Enter') {
-    rimeKey = '{Shift+Return}'
+    const modifiers: string[] = []
+    if (hasControl) {
+      modifiers.push('Control')
+    }
+    if (hasMeta) {
+      modifiers.push('Meta')
+    }
+    if (hasAlt) {
+      modifiers.push('Alt')
+    }
+    if (hasShift) {
+      modifiers.push('Shift')
+    }
+    modifiers.push(rimeKey)
+    rimeKey = wrap(modifiers.join('+'))
+  } else if (code.startsWith('Numpad')) {
+    rimeKey = wrap(`KP_${code.substring(6)}`)
   } else {
-    for (const [k, v] of Object.entries(RIME_KEY_MAP)) {
-      if (key === k) {
-        rimeKey = `{${v}}`
-        break
-      }
-    }
+    rimeKey = key
   }
-  if (rimeKey === undefined) {
-    return
-  }
+
   if (!dragged.value) {
     const box = textarea.getBoundingClientRect()
     const caret: { top: number, left: number, height: number } = getCaretCoordinates(textarea, textarea.selectionStart)
@@ -244,8 +279,7 @@ function onKeyup (e: KeyboardEvent) {
   }
   exclusiveShift.value = false
   if (editing.value && isPrintable(key)) {
-    // @ts-ignore
-    input(`{Release+${RIME_RELEASE_KEY_MAP[key] || key}}`)
+    input(`{Release+${RIME_KEY_MAP[key] || key}}`)
   }
 }
 

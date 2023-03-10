@@ -1,5 +1,5 @@
 import { test, Request, expect } from '@playwright/test'
-import { baseURL, browserName, init, textarea, item, input, expectValue, changeLanguage, changeVariant, changeWidth, luna, cut, copy, copyLink } from './util'
+import { baseURL, browserName, init, textarea, item, menu, input, expectValue, changeLanguage, changeVariant, changeWidth, luna, cut, copy, copyLink } from './util'
 
 test('Simplified', async ({ page }) => {
   await init(page)
@@ -79,6 +79,17 @@ function Control (key: string) {
   return `${CONTROL}+${key}`
 }
 
+test('Shift', async ({ page }) => {
+  await init(page)
+
+  await changeLanguage(page, 'En')
+  await page.keyboard.down('Shift')
+  await page.keyboard.down('!')
+  await page.keyboard.up('Shift')
+  await page.keyboard.up('1')
+  await expectValue(page, '!')
+})
+
 test('Control shortcut', async ({ page }) => {
   await init(page)
 
@@ -97,6 +108,38 @@ test('Control shortcut', async ({ page }) => {
   await page.keyboard.press('ArrowUp')
   await page.keyboard.press(Control('v'))
   await expectValue(page, '选全选')
+})
+
+test('Control shortcut composing', async ({ page }) => {
+  await init(page)
+
+  await input(page, 'qj')
+  await expect(item(page, '1 期间')).toBeVisible()
+  await page.keyboard.press('Control+h')
+  await expect(item(page, '1 去')).toBeVisible()
+})
+
+test('Control Shift shortcut', async ({ page }) => {
+  await init(page)
+
+  await page.keyboard.down('Control')
+  await page.keyboard.down('Shift')
+  await page.keyboard.down('@')
+  await page.keyboard.up('@')
+  await page.keyboard.up('Shift')
+  await page.keyboard.up('Control')
+  await expect(menu(page).nth(0)).toHaveText('En')
+})
+
+test('Alt shortcut composing', async ({ page }) => {
+  await init(page)
+
+  await input(page, 'xy')
+  await expect(item(page, '1 需要')).toBeVisible()
+  await page.keyboard.press('=')
+  await expect(item(page, '1 想要')).toBeVisible()
+  await page.keyboard.press('Alt+v')
+  await expect(item(page, '1 需要')).toBeVisible()
 })
 
 test('Symbol', async ({ page }) => {
