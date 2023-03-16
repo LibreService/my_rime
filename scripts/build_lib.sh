@@ -15,6 +15,11 @@ popd
 ./b2 toolset=emscripten link=static --with-filesystem --with-system --with-regex --disable-icu --prefix=$root/build/sysroot/usr/local install -j $n
 popd
 
+[[ -L librime/plugins/lua ]] || ln -s ../../librime-lua librime/plugins/lua
+mkdir -p librime-lua/thirdparty
+[[ -L librime-lua/thirdparty/lua5.4 ]] || ln -s ../../lua librime-lua/thirdparty/lua5.4
+rm -f lua/onelua.c
+
 emcmake cmake librime/deps/yaml-cpp -B build/yaml-cpp \
 	-DBUILD_SHARED_LIBS:BOOL=OFF \
 	-DYAML_CPP_BUILD_CONTRIB:BOOL=OFF \

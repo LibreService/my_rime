@@ -13,7 +13,9 @@ However, you are more than welcomed to host a customized version of My RIME to d
 * Clone the repo. Do not use `--recurse-submodules`.
 * Replicate build steps locally. You may reference [README](../README.md) or `build` job of [CI script](../.github/workflows/build.yml). Those steps work on Ubuntu latest stable and LTS release.
 * Customize [schemas.json](../schemas.json).
-* Run `pnpm run schema`. If the end of the output asks to run `pnpm run wasm`, please do.
+* If your IME uses lua, place your `rime.lua` and `lua` directory under [rime-config](../rime-config/).
+* Run `pnpm run schema`.
+* Run `pnpm run wasm` if the end of previous step's output asks you to do, or if your IME uses lua.
 * Test by `pnpm run dev`.
 * Once everything works fine, run `pnpm run build`.
 * The artifact is in `dist`, and you may deploy it to a static web server.

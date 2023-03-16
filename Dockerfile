@@ -1,4 +1,4 @@
-FROM node:18.14.2-bullseye as builder
+FROM node:18.15.0-bullseye as builder
 
 ARG ENABLE_LOGGING=OFF
 

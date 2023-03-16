@@ -13,6 +13,8 @@ if [[ -z `git status --porcelain --ignore-submodules` ]]; then
 fi
 popd
 
+rm -rf librime/plugins/lua
+
 cmake librime -B build/librime_native \
   -DBUILD_TEST:BOOL=OFF \
   -DENABLE_LOGGING:BOOL=OFF \

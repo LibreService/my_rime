@@ -1,4 +1,5 @@
 import { test, Request, expect } from '@playwright/test'
+import yaml from 'js-yaml'
 import { baseURL, browserName, init, textarea, item, menu, input, expectValue, changeLanguage, changeVariant, changeWidth, luna, cut, copy, copyLink } from './util'
 
 test('Simplified', async ({ page }) => {
@@ -263,4 +264,21 @@ test('Debug', async ({ page }) => {
   await debugInput.fill('{Page_Down}')
   await page.keyboard.press('Enter')
   await expect(item(page, '1 等')).toBeVisible()
+})
+
+test('Lua', async ({ page }) => {
+  await page.route('**/luna_pinyin.schema.yaml', async route => {
+    const response = await route.fetch()
+    const body = await response.text()
+    const content = yaml.load(body)
+    content.engine.translators.push('lua_translator@*date_translator')
+    route.fulfill({
+      response,
+      body: yaml.dump(content)
+    })
+  })
+  await init(page)
+
+  await input(page, 'date', '2')
+  await expectValue(page, /^\d+年\d+月\d+日$/)
 })

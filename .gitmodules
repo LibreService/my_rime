@@ -7,3 +7,9 @@
 [submodule "plum"]
 	path = plum
 	url = https://github.com/rime/plum
+[submodule "lua"]
+	path = lua
+	url = https://github.com/lua/lua
+[submodule "librime-lua"]
+	path = librime-lua
+	url = https://github.com/hchunhui/librime-lua

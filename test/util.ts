@@ -57,7 +57,7 @@ async function inputCombo (page: Page, ...sequences: string[]) {
   }
 }
 
-function expectValue (page: Page, value: string) {
+function expectValue (page: Page, value: string | RegExp) {
   return expect(textarea(page)).toHaveValue(value)
 }
 

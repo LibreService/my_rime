@@ -37,6 +37,7 @@ const compileArgs = [
   '-s', 'ALLOW_MEMORY_GROWTH=1',
   '-s', 'EXPORTED_FUNCTIONS=_init,_set_option,_set_ime,_process',
   '-s', 'EXPORTED_RUNTIME_METHODS=["ccall","FS"]',
+  '--preload-file', 'rime-config@.',
   '-I', 'build/sysroot/usr/local/include',
   '-o', 'public/rime.js'
 ]
@@ -47,7 +48,8 @@ for (const file of preloadFiles) {
 
 const linkArgs = [
   '-L', 'build/sysroot/usr/local/lib',
-  '-l', 'rime',
+  // To include __attribute__((constructor)) in librime-lua, see https://stackoverflow.com/a/842770
+  '-Wl,--whole-archive', '-l', 'rime', '-Wl,--no-whole-archive',
   '-l:libboost_filesystem.bc',
   '-l', 'yaml-cpp',
   '-l', 'leveldb',
