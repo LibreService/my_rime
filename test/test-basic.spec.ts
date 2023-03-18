@@ -1,6 +1,5 @@
 import { test, Request, expect } from '@playwright/test'
-import yaml from 'js-yaml'
-import { baseURL, browserName, init, textarea, item, menu, input, expectValue, changeLanguage, changeVariant, changePunctuation, changeEmoji, changeWidth, luna, cut, copy, copyLink } from './util'
+import { baseURL, browserName, init, textarea, item, menu, input, expectValue, changeLanguage, changeVariant, changePunctuation, changeEmoji, changeWidth, luna, cut, copy, copyLink, patch } from './util'
 
 test('Simplified', async ({ page }) => {
   await init(page)
@@ -130,6 +129,28 @@ test('Control Shift shortcut', async ({ page }) => {
   await page.keyboard.up('Shift')
   await page.keyboard.up('Control')
   await expect(menu(page).nth(0)).toHaveText('En')
+})
+
+test('Alt composing', async ({ page }) => {
+  await patch(page, (content: any) => {
+    content.key_binder.bindings.push({
+      accept: 'Alt_L',
+      send: 'Page_Down',
+      when: 'has_menu'
+    }, {
+      accept: 'Alt_R',
+      send: 'Page_Up',
+      when: 'has_menu'
+    })
+  })
+  await init(page)
+
+  await input(page, 'yy')
+  await expect(item(page, '1 一样')).toBeVisible()
+  await page.keyboard.press('AltLeft')
+  await expect(item(page, '1 拥有')).toBeVisible()
+  await page.keyboard.press('AltRight')
+  await expect(item(page, '1 一样')).toBeVisible()
 })
 
 test('Alt shortcut composing', async ({ page }) => {
@@ -270,15 +291,8 @@ test('Debug', async ({ page }) => {
 })
 
 test('Lua', async ({ page }) => {
-  await page.route('**/luna_pinyin.schema.yaml', async route => {
-    const response = await route.fetch()
-    const body = await response.text()
-    const content = yaml.load(body)
+  await patch(page, (content: any) => {
     content.engine.translators.push('lua_translator@*date_translator')
-    route.fulfill({
-      response,
-      body: yaml.dump(content)
-    })
   })
   await init(page)
 

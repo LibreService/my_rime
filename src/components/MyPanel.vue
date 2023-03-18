@@ -62,6 +62,7 @@ const RIME_KEY_MAP: {[key: string]: string | undefined} = {
   End: 'End',
   PageUp: 'Page_Up',
   PageDown: 'Page_Down',
+  Alt: 'Alt_L',
   ArrowUp: 'Up',
   ArrowRight: 'Right',
   ArrowDown: 'Down',
@@ -213,6 +214,7 @@ function onKeydown (e: KeyboardEvent) {
   exclusiveShift.value = false
 
   const isPrintableKey = isPrintable(key)
+  const isAlt = key === 'Alt'
   const hasControl = e.getModifierState('Control')
   const hasMeta = e.getModifierState('Meta')
   const hasAlt = e.getModifierState('Alt')
@@ -237,6 +239,9 @@ function onKeydown (e: KeyboardEvent) {
     if (rimeKey === undefined) {
       return
     }
+    if (isAlt && code === 'AltRight') {
+      rimeKey = 'Alt_R'
+    }
     const modifiers: string[] = []
     if (hasControl) {
       modifiers.push('Control')
@@ -244,7 +249,7 @@ function onKeydown (e: KeyboardEvent) {
     if (hasMeta) {
       modifiers.push('Meta')
     }
-    if (hasAlt) {
+    if (hasAlt && !isAlt) {
       modifiers.push('Alt')
     }
     if (hasShift) {
