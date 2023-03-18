@@ -105,6 +105,8 @@ const changeCharLabel = (n: number) => async (page: Page, label: string) => {
 const changeLanguage = changeCharLabel(0)
 const changeVariant = changeCharLabel(1)
 const changeExtendedCharset = changeCharLabel(3)
+const changePunctuation = changeCharLabel(4)
+const changeEmoji = changeCharLabel(5)
 
 async function changeWidth (page: Page, full: boolean) {
   const button = menu(page).nth(2)
@@ -124,4 +126,4 @@ function copyLink (page: Page) {
   return bottomMenu(page).nth(2).click()
 }
 
-export { baseURL, luna, browserName, init, textarea, panel, panelBox, item, menu, input, inputCombo, expectValue, selectIME, changeLanguage, changeVariant, changeExtendedCharset, changeWidth, cut, copy, copyLink }
+export { baseURL, luna, browserName, init, textarea, panel, panelBox, item, menu, input, inputCombo, expectValue, selectIME, changeLanguage, changeVariant, changeExtendedCharset, changePunctuation, changeEmoji, changeWidth, cut, copy, copyLink }

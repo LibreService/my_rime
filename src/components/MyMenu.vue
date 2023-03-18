@@ -2,7 +2,7 @@
 import { ref, computed, watchEffect } from 'vue'
 import { NButton, NButtonGroup, NIcon, NSpace, NSelect } from 'naive-ui'
 import { WeatherMoon16Regular, Circle16Regular } from '@vicons/fluent'
-import { init, schemaId, options, variants, variant, isEnglish, isFullWidth, isExtendedCharset, isEnglishPunctuation, schemaExtended, changeLanguage, changeVariant, changeWidth, changeCharset, changePunctuation, changeIME } from '../control'
+import { init, schemaId, options, variants, variant, isEnglish, isFullWidth, isExtendedCharset, isEnglishPunctuation, enableEmoji, schemaExtended, changeLanguage, changeVariant, changeWidth, changeCharset, changePunctuation, changeEmoji, changeIME } from '../control'
 import { getTextarea, getQueryString } from '../util'
 
 const ime = ref<string>('') // visual vs internal
@@ -97,6 +97,12 @@ function resetFocus () {
         @click="changePunctuation"
       >
         {{ isEnglishPunctuation ? '.' : '。' }}
+      </n-button>
+      <n-button
+        secondary
+        @click="changeEmoji"
+      >
+        {{ enableEmoji ? '😀' : '🚫' }}
       </n-button>
     </n-button-group>
   </n-space>

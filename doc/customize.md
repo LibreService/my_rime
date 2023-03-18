@@ -44,6 +44,7 @@ Switching to a variant will first set other `option`s to `0`, and then set this 
 So if there is only one `option` that controls 2 variants, you may use `[{"id": "option"}, {"id": "random stuff"}]` if the default variant should have `option` on, and `[{"id": "random stuff"}, {"id": "option"}]` if the default variant should have `option` off.
 If you can understand this, you should agree that `undefined` is equivalent to `[{"id": "simplification", "name": "简"}, {"id": "233", "name": "繁"}]`.
 * `extended?: boolean`, whether the `.schema.yaml` supports common/extended charset switch. Default `false`.
+* `hideComment?: boolean | 'emoji'`, whether hide comment after candidate. `'emoji'` means only hide comment after emoji candidate. Default `false`.
 * `family?: object[]`, the other IMEs that share some files. Each shares the same `variants` with the major IME. Default `[]`.
   * `id: string`, the schema id.
   * `name: string`, the label.

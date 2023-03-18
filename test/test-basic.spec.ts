@@ -1,6 +1,6 @@
 import { test, Request, expect } from '@playwright/test'
 import yaml from 'js-yaml'
-import { baseURL, browserName, init, textarea, item, menu, input, expectValue, changeLanguage, changeVariant, changeWidth, luna, cut, copy, copyLink } from './util'
+import { baseURL, browserName, init, textarea, item, menu, input, expectValue, changeLanguage, changeVariant, changePunctuation, changeEmoji, changeWidth, luna, cut, copy, copyLink } from './util'
 
 test('Simplified', async ({ page }) => {
   await init(page)
@@ -50,7 +50,7 @@ test('Punctuation', async ({ page }) => {
   await init(page)
 
   await input(page, '.')
-  await page.getByRole('button', { name: '。' }).click()
+  await changePunctuation(page, '.')
   await input(page, '.')
   await expectValue(page, '。.')
 })
@@ -155,6 +155,9 @@ test('Emoji', async ({ page }) => {
 
   await input(page, 'chou', 'you', '2')
   await expectValue(page, '🦨')
+  await changeEmoji(page, '🚫')
+  await input(page, 'chou', 'you')
+  await expect(item(page, '2 抽')).toBeVisible()
 })
 
 test('Reverse lookup stroke', async ({ page }) => {

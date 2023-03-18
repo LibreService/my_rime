@@ -41,6 +41,7 @@
         "name": "臺"
       }
     ],
+    "hideComment": "emoji",
     "family": [
       {
         "id": "jyut6ping3_ipa",
@@ -219,6 +220,7 @@
     "target": "array",
     "dependencies": ["luna_quanpin"],
     "extended": true,
+    "hideComment": "emoji",
     "license": "GPL-3.0-only"
   },
   {

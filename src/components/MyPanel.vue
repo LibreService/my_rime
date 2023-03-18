@@ -6,7 +6,7 @@ import { CaretLeft, CaretRight } from '@vicons/fa'
 import getCaretCoordinates from 'textarea-caret'
 import emojiRegex from 'emoji-regex'
 import { process } from '../workerAPI'
-import { changeLanguage, syncOptions } from '../control'
+import { hideComment, changeLanguage, syncOptions } from '../control'
 import { isMobile, getTextarea, getQueryString } from '../util'
 
 const props = defineProps<{
@@ -138,7 +138,7 @@ async function input (rimeKey: string) {
     highlighted.value = (result.highlighted + 1).toString()
     menuOptions.value = result.candidates.map((candidate, i) => {
       let label = `${i + 1} ${candidate.text}`
-      if (!isEmoji(candidate.text)) {
+      if (hideComment.value === false || (hideComment.value === 'emoji' && !isEmoji(candidate.text))) {
         label += ' ' + candidate.comment
       }
       return { label, key: (i + 1).toString() }

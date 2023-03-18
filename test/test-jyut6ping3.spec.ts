@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { init, item, input, expectValue } from './util'
+import { init, item, input, expectValue, changeEmoji, selectIME } from './util'
 
 const ime = '粤语拼音'
 const schemaId = 'jyut6ping3'
@@ -30,6 +30,15 @@ test('Traditional', async ({ page }) => {
 
   await input(page, 'saan', 'fung ', 'wai', 'ho ', 'syut', 'waa ')
   await expectValue(page, '山峯爲何說話')
+})
+
+test('Emoji not affected by other IME', async ({ page }) => {
+  await init(page)
+
+  await changeEmoji(page, '🚫')
+  await selectIME(page, ime)
+  await input(page, 'cau', 'jau', '3')
+  await expectValue(page, '🦨')
 })
 
 test('Reverse lookup luna_pinyin', async ({ page }) => {
