@@ -283,7 +283,7 @@ function onKeyup (e: KeyboardEvent) {
     changeLanguage()
   }
   exclusiveShift.value = false
-  if (editing.value && isPrintable(key)) {
+  if (editing.value) {
     input(`{Release+${RIME_KEY_MAP[key] || key}}`)
   }
 }

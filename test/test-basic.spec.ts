@@ -79,6 +79,28 @@ function Control (key: string) {
   return `${CONTROL}+${key}`
 }
 
+test('Tab composing', async ({ page }) => {
+  await patch(page, (content: any) => {
+    content.key_binder.bindings.push({
+      accept: 'Tab',
+      send: 'Page_Down',
+      when: 'has_menu'
+    }, {
+      accept: 'Release+Tab',
+      send: 'Page_Up',
+      when: 'has_menu'
+    })
+  })
+  await init(page)
+
+  await input(page, 'zg')
+  await expect(item(page, '1 这个')).toBeVisible()
+  await page.keyboard.down('Tab')
+  await expect(item(page, '1 找个')).toBeVisible()
+  await page.keyboard.up('Tab')
+  await expect(item(page, '1 这个')).toBeVisible()
+})
+
 test('Shift', async ({ page }) => {
   await init(page)
 
