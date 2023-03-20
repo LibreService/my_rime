@@ -159,10 +159,10 @@ async function input (rimeKey: string) {
     if (result.committed) {
       insert(result.committed)
     }
-  } else { // REJECTED
+  } else { // REJECTED, UNHANDLED
     editing.value = false
     showMenu.value = false
-    if (isPrintable(rimeKey)) {
+    if (result.state === 3 && isPrintable(rimeKey)) {
       insert(rimeKey)
     }
   }

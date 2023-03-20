@@ -101,6 +101,29 @@ test('Tab composing', async ({ page }) => {
   await expect(item(page, '1 这个')).toBeVisible()
 })
 
+test('Space no candidates', async ({ page }) => {
+  await patch(page, (content: any) => {
+    content.key_binder.bindings.push({
+      accept: 'space',
+      send: 'space',
+      when: 'has_menu'
+    }, {
+      accept: 'space',
+      send: 'Escape',
+      when: 'composing'
+    })
+  })
+  await init(page)
+
+  await input(page, ' ')
+  await expectValue(page, ' ')
+  await input(page, 'j', ' ')
+  await expectValue(page, ' 就')
+  await input(page, 'u', ' ')
+  await input(page, 'x', ' ')
+  await expectValue(page, ' 就下')
+})
+
 test('Shift', async ({ page }) => {
   await init(page)
 

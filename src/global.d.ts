@@ -28,10 +28,13 @@ declare global {
   type RIME_REJECTED = {
     state: 2
   }
+  type RIME_UNHANDLED = {
+    state: 3
+  }
   type RIME_UPDATED_OPTIONS = {
     updatedOptions?: string[]
   }
-  type RIME_RESULT = (RIME_COMMITTED | RIME_ACCEPTED | RIME_REJECTED) & RIME_UPDATED_OPTIONS
+  type RIME_RESULT = (RIME_COMMITTED | RIME_ACCEPTED | RIME_REJECTED | RIME_UNHANDLED) & RIME_UPDATED_OPTIONS
 }
 
 export {}

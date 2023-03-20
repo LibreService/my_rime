@@ -4,13 +4,14 @@
 #include <rime_api.h>
 
 enum {
-    COMMITTED, ACCEPTED, REJECTED
+    COMMITTED, ACCEPTED, REJECTED, UNHANDLED
 };
 
 RimeSessionId session_id;
 RimeCommit commit;
 RimeContext context;
 std::string json_string;
+bool has_pre_edit;
 bool processing;
 std::vector<std::string> updated_options;
 
@@ -53,8 +54,8 @@ extern "C" {
             obj["updatedOptions"] = options;
         }
         RimeFreeCommit(&commit);
-        Bool hasCommitted = RimeGetCommit(session_id, &commit);
-        if (hasCommitted) {
+        Bool has_committed = RimeGetCommit(session_id, &commit);
+        if (has_committed) {
             obj["committed"] = commit.text;
         }
         RimeFreeContext(&context);
@@ -78,10 +79,16 @@ extern "C" {
                 candidates.push_back(candidate);
             }
             obj["candidates"] = candidates;
-        } else if (hasCommitted) {
-            obj["state"] = COMMITTED;
+            has_pre_edit = true;
         } else {
-            obj["state"] = REJECTED;
+            if (has_committed) {
+                obj["state"] = COMMITTED;
+            } else if (has_pre_edit) {
+                obj["state"] = REJECTED;
+            } else {
+                obj["state"] = UNHANDLED;
+            }
+            has_pre_edit = false;
         }
         return to_json(obj);
     }
