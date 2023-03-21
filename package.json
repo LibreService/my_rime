@@ -23,7 +23,7 @@
     "lint": "eslint --ext .ts,.js,.mjs,.vue scripts src test",
     "lint:fix": "eslint --ext .ts,.js,.mjs,.vue --fix scripts src test",
     "check": "vue-tsc --noEmit",
-    "build": "pnpm run check && rm -rf public/*.js.map && bash scripts/clean_ime.sh && NODE_ENV=production pnpm run worker && vite build",
+    "build": "pnpm run check && rm -rf public/*.js.map && node scripts/clean_ime.mjs && NODE_ENV=production pnpm run worker && vite build",
     "test": "playwright test --browser all test/ && playwright test test-device/",
     "preview": "vite preview --host"
   },
