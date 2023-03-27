@@ -8,6 +8,7 @@ const root = cwd()
 const { version } = JSON.parse(readFileSync('package.json'))
 const RIME_DIR = 'build/librime_native/bin'
 const defaultPath = `${RIME_DIR}/default.yaml`
+const utf8 = { encoding: 'utf-8' }
 
 // input file
 const schemas = JSON.parse(readFileSync('schemas.json'))
@@ -45,7 +46,7 @@ function isOfficialIME (target) {
 }
 
 function parseYaml (schemaId) {
-  const content = yaml.load(readFileSync(`${RIME_DIR}/build/${schemaId}.schema.yaml`, { encoding: 'utf-8' }))
+  const content = yaml.load(readFileSync(`${RIME_DIR}/build/${schemaId}.schema.yaml`, utf8))
   for (const [key, value] of Object.entries(content)) {
     if (key === 'translator') {
       const { dictionary, prism } = value
@@ -66,6 +67,13 @@ function parseYaml (schemaId) {
 
 ['prelude', 'essay', 'emoji'].forEach(install)
 
+// remove emoji_category as I don't want to visit a zoo when I type 东吴
+const emojiJson = `${RIME_DIR}/opencc/emoji.json`
+const emojiContent = JSON.parse(readFileSync(emojiJson, utf8))
+const emojiDict = emojiContent.conversion_chain[0].dict
+emojiDict.dicts = emojiDict.dicts.filter(({ file }) => file !== 'emoji_category.txt')
+writeFileSync(emojiJson, JSON.stringify(emojiContent))
+
 for (const schema of schemas) {
   const { target } = schema
   if (!(target in targetSchemas)) {
@@ -85,7 +93,7 @@ for (const schema of schemas) {
       ids.push(id)
       schemaTarget[id] = target
       targetSchemas[target].push(id)
-      if (!disabled) {
+      if (!disabled && schema.dependencies) {
         dependencyMap[id] = schema.dependencies
       }
     }
@@ -156,9 +164,7 @@ for (const [target, schemaIds] of Object.entries(targetSchemas)) {
     const fullPath = `${RIME_DIR}/build/${fileName}`
     copyFileSync(fullPath, `${packageDir}/${fileName}`)
 
-    const md5 = ensure(spawnSync('md5sum', [fullPath], {
-      encoding: 'utf-8'
-    })).stdout.slice(0, 32)
+    const md5 = ensure(spawnSync('md5sum', [fullPath], utf8)).stdout.slice(0, 32)
     targetFiles[target].push({ name: fileName, md5 })
   }
 }
