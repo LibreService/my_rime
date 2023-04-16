@@ -35,7 +35,7 @@ const compileArgs = [
   '-std=c++14',
   '-O2',
   '-s', 'ALLOW_MEMORY_GROWTH=1',
-  '-s', 'EXPORTED_FUNCTIONS=_init,_set_option,_set_ime,_process',
+  '-s', 'EXPORTED_FUNCTIONS=_init,_set_option,_set_ime,_process,_deploy',
   '-s', 'EXPORTED_RUNTIME_METHODS=["ccall","FS"]',
   '--preload-file', 'rime-config@.',
   '-I', 'build/sysroot/usr/local/include',

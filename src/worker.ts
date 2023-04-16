@@ -1,4 +1,4 @@
-import { expose, loadWasm } from '@libreservice/my-worker'
+import { expose, control, loadWasm } from '@libreservice/my-worker'
 import { openDB } from 'idb'
 import schemaFiles from '../schema-files.json'
 import schemaTarget from '../schema-target.json'
@@ -83,10 +83,16 @@ const readyPromise = loadWasm('rime.js', {
   }
 })
 
+// @ts-ignore
+globalThis._deployStatus = control('deployStatus') // called from api.cpp
+
 expose({
   setIME,
   setOption (option: string, value: boolean): void {
     return Module.ccall('set_option', 'null', ['string', 'number'], [option, value])
+  },
+  deploy (): void {
+    return Module.ccall('deploy', 'null', [], [])
   },
   process (input: string): string {
     return Module.ccall('process', 'string', ['string'], [input])

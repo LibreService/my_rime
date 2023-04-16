@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 #include <boost/json/src.hpp>
+#include <emscripten.h>
 #include <rime_api.h>
 
 enum {
@@ -21,8 +22,11 @@ inline const char *to_json(boost::json::object &obj) {
 }
 
 void handler(void* context_object, RimeSessionId session_id, const char* message_type, const char* message_value) {
-    if (processing && std::string(message_type) == "option") {
+    std::string msg_type = message_type;
+    if (processing && msg_type == "option") {
         updated_options.push_back(message_value);
+    } else if (msg_type == "deploy") {
+        EM_ASM(_deployStatus(UTF8ToString($0)), message_value);
     }
 }
 
@@ -95,5 +99,11 @@ extern "C" {
 
     void set_ime(const char *ime) {
         RimeSelectSchema(session_id, ime);
+    }
+
+    void deploy () {
+        RimeDestroySession(session_id);
+        RimeStartMaintenance(true);
+        session_id = RimeCreateSession();
     }
 }
