@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { NInput, NSpace, NButtonGroup, NButton, NIcon } from 'naive-ui'
+import { ref, defineAsyncComponent } from 'vue'
+import { NInput, NSpace, NButtonGroup, NButton, NIcon, NSwitch } from 'naive-ui'
 import { Cut20Regular, Copy20Regular, ClipboardLink20Regular } from '@vicons/fluent'
 import MyMenu from '../components/MyMenu.vue'
 import MyPanel from '../components/MyPanel.vue'
-import { getTextarea } from '../util'
+import type MySimulator from '../components/MySimulator.vue'
+import { getTextarea, getQueryString } from '../util'
 import { schemaId, variant } from '../control'
 
 const textareaSelector = '#container textarea'
@@ -49,6 +50,19 @@ async function copyLink () {
   const textarea = getTextarea(textareaSelector)
   textarea.focus()
 }
+
+const panel = ref<InstanceType<typeof MyPanel>>()
+const simulator = ref<InstanceType<typeof MySimulator>>()
+
+const advancedLoaded = ref<boolean>(Boolean(getQueryString('debug')))
+const showAdvanced = ref<boolean>(advancedLoaded.value)
+
+function toggleAdvanced (newValue: boolean) {
+  advancedLoaded.value = true
+  showAdvanced.value = newValue
+}
+
+const AsyncSimulator = defineAsyncComponent(() => import('../components/MySimulator.vue'))
 </script>
 
 <template>
@@ -88,9 +102,25 @@ async function copyLink () {
       </n-button>
     </n-button-group>
     <my-panel
+      ref="panel"
       :textarea-selector="textareaSelector"
       :text="text"
       :update-text="updateText"
+      :debug-mode="simulator?.debugMode"
+    />
+    <n-space>
+      Advanced
+      <n-switch
+        :value="showAdvanced"
+        @update:value="toggleAdvanced"
+      />
+    </n-space>
+    <component
+      :is="AsyncSimulator"
+      v-if="advancedLoaded"
+      v-show="showAdvanced"
+      ref="simulator"
+      :debug="panel?.debug"
     />
   </n-space>
 </template>

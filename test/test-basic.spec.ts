@@ -1,5 +1,25 @@
 import { test, Request, expect } from '@playwright/test'
-import { baseURL, browserName, init, textarea, item, menu, input, expectValue, changeLanguage, changeVariant, changePunctuation, changeEmoji, changeWidth, luna, cut, copy, copyLink, patch } from './util'
+import {
+  baseURL,
+  browserName,
+  init,
+  textarea,
+  item,
+  menu,
+  input,
+  expectValue,
+  changeLanguage,
+  changeVariant,
+  changePunctuation,
+  changeEmoji,
+  changeWidth,
+  luna,
+  cut,
+  copy,
+  copyLink,
+  callOnDownload,
+  patch
+} from './util'
 
 test('Simplified', async ({ page }) => {
   await init(page)
@@ -233,16 +253,8 @@ test('Reverse lookup stroke', async ({ page }) => {
   await expect(item(page, '1 反 fan')).toBeVisible()
 })
 
-function callOnDownload (callback: (param?: any) => void, resource: string, param?: any) {
-  return (request: Request) => {
-    if (request.url().endsWith(resource)) {
-      callback(param)
-    }
-  }
-}
-
 test('IndexedDB cache', async ({ page }) => {
-  const resource = '/luna_pinyin.schema.yaml'
+  const resource = /\/luna_pinyin.schema\.yaml$/
   let resolveDownload: (request: Request) => void
   let rejectDownload: (request: Request) => void
   let promise = new Promise(resolve => {
@@ -272,7 +284,7 @@ test('IndexedDB cache', async ({ page }) => {
 })
 
 test('Preload font', async ({ page }) => {
-  const resource = '/HanaMinB.woff2'
+  const resource = /\/HanaMinB\.woff2$/
   let resolveDownload: (request: Request) => void
   const promise = new Promise(resolve => {
     resolveDownload = callOnDownload(resolve, resource)
@@ -319,20 +331,6 @@ test('Copy link button', async ({ page }) => {
   await expect(textarea(page)).toBeFocused()
   const copiedURL = `${baseURL}?schemaId=luna_pinyin&variantName=%E7%B9%81`
   while (await page.evaluate(() => navigator.clipboard.readText()) !== copiedURL);
-})
-
-test('Debug', async ({ page }) => {
-  await page.goto(`${baseURL}?debug=on`)
-
-  const debugInput = page.locator('input')
-
-  await debugInput.fill('d')
-  await page.keyboard.press('Enter')
-  await expect(item(page, '1 的')).toBeVisible()
-  await expect(debugInput).toBeFocused()
-  await debugInput.fill('{Page_Down}')
-  await page.keyboard.press('Enter')
-  await expect(item(page, '1 等')).toBeVisible()
 })
 
 test('Lua', async ({ page }) => {

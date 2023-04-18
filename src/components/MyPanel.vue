@@ -1,24 +1,23 @@
 <script setup lang="ts">
-import { nextTick, ref, toRef, onMounted, onUnmounted, watch } from 'vue'
-import { NPopover, NMenu, MenuOption, NText, NButton, NIcon, NInput } from 'naive-ui'
+import { nextTick, ref, toRefs, toRaw, onMounted, onUnmounted, watch } from 'vue'
+import { NPopover, NMenu, MenuOption, NText, NButton, NIcon } from 'naive-ui'
 import { CaretLeft, CaretRight } from '@vicons/fa'
 // @ts-ignore
 import getCaretCoordinates from 'textarea-caret'
 import emojiRegex from 'emoji-regex'
 import { process } from '../workerAPI'
 import { hideComment, changeLanguage, syncOptions } from '../control'
-import { isMobile, getTextarea, getQueryString } from '../util'
+import { isMobile, getTextarea } from '../util'
 
 const props = defineProps<{
   textareaSelector: string
   text: string
+  debugMode?: boolean
   updateText:(newText: string) => void
 }>()
 
-/* eslint-disable vue/no-setup-props-destructure */
-const { textareaSelector, updateText } = props
-/* eslint-enable vue/no-setup-props-destructure */
-const text = toRef(props, 'text')
+const { textareaSelector, updateText } = toRaw(props)
+const { text, debugMode } = toRefs(props)
 
 const mouseX = ref<number>(0)
 const mouseY = ref<number>(0)
@@ -43,12 +42,9 @@ const showMenu = ref<boolean>(false)
 const xOverflow = ref<boolean>(false)
 const exclusiveShift = ref<boolean>(false)
 
-const debugEnabled = Boolean(getQueryString('debug'))
-const debugMode = ref<boolean>(false)
-const debugCode = ref<string>('')
-async function debug (e: KeyboardEvent) {
+async function debug (e: KeyboardEvent, rimeKey: string) {
   editing.value = true
-  await input(debugCode.value);
+  await input(rimeKey);
   (e.target as HTMLElement).focus()
 }
 
@@ -355,18 +351,13 @@ onUnmounted(() => { // Cleanup for HMR
   document.removeEventListener('mouseup', onMouseupOrTouchend)
   document.removeEventListener('touchend', onMouseupOrTouchend)
 })
+
+defineExpose({
+  debug
+})
 </script>
 
 <template>
-  <n-input
-    v-if="debugEnabled"
-    v-model:value="debugCode"
-    clearable
-    placeholder="Send key sequence to librime"
-    @keyup.enter="debug"
-    @focus="debugMode = true"
-    @blur="debugMode = false"
-  />
   <n-popover
     :show="showMenu"
     :show-arrow="false"

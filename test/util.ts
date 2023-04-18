@@ -1,4 +1,4 @@
-import { expect, Page } from '@playwright/test'
+import { expect, Request, Page } from '@playwright/test'
 import yaml from 'js-yaml'
 
 const baseURL = 'http://localhost:4173/'
@@ -127,6 +127,14 @@ function copyLink (page: Page) {
   return bottomMenu(page).nth(2).click()
 }
 
+function callOnDownload (callback: (param?: any) => void, resource: RegExp, param?: any) {
+  return (request: Request) => {
+    if (request.url().match(resource)) {
+      callback(param)
+    }
+  }
+}
+
 function patch (page: Page, patcher: (content: any) => void) {
   return page.route('**/luna_pinyin.schema.yaml', async route => {
     const response = await route.fetch()
@@ -140,4 +148,29 @@ function patch (page: Page, patcher: (content: any) => void) {
   })
 }
 
-export { baseURL, luna, browserName, init, textarea, panel, panelBox, item, menu, input, inputCombo, expectValue, selectIME, changeLanguage, changeVariant, changeExtendedCharset, changePunctuation, changeEmoji, changeWidth, cut, copy, copyLink, patch }
+export {
+  baseURL,
+  luna,
+  browserName,
+  init,
+  textarea,
+  panel,
+  panelBox,
+  item,
+  menu,
+  input,
+  inputCombo,
+  expectValue,
+  selectIME,
+  changeLanguage,
+  changeVariant,
+  changeExtendedCharset,
+  changePunctuation,
+  changeEmoji,
+  changeWidth,
+  cut,
+  copy,
+  copyLink,
+  callOnDownload,
+  patch
+}
