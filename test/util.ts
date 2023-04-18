@@ -2,6 +2,7 @@ import { expect, Request, Page } from '@playwright/test'
 import yaml from 'js-yaml'
 
 const baseURL = 'http://localhost:4173/'
+const debugURL = `${baseURL}?debug=on`
 const luna = '朙月拼音'
 
 function browserName (page: Page) {
@@ -127,6 +128,14 @@ function copyLink (page: Page) {
   return bottomMenu(page).nth(2).click()
 }
 
+function chain (...callbacks: ((param?: any) => void)[]) {
+  return (param?: any) => {
+    for (const callback of callbacks) {
+      callback(param)
+    }
+  }
+}
+
 function callOnDownload (callback: (param?: any) => void, resource: RegExp, param?: any) {
   return (request: Request) => {
     if (request.url().match(resource)) {
@@ -150,6 +159,7 @@ function patch (page: Page, patcher: (content: any) => void) {
 
 export {
   baseURL,
+  debugURL,
   luna,
   browserName,
   init,
@@ -171,6 +181,7 @@ export {
   cut,
   copy,
   copyLink,
+  chain,
   callOnDownload,
   patch
 }

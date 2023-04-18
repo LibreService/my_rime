@@ -10,6 +10,18 @@ index 4df1e65..eaf858c 100644
    auto timestamps = build_info["timestamps"];
    compiler->EnumerateResources([&](an<ConfigResource> resource) {
      if (!resource->loaded) {
+diff --git a/src/rime/deployer.cc b/src/rime/deployer.cc
+index fc43344..830333e 100644
+--- a/src/rime/deployer.cc
++++ b/src/rime/deployer.cc
+@@ -109,6 +109,7 @@ bool Deployer::StartWork(bool maintenance_mode) {
+   }
+   LOG(INFO) << "starting work thread for "
+             << pending_tasks_.size() << " tasks.";
++  return Run();
+   work_ = std::async(std::launch::async, [this] { Run(); });
+   return work_.valid();
+ }
 diff --git a/tools/CMakeLists.txt b/tools/CMakeLists.txt
 index 18e3407..b79a0c1 100644
 --- a/tools/CMakeLists.txt

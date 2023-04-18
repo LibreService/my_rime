@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NConfigProvider, NH1, darkTheme, useOsTheme } from 'naive-ui'
+import { NConfigProvider, NNotificationProvider, NH1, darkTheme, useOsTheme } from 'naive-ui'
 import { MyLayout, MyHeader, MyFooter } from '@libreservice/my-widget'
 import MyPwa from './components/MyPwa.vue'
 import MyFont from './components/MyFont.vue'
@@ -23,11 +23,13 @@ const osThemeRef = useOsTheme()
         <div style="cursor: pointer; text-align: center; margin-top: 16px">
           <n-h1>My RIME</n-h1>
         </div>
-        <router-view v-slot="{ Component }">
-          <keep-alive>
-            <component :is="Component" />
-          </keep-alive>
-        </router-view>
+        <n-notification-provider :max="1">
+          <router-view v-slot="{ Component }">
+            <keep-alive>
+              <component :is="Component" />
+            </keep-alive>
+          </router-view>
+        </n-notification-provider>
       </template>
       <template #footer>
         <my-footer

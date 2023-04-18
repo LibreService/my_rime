@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, defineAsyncComponent } from 'vue'
+import { ref, computed, watch, defineAsyncComponent } from 'vue'
 import { NInput, NSpace, NButtonGroup, NButton, NIcon, NSwitch } from 'naive-ui'
 import { Cut20Regular, Copy20Regular, ClipboardLink20Regular } from '@vicons/fluent'
 import MyMenu from '../components/MyMenu.vue'
 import MyPanel from '../components/MyPanel.vue'
 import type MySimulator from '../components/MySimulator.vue'
-import { getTextarea, getQueryString } from '../util'
+import type MyEditor from '../components/MyEditor.vue'
+import { getTextarea, getQueryString, isMobile } from '../util'
 import { schemaId, variant } from '../control'
 
 const textareaSelector = '#container textarea'
@@ -53,9 +54,18 @@ async function copyLink () {
 
 const panel = ref<InstanceType<typeof MyPanel>>()
 const simulator = ref<InstanceType<typeof MySimulator>>()
+const editor = ref<InstanceType<typeof MyEditor>>()
 
 const advancedLoaded = ref<boolean>(Boolean(getQueryString('debug')))
 const showAdvanced = ref<boolean>(advancedLoaded.value)
+const editorLoaded = ref<boolean>(advancedLoaded.value && !isMobile.value)
+const showEditor = computed(() => showAdvanced.value && !isMobile.value)
+
+watch(showEditor, (newValue: boolean) => {
+  if (newValue) {
+    editorLoaded.value = true
+  }
+})
 
 function toggleAdvanced (newValue: boolean) {
   advancedLoaded.value = true
@@ -63,6 +73,7 @@ function toggleAdvanced (newValue: boolean) {
 }
 
 const AsyncSimulator = defineAsyncComponent(() => import('../components/MySimulator.vue'))
+const AsyncEditor = defineAsyncComponent(() => import('../components/MyEditor.vue'))
 </script>
 
 <template>
@@ -121,6 +132,12 @@ const AsyncSimulator = defineAsyncComponent(() => import('../components/MySimula
       v-show="showAdvanced"
       ref="simulator"
       :debug="panel?.debug"
+    />
+    <component
+      :is="AsyncEditor"
+      v-if="editorLoaded"
+      v-show="showEditor"
+      ref="editor"
     />
   </n-space>
 </template>

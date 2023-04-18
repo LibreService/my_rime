@@ -6,6 +6,8 @@ Chinese IME powered by [RIME](https://github.com/rime/librime).
 https://my-rime.vercel.app/
 
 If you want to distribute your own IME, see [customize](doc/customize.md).
+
+If you want to deploy schemas dynamically (online, like how you deploy in Desktop/Mobile platforms), see [deploy](doc/deploy.md).
 ## Self host
 Download latest [artifact](https://github.com/LibreService/my_rime/releases/download/latest/my-rime-dist.zip) built by GitHub Actions.
 
@@ -56,7 +58,8 @@ pnpm run dev
 ```
 The app is accessible at http://localhost:5173
 
-Optionally, go to http://localhost:5173/?debug=on so that you can send raw key sequences to librime, e.g. `{Shift+Delete}`, `{Release+a}`. This feature is better used when you set `ENABLE_LOGGING=ON` in the previous step.
+Optionally, go to http://localhost:5173/?debug=on or turn on `Advanced` switch so that you can send raw key sequences to librime,
+ e.g. `{Shift+Delete}`, `{Release+a}`. This feature is better used when you set `ENABLE_LOGGING=ON` in the previous step.
 ### Lint
 ```sh
 pnpm run lint:fix

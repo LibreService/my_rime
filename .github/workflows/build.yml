@@ -54,12 +54,14 @@ jobs:
       - name: Build
         run: |
           pnpm run build
+      - name: Tar files
+        run: tar --exclude=build/librime_native/bin/build -cvf artifact.tar build/librime_native/bin dist
       - name: Upload artifact
         if: ${{ github.ref == 'refs/heads/master' }}
         uses: actions/upload-artifact@v3
         with:
-          name: dist
-          path: dist
+          name: artifact.tar
+          path: artifact.tar
 
   test:
     needs: build
@@ -87,8 +89,9 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:
-          name: dist
-          path: dist
+          name: artifact.tar
+      - name: Untar files
+        run: tar -xvf artifact.tar
       - name: Test
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |
@@ -108,8 +111,9 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:
-          name: dist
-          path: dist
+          name: artifact.tar
+      - name: Untar files
+        run: tar -xvf artifact.tar
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

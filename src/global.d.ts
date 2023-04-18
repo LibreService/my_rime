@@ -2,6 +2,7 @@ declare global {
   const Module: {
     FS: {
       lookupPath: (path: string) => void
+      chdir: (path: string) => void
       mkdir: (path: string) => void
       writeFile: (path: string, content: Uint8Array) => void
     }
