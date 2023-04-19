@@ -85,7 +85,7 @@ jobs:
         run: |
           npm i -g pnpm
           pnpm i
-          npx playwright install-deps
+          npx playwright install-deps ${{ matrix.browser }}
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:

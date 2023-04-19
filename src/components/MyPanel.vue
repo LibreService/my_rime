@@ -14,10 +14,15 @@ const props = defineProps<{
   text: string
   debugMode?: boolean
   updateText:(newText: string) => void
+  onUpdateSchema?: (targetIME: string) => Promise<void>
 }>()
 
 const { textareaSelector, updateText } = toRaw(props)
-const { text, debugMode } = toRefs(props)
+const {
+  text,
+  debugMode,
+  onUpdateSchema
+} = toRefs(props)
 
 const mouseX = ref<number>(0)
 const mouseY = ref<number>(0)
@@ -50,6 +55,7 @@ async function debug (e: KeyboardEvent, rimeKey: string) {
 
 const RIME_KEY_MAP: {[key: string]: string | undefined} = {
   Escape: 'Escape',
+  F4: 'F4',
   Backspace: 'BackSpace',
   Delete: 'Delete',
   Tab: 'Tab',
@@ -98,6 +104,8 @@ const RIME_KEY_MAP: {[key: string]: string | undefined} = {
   ' ': 'space'
 }
 
+const CONTROL_ALLOWLIST = ['`']
+
 function isPrintable (key: string) {
   return /^[a-z0-9!"#$%&'()*+,./:;<=>?@[\] ^_`{|}~\\-]$/i.test(key)
 }
@@ -122,6 +130,9 @@ async function input (rimeKey: string) {
   const result = JSON.parse(await process(rimeKey)) as RIME_RESULT
   if (result.updatedOptions) {
     syncOptions(result.updatedOptions)
+  }
+  if (result.updatedSchema) {
+    await onUpdateSchema?.value!(result.updatedSchema.split('/')[0])
   }
   if (result.state === 0) { // COMMITTED
     editing.value = false
@@ -220,11 +231,11 @@ function onKeydown (e: KeyboardEvent) {
   // In edit mode, rime handles every keydown;
   // In non-edit mode, only when the textarea is focused and a printable key is down (w/o modifier) will activate rime.
   if (!editing.value) {
-    if (document.activeElement !== textarea || !isPrintableKey) {
+    if (document.activeElement !== textarea || (!isPrintableKey && key !== 'F4')) {
       return
     }
     // Don't send Control+x, Meta+x, Alt+x to librime, but allow them with Shift
-    if (isShortcut && !hasShift) {
+    if (isShortcut && !hasShift && !(hasControl && CONTROL_ALLOWLIST.includes(key))) {
       return
     }
   }

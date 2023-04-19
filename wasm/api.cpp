@@ -15,6 +15,7 @@ std::string json_string;
 bool has_pre_edit;
 bool processing;
 std::vector<std::string> updated_options;
+std::string updated_schema;
 
 inline const char *to_json(boost::json::object &obj) {
     json_string = boost::json::serialize(obj);
@@ -25,6 +26,8 @@ void handler(void* context_object, RimeSessionId session_id, const char* message
     std::string msg_type = message_type;
     if (processing && msg_type == "option") {
         updated_options.push_back(message_value);
+    } else if (processing && msg_type == "schema") {
+        updated_schema = message_value;
     } else if (msg_type == "deploy") {
         EM_ASM(_deployStatus(UTF8ToString($0)), message_value);
     }
@@ -47,6 +50,7 @@ extern "C" {
     const char *process(const char *input) {
         boost::json::object obj;
         updated_options.clear();
+        updated_schema = "";
         processing = true;
         RimeSimulateKeySequence(session_id, input);
         processing = false;
@@ -56,6 +60,9 @@ extern "C" {
                 options.push_back(s.c_str());
             }
             obj["updatedOptions"] = options;
+        }
+        if (updated_schema.size()) {
+            obj["updatedSchema"] = updated_schema;
         }
         RimeFreeCommit(&commit);
         Bool has_committed = RimeGetCommit(session_id, &commit);
@@ -98,6 +105,10 @@ extern "C" {
     }
 
     void set_ime(const char *ime) {
+        // Need to reset session when using F4 to select a schema
+        // not available yet.
+        RimeDestroySession(session_id);
+        session_id = RimeCreateSession();
         RimeSelectSchema(session_id, ime);
     }
 

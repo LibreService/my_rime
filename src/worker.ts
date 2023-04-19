@@ -80,7 +80,6 @@ const readyPromise = loadWasm('rime.js', {
   init () {
     Module.ccall('init', 'null', [], [])
     Module.FS.chdir('rime')
-    Module.FS.mkdir('build')
   }
 })
 

@@ -1,5 +1,18 @@
 import { test, expect } from '@playwright/test'
-import { init, luna, textarea, item, menu, input, expectValue, selectIME, changeLanguage, changeVariant, changeExtendedCharset } from './util'
+import {
+  init,
+  luna,
+  select,
+  textarea,
+  item,
+  menu,
+  input,
+  expectValue,
+  selectIME,
+  changeLanguage,
+  changeVariant,
+  changeExtendedCharset
+} from './util'
 
 const ime = '仓颉五代'
 const schemaId = 'cangjie5'
@@ -68,7 +81,7 @@ test('IME and variant restored after reload', async ({ page }) => {
 
   await page.reload()
   await textarea(page).click()
-  await expect(page.locator('.n-select')).toHaveText(ime)
+  await expect(select(page)).toHaveText(ime)
   await expect(menu(page).nth(1)).toHaveText('繁')
   await input(page, 'okvif', 'bbtwt ')
   await expectValue(page, '繁體')

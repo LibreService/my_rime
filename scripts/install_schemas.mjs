@@ -24,6 +24,7 @@ const targetSchemas = {} // maps target to a list of schemas
 const targetFiles = {} // maps target to files with hash
 const targetLicense = {}
 const ids = []
+const disabledIds = []
 
 function install (target) {
   ensure(spawnSync('plum/rime-install', [target], {
@@ -83,6 +84,9 @@ for (const schema of schemas) {
     install(target)
   }
   ids.push(schema.id)
+  if (schema.disabled) {
+    disabledIds.push(schema.id)
+  }
   schemaTarget[schema.id] = target
   targetSchemas[target].push(schema.id)
   if (schema.dependencies) {
@@ -93,7 +97,9 @@ for (const schema of schemas) {
       ids.push(id)
       schemaTarget[id] = target
       targetSchemas[target].push(id)
-      if (!disabled && schema.dependencies) {
+      if (disabled) {
+        disabledIds.push(id)
+      } else if (schema.dependencies) {
         dependencyMap[id] = schema.dependencies
       }
     }
@@ -114,7 +120,7 @@ for (const [schemaId, dependencies] of Object.entries(dependencyMap)) {
   }
 }
 
-const patch = ids.map(id => `  - schema: ${id}`).join('\n') + '\n'
+const patch = ids.filter(id => !disabledIds.includes(id)).map(id => `  - schema: ${id}`).join('\n') + '\n'
 const defaultContent = readFileSync(defaultPath, 'utf-8')
 const updatedContent = defaultContent.replace(/( {2}- schema: \S+\n)+/, patch)
 writeFileSync(defaultPath, updatedContent)

@@ -3,11 +3,13 @@ import {
   baseURL,
   browserName,
   init,
+  select,
   textarea,
   item,
   menu,
   input,
   expectValue,
+  selectIME,
   changeLanguage,
   changeVariant,
   changePunctuation,
@@ -229,6 +231,34 @@ test('Alt shortcut composing', async ({ page }) => {
   await expect(item(page, '1 需要')).toBeVisible()
 })
 
+test('Switcher', async ({ page }) => {
+  await init(page)
+
+  await changeVariant(page, '繁')
+  await page.keyboard.press('F4')
+  await expect(item(page, '4 jyut6ping3')).toBeVisible()
+  await input(page, '4')
+  await expect(select(page)).toHaveText('粤语拼音')
+
+  await page.keyboard.press('Control+`')
+  await expect(item(page, '1 粵語拼音')).toBeVisible()
+  await input(page, '2')
+  await expect(item(page, '5 香港傳統漢字')).toBeVisible()
+  await input(page, '5')
+  await expect(menu(page).nth(1)).toHaveText('港')
+  await input(page, 'syut ')
+  await expectValue(page, '説')
+
+  await page.keyboard.press('Control+`')
+  await expect(item(page, '3 朙月拼音')).toBeVisible()
+  await input(page, '3')
+  await expect(select(page)).toHaveText('朙月拼音')
+  await expect(menu(page).nth(1)).toHaveText('繁')
+
+  await selectIME(page, '粤语拼音')
+  await expect(menu(page).nth(1)).toHaveText('港')
+})
+
 test('Symbol', async ({ page }) => {
   await init(page)
 
@@ -277,7 +307,7 @@ test('IndexedDB cache', async ({ page }) => {
   page.on('request', rejectDownload)
 
   await page.reload()
-  await expect(page.locator('.n-select')).toHaveText(luna)
+  await expect(select(page)).toHaveText(luna)
   await textarea(page).click()
   await input(page, 'huan', 'cun ')
   await Promise.race([expectValue(page, '缓存'), promise])

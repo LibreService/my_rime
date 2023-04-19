@@ -48,6 +48,10 @@ const props = defineProps<{
 function resetFocus () {
   getTextarea(props.textareaSelector).focus()
 }
+
+defineExpose({
+  selectIME
+})
 </script>
 
 <template>

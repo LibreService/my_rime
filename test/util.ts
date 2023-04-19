@@ -9,6 +9,10 @@ function browserName (page: Page) {
   return page.context().browser()!.browserType().name()
 }
 
+function select (page: Page) {
+  return page.locator('.n-select')
+}
+
 function textarea (page: Page) {
   return page.locator('textarea')
 }
@@ -22,7 +26,7 @@ async function init (page: Page, ime?: string, schemaId?: string, variantName?: 
     }
   }
   await page.goto(url)
-  await expect(page.locator('.n-select')).toHaveText(ime || luna)
+  await expect(select(page)).toHaveText(ime || luna)
   await textarea(page).click()
 }
 
@@ -64,8 +68,7 @@ function expectValue (page: Page, value: string | RegExp) {
 }
 
 async function selectIME (page: Page, ime: string) {
-  const select = page.locator('.n-select')
-  await select.click()
+  await select(page).click()
   const options = page.locator('.n-base-select-option')
   const first = options.getByText(luna, { exact: true })
   const klass = 'n-base-select-option--pending'
@@ -87,7 +90,7 @@ async function selectIME (page: Page, ime: string) {
     ])
   } while (true)
   await current.click()
-  return expect(select).toHaveText(ime) // ensure changed
+  return expect(select(page)).toHaveText(ime) // ensure changed
 }
 
 function menu (page: Page) {
@@ -163,6 +166,7 @@ export {
   luna,
   browserName,
   init,
+  select,
   textarea,
   panel,
   panelBox,
