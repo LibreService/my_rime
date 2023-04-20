@@ -131,9 +131,6 @@ async function input (rimeKey: string) {
   if (result.updatedOptions) {
     syncOptions(result.updatedOptions)
   }
-  if (result.updatedSchema) {
-    await onUpdateSchema?.value!(result.updatedSchema.split('/')[0])
-  }
   if (result.state === 0) { // COMMITTED
     editing.value = false
     showMenu.value = false
@@ -169,6 +166,9 @@ async function input (rimeKey: string) {
   } else { // REJECTED, UNHANDLED
     editing.value = false
     showMenu.value = false
+    if (result.state === 2 && result.updatedSchema) {
+      await onUpdateSchema?.value!(result.updatedSchema.split('/')[0])
+    }
     if (result.state === 3 && isPrintable(rimeKey)) {
       insert(rimeKey)
     }
