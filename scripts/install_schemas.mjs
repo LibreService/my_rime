@@ -16,12 +16,13 @@ const schemas = JSON.parse(readFileSync('schemas.json'))
 // output files
 const schemaFiles = {} // maps schema to dict and prism
 const schemaTarget = {} // maps schema to target
+const targetFiles = {} // maps target to files with hash
+const targetVersion = {} // maps target to npm package version
 const dependencyMap = {} // maps schema to dependent schemas
 const openccConfigs = ['t2s.json']
 
 // temp data structures
 const targetSchemas = {} // maps target to a list of schemas
-const targetFiles = {} // maps target to files with hash
 const targetLicense = {}
 const ids = []
 const disabledIds = []
@@ -134,6 +135,10 @@ ensure(spawnSync('./rime_console', [], {
 chdir(root)
 ids.forEach(parseYaml)
 
+function getPackageDir (target) {
+  return `public/ime/${target}`
+}
+
 for (const [target, schemaIds] of Object.entries(targetSchemas)) {
   // find all files that belongs to a target('s npm package)
   // wtf https://github.com/rime/plum/blob/6f502ff6fa87789847fa18200415318e705bffa4/scripts/resolver.sh#L22
@@ -157,15 +162,9 @@ for (const [target, schemaIds] of Object.entries(targetSchemas)) {
   fileNames.sort()
 
   // make npm package and calculate hash
-  const packageDir = `public/ime/${target}`
+  const packageDir = getPackageDir(target)
   mkdirSync(packageDir, { recursive: true })
-  const packageJson = {
-    name: `@${isOfficialIME(target) ? 'rime-contrib' : ''}/${target}`,
-    version,
-    files: fileNames,
-    license: targetLicense[target]
-  }
-  writeFileSync(`${packageDir}/package.json`, JSON.stringify(packageJson))
+
   for (const fileName of fileNames) {
     const fullPath = `${RIME_DIR}/build/${fileName}`
     copyFileSync(fullPath, `${packageDir}/${fileName}`)
@@ -175,18 +174,42 @@ for (const [target, schemaIds] of Object.entries(targetSchemas)) {
   }
 }
 
-let oldTargetFiles
-try {
-  oldTargetFiles = JSON.parse(readFileSync('target-files.json', 'utf-8'))
-} catch (e) {
-  oldTargetFiles = {}
+function readJson (path, defaultValue) {
+  try {
+    return JSON.parse(readFileSync(path, 'utf-8'))
+  } catch (e) {
+    return defaultValue
+  }
 }
+
+function bumpVersion (oldVersion) {
+  if (!oldVersion) {
+    return version
+  }
+  const [major, minor, patch] = oldVersion.split('.')
+  return [major, minor, Number(patch) + 1].join('.')
+}
+
+const oldTargetFiles = readJson('target-files.json', {})
 
 const updatedTargets = []
 for (const [target, files] of Object.entries(targetFiles)) {
+  const packageDir = getPackageDir(target)
+  const packageJsonPath = `${packageDir}/package.json`
+  const { version: oldVersion } = readJson(packageJsonPath, {})
+  let newVersion = oldVersion || version
   if (JSON.stringify(files) !== JSON.stringify(oldTargetFiles[target])) {
     updatedTargets.push(target)
+    newVersion = bumpVersion(oldVersion)
+    const packageJson = {
+      name: `@${isOfficialIME(target) ? 'rime-contrib' : ''}/${target}`,
+      version: newVersion,
+      files: targetFiles[target].map(({ name }) => name),
+      license: targetLicense[target]
+    }
+    writeFileSync(packageJsonPath, JSON.stringify(packageJson))
   }
+  targetVersion[target] = newVersion
 }
 
 if (updatedTargets.length) {
@@ -202,6 +225,7 @@ if (updatedTargets.length) {
 writeFileSync('schema-files.json', JSON.stringify(schemaFiles))
 writeFileSync('schema-target.json', JSON.stringify(schemaTarget))
 writeFileSync('dependency-map.json', JSON.stringify(dependencyMap))
+writeFileSync('target-version.json', JSON.stringify(targetVersion))
 
 let oldOpenccConfigs
 try {

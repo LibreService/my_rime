@@ -39,4 +39,5 @@ opencc-configs.json
 schema-files.json
 schema-target.json
 target-files.json
+target-version.json
 *.woff2

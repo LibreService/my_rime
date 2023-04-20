@@ -4,10 +4,17 @@ import schemaFiles from '../schema-files.json'
 import schemaTarget from '../schema-target.json'
 import dependencyMap from '../dependency-map.json'
 import targetFiles from '../target-files.json'
+import targetVersion from '../target-version.json'
 
 const HASH = 'hash'
 const CONTENT = 'content'
-const prefix = '__RIME_CDN__' || ('__LIBRESERVICE_CDN__' + 'ime/')
+
+function getURL (target: string, name: string) {
+  if ('__RIME_CDN__') { // eslint-disable-line no-constant-condition
+    return '__RIME_CDN__' + `${target}@${(targetVersion as {[key: string]: string})[target]}/${name}`
+  }
+  return `ime/${target}/${name}`
+}
 
 const dbPromise = openDB('ime', 1, {
   upgrade (db) {
@@ -61,7 +68,8 @@ async function setIME (schemaId: string) {
       if (storedHash === md5) {
         ab = await db!.get(CONTENT, name)
       } else {
-        const response = await fetch(`${prefix}${target}/${name}`)
+        const url = getURL(target, name)
+        const response = await fetch(url)
         if (!response.ok) {
           throw new Error(`Fail to download ${name}`)
         }
