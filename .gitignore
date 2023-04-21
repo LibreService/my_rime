@@ -37,6 +37,7 @@ public/worker.js
 dependency-map.json
 opencc-configs.json
 schema-files.json
+schema-name.json
 schema-target.json
 target-files.json
 target-version.json

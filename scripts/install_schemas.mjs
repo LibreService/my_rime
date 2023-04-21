@@ -14,6 +14,7 @@ const utf8 = { encoding: 'utf-8' }
 const schemas = JSON.parse(readFileSync('schemas.json'))
 
 // output files
+const schemaName = {} // maps schema to names
 const schemaFiles = {} // maps schema to dict and prism
 const schemaTarget = {} // maps schema to target
 const targetFiles = {} // maps target to files with hash
@@ -87,6 +88,8 @@ for (const schema of schemas) {
   ids.push(schema.id)
   if (schema.disabled) {
     disabledIds.push(schema.id)
+  } else {
+    schemaName[schema.id] = schema.name
   }
   schemaTarget[schema.id] = target
   targetSchemas[target].push(schema.id)
@@ -94,13 +97,14 @@ for (const schema of schemas) {
     dependencyMap[schema.id] = schema.dependencies
   }
   if (schema.family) {
-    for (const { id, disabled } of schema.family) {
+    for (const { id, name, disabled } of schema.family) {
       ids.push(id)
       schemaTarget[id] = target
       targetSchemas[target].push(id)
       if (disabled) {
         disabledIds.push(id)
       } else if (schema.dependencies) {
+        schemaName[id] = name
         dependencyMap[id] = schema.dependencies
       }
     }
@@ -222,6 +226,7 @@ if (updatedTargets.length) {
   console.log('All targets are already up to date.')
 }
 
+writeFileSync('schema-name.json', JSON.stringify(schemaName))
 writeFileSync('schema-files.json', JSON.stringify(schemaFiles))
 writeFileSync('schema-target.json', JSON.stringify(schemaTarget))
 writeFileSync('dependency-map.json', JSON.stringify(dependencyMap))

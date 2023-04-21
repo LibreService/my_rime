@@ -1,8 +1,11 @@
 #include <string>
 #include <vector>
+#include <unordered_map>
 #include <boost/json/src.hpp>
 #include <emscripten.h>
 #include <rime_api.h>
+
+namespace my_rime {
 
 enum {
     COMMITTED, ACCEPTED, REJECTED, UNHANDLED
@@ -16,6 +19,9 @@ bool has_pre_edit;
 bool processing;
 std::vector<std::string> updated_options;
 std::string updated_schema;
+// Before a successful deployment, use schema name in schemas.json instead of .schema.yaml.
+bool deployed = false;
+std::unordered_map<std::string, std::string> schema_name;
 
 inline const char *to_json(boost::json::object &obj) {
     json_string = boost::json::serialize(obj);
@@ -30,7 +36,14 @@ void handler(void* context_object, RimeSessionId session_id, const char* message
         updated_schema = message_value;
     } else if (msg_type == "deploy") {
         EM_ASM(_deployStatus(UTF8ToString($0)), message_value);
+        if (std::string(message_value) == "success") {
+            deployed = true;
+        }
     }
+}
+
+std::string get_schema_name(std::string schema) {
+    return schema_name[schema];
 }
 
 extern "C" {
@@ -45,6 +58,10 @@ extern "C" {
         session_id = RimeCreateSession();
         RIME_STRUCT_INIT(RimeCommit, commit);
         RIME_STRUCT_INIT(RimeContext, context);
+    }
+
+    void set_schema_name(const char* schema, const char *name) {
+        schema_name[schema] = name;
     }
 
     const char *process(const char *input) {
@@ -117,4 +134,6 @@ extern "C" {
         RimeStartMaintenance(true);
         session_id = RimeCreateSession();
     }
+}
+
 }

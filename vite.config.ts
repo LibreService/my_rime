@@ -58,6 +58,7 @@ if (process.env.NODE_ENV !== 'production') {
   const watchFiles = [
     'worker.ts',
     'schema-files.json',
+    'schema-name.json',
     'schema-target.json',
     'dependency-map.json',
     'target-files.json',

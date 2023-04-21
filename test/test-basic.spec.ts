@@ -236,12 +236,12 @@ test('Switcher', async ({ page }) => {
 
   await changeVariant(page, '繁')
   await page.keyboard.press('F4')
-  await expect(item(page, '4 jyut6ping3')).toBeVisible()
+  await expect(item(page, '4 粤语拼音')).toBeVisible()
   await input(page, '4')
   await expect(select(page)).toHaveText('粤语拼音')
 
   await page.keyboard.press('Control+`')
-  await expect(item(page, '1 粵語拼音')).toBeVisible()
+  await expect(item(page, '1 粤语拼音')).toBeVisible()
   await input(page, '2')
   await expect(item(page, '5 香港傳統漢字')).toBeVisible()
   await input(page, '5')

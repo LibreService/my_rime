@@ -1,5 +1,6 @@
 import { expose, control, loadWasm, fsOperate } from '@libreservice/my-worker'
 import { openDB } from 'idb'
+import schemaName from '../schema-name.json'
 import schemaFiles from '../schema-files.json'
 import schemaTarget from '../schema-target.json'
 import dependencyMap from '../dependency-map.json'
@@ -88,6 +89,9 @@ const readyPromise = loadWasm('rime.js', {
   init () {
     Module.ccall('init', 'null', [], [])
     Module.FS.chdir('rime')
+    for (const [schema, name] of Object.entries(schemaName)) {
+      Module.ccall('set_schema_name', 'null', ['string', 'string'], [schema, name])
+    }
   }
 })
 
