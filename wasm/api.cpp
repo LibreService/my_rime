@@ -23,7 +23,8 @@ std::string updated_schema;
 bool deployed = false;
 std::unordered_map<std::string, std::string> schema_name;
 
-inline const char *to_json(boost::json::object &obj) {
+template <typename T>
+inline const char *to_json(T &obj) {
     json_string = boost::json::serialize(obj);
     return json_string.c_str();
 }
@@ -35,10 +36,20 @@ void handler(void* context_object, RimeSessionId session_id, const char* message
     } else if (processing && msg_type == "schema") {
         updated_schema = message_value;
     } else if (msg_type == "deploy") {
-        EM_ASM(_deployStatus(UTF8ToString($0)), message_value);
+        boost::json::array schema_array;
         if (std::string(message_value) == "success") {
             deployed = true;
+            RimeSchemaList schemas;
+            RimeGetSchemaList(&schemas);
+            for (size_t i = 0; i < schemas.size; ++i) {
+                boost::json::object obj;
+                obj["id"] = schemas.list[i].schema_id;
+                obj["name"] = schemas.list[i].name;
+                schema_array.push_back(obj);
+            }
+            RimeFreeSchemaList(&schemas);
         }
+        EM_ASM(_deployStatus(UTF8ToString($0), UTF8ToString($1)), message_value, to_json(schema_array));
     }
 }
 

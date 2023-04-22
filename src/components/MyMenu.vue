@@ -2,20 +2,49 @@
 import { ref, computed, watchEffect } from 'vue'
 import { NButton, NButtonGroup, NIcon, NSpace, NSelect } from 'naive-ui'
 import { WeatherMoon16Regular, Circle16Regular } from '@vicons/fluent'
-import { init, schemaId, options, variants, variant, isEnglish, isFullWidth, isExtendedCharset, isEnglishPunctuation, enableEmoji, schemaExtended, changeLanguage, changeVariant, changeWidth, changeCharset, changePunctuation, changeEmoji, changeIME } from '../control'
+import {
+  init,
+  deployed,
+  schemaId,
+  selectOptions,
+  variants,
+  variant,
+  isEnglish,
+  isFullWidth,
+  isExtendedCharset,
+  isEnglishPunctuation,
+  enableEmoji,
+  schemaExtended,
+  changeLanguage,
+  changeVariant,
+  changeWidth,
+  changeCharset,
+  changePunctuation,
+  changeEmoji,
+  changeIME
+} from '../control'
 import { getTextarea, getQueryString } from '../util'
 
 const ime = ref<string>('') // visual vs internal
+
+function displayIME (value: string) {
+  ime.value = value
+}
+
 const showVariant = ref<boolean>(false)
 const loading = ref<boolean>(true)
 
+function setLoading (value: boolean) {
+  loading.value = value
+}
+
 init(getQueryString('schemaId'), getQueryString('variantName')).then(() => {
-  ime.value = schemaId.value
+  displayIME(schemaId.value)
   showVariant.value = true
-  loading.value = false
+  setLoading(false)
 })
 
-const variantLabel = computed(() => showVariant.value ? variant.value.name : '')
+const variantLabel = computed(() => showVariant.value && !deployed.value ? variant.value.name : '')
 const singleVariant = computed(() => variants.value.length === 1)
 
 watchEffect(() => {
@@ -26,11 +55,11 @@ watchEffect(() => {
 async function selectIME (targetIME: string) {
   resetFocus()
   showVariant.value = false
-  loading.value = true
+  setLoading(true)
   await changeIME(targetIME)
-  ime.value = targetIME // update UI after variant properly set
+  displayIME(targetIME) // update UI after variant properly set
   showVariant.value = true
-  loading.value = false
+  setLoading(false)
 }
 
 async function switchVariant () {
@@ -50,6 +79,8 @@ function resetFocus () {
 }
 
 defineExpose({
+  displayIME,
+  setLoading,
   selectIME
 })
 </script>
@@ -59,7 +90,7 @@ defineExpose({
     <n-select
       style="width: 160px"
       :value="ime"
-      :options="options"
+      :options="selectOptions"
       :loading="loading"
       @update:value="selectIME"
     />
@@ -75,7 +106,7 @@ defineExpose({
       </n-button>
       <n-button
         secondary
-        :disabled="isEnglish || singleVariant"
+        :disabled="isEnglish || singleVariant || deployed"
         @click="switchVariant"
       >
         {{ variantLabel }}

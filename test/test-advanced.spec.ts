@@ -1,11 +1,13 @@
 import { test, Request, expect, Page } from '@playwright/test'
 import {
   init,
+  select,
   debugURL,
   textarea,
   input,
   expectValue,
   item,
+  selectIME,
   chain,
   callOnDownload
 } from './util'
@@ -73,6 +75,8 @@ test('Advanced', async ({ page }) => {
 test('Deploy', async ({ page }) => {
   await page.goto(debugURL)
 
+  await selectIME(page, '粤语拼音')
+
   await deploy(page)
   await expect(page.getByText('Deployment failed')).toBeVisible()
 
@@ -106,6 +110,7 @@ test('Deploy', async ({ page }) => {
 
   await deploy(page)
   await expect(page.getByText('Deployment succeeded')).toBeVisible()
+  await expect(select(page)).toHaveText('朙月拼音')
 
   await textarea(page).click()
   await input(page, 'fan', 'ti ')

@@ -143,6 +143,7 @@ const AsyncEditor = defineAsyncComponent(() => import('../components/MyEditor.vu
       v-if="editorLoaded"
       v-show="showEditor"
       ref="editor"
+      :menu="menu"
     />
   </n-space>
 </template>

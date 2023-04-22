@@ -9,6 +9,8 @@ const ASCII_PUNCT = 'ascii_punct'
 const EMOJI_SUGGESTION = 'emoji_suggestion'
 const SIMPLIFICATION = 'simplification'
 
+const deployed = ref<boolean>(false)
+
 const schemaId = ref<string>(schemas[0].id)
 
 const schemaExtended: string[] = []
@@ -26,10 +28,10 @@ const schemaVariantsIndex: {
 
 const schemaEmoji: {[key: string]: Ref<boolean>} = {}
 
-const options: {
+const selectOptions = ref<{
   label: string
   value: string
-}[] = []
+}[]>([])
 
 type Variants = {
   id: string,
@@ -87,7 +89,7 @@ for (const schema of schemas as {
   }
 
   function helper (id: string, name: string, extended: boolean | undefined, hideComment: HideComment | undefined) {
-    options.push({
+    selectOptions.value.push({
       label: name,
       value: id
     })
@@ -199,7 +201,9 @@ async function changeIME (targetIME: string) {
   try {
     await setIME(targetIME)
     schemaId.value = targetIME
-    await setVariant()
+    if (!deployed.value) {
+      await setVariant()
+    }
     await setEmoji()
     isEnglish.value = false // librime resets Chinese
   } catch (e) {
@@ -243,4 +247,26 @@ function syncOptions (updatedOptions: string[]) {
   }
 }
 
-export { init, schemaId, options, variants, variant, isEnglish, isFullWidth, isExtendedCharset, isEnglishPunctuation, enableEmoji, schemaExtended, hideComment, changeLanguage, changeVariant, changeWidth, changeCharset, changePunctuation, changeEmoji, changeIME, syncOptions }
+export {
+  init,
+  deployed,
+  schemaId,
+  selectOptions,
+  variants,
+  variant,
+  isEnglish,
+  isFullWidth,
+  isExtendedCharset,
+  isEnglishPunctuation,
+  enableEmoji,
+  schemaExtended,
+  hideComment,
+  changeLanguage,
+  changeVariant,
+  changeWidth,
+  changeCharset,
+  changePunctuation,
+  changeEmoji,
+  changeIME,
+  syncOptions
+}
