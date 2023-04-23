@@ -32,13 +32,13 @@ test('Traditional', async ({ page }) => {
   await expectValue(page, '山峯爲何說話')
 })
 
-test('Emoji not affected by other IME', async ({ page }) => {
+test('Emoji is global option', async ({ page }) => {
   await init(page)
 
   await changeEmoji(page, '🚫')
   await selectIME(page, ime)
   await input(page, 'cau', 'jau', '3')
-  await expectValue(page, '🦨')
+  await expectValue(page, '泅游')
 })
 
 test('Reverse lookup luna_pinyin', async ({ page }) => {

@@ -26,8 +26,6 @@ const schemaVariantsIndex: {
   [key: string]: Ref<number>
 } = {}
 
-const schemaEmoji: {[key: string]: Ref<boolean>} = {}
-
 const selectOptions = ref<{
   label: string
   value: string
@@ -94,7 +92,6 @@ for (const schema of schemas as {
       value: id
     })
     schemaVariantsIndex[id] = ref<number>(0)
-    schemaEmoji[id] = ref<boolean>(true)
     if (extended) {
       schemaExtended.push(id)
     }
@@ -133,8 +130,6 @@ async function init (_schemaId: string, variantName: string) {
   if (_schemaId in schemaVariants) {
     schemaId.value = _schemaId
   }
-  await setIME(schemaId.value)
-  await setEmoji()
   variantIndex.value = 0
   for (let i = 0; i < variants.value.length; ++i) {
     if (variants.value[i].name === variantName) {
@@ -142,21 +137,14 @@ async function init (_schemaId: string, variantName: string) {
       break
     }
   }
-  return setVariant()
+  return changeIME(schemaId.value)
 }
 
 const isEnglish = ref<boolean>(false)
 const isFullWidth = ref<boolean>(false)
 const isExtendedCharset = ref<boolean>(false)
 const isEnglishPunctuation = ref<boolean>(false)
-const enableEmoji = computed({
-  get () {
-    return schemaEmoji[schemaId.value].value
-  },
-  set (newValue) {
-    schemaEmoji[schemaId.value].value = newValue
-  }
-})
+const enableEmoji = ref<boolean>(true)
 
 const basicOptionMap = {
   [ASCII_MODE]: isEnglish,
@@ -193,19 +181,23 @@ function changeVariant () {
   return setVariant()
 }
 
-function setEmoji () {
-  return setOption(EMOJI_SUGGESTION, enableEmoji.value)
-}
-
 async function changeIME (targetIME: string) {
   try {
     await setIME(targetIME)
     schemaId.value = targetIME
     if (!deployed.value) {
+      // Variant is specific to a schema
       await setVariant()
     }
-    await setEmoji()
-    isEnglish.value = false // librime resets Chinese
+    for (const [option, box] of Object.entries(basicOptionMap)) {
+      if (option === ASCII_MODE) {
+        // librime resets Chinese
+        box.value = false
+        continue
+      }
+      // Other options aren't specific to a schema
+      await setOption(option, box.value)
+    }
   } catch (e) {
     console.error(e)
   }

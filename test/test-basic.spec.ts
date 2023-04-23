@@ -76,6 +76,15 @@ test('Punctuation', async ({ page }) => {
   await expectValue(page, '。.')
 })
 
+test('Punctuation restored', async ({ page }) => {
+  await init(page)
+
+  await changePunctuation(page, '.')
+  await selectIME(page, luna)
+  await input(page, ',')
+  await expectValue(page, ',')
+})
+
 test('No action', async ({ page }) => {
   await init(page)
 

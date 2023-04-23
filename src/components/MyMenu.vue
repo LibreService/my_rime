@@ -56,6 +56,7 @@ async function selectIME (targetIME: string) {
   resetFocus()
   showVariant.value = false
   setLoading(true)
+  displayIME('')
   await changeIME(targetIME)
   displayIME(targetIME) // update UI after variant properly set
   showVariant.value = true
