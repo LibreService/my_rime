@@ -38,6 +38,10 @@ test('Debug', async ({ page }) => {
   await debugInput.fill('{Page_Down}')
   await page.keyboard.press('Enter')
   await expect(item(page, '1 等')).toBeVisible()
+
+  for (const name of ['rime', 'opencc']) {
+    await expect(page.locator('.n-tree').getByText(name, { exact: true })).toBeVisible()
+  }
 })
 
 test('Advanced', async ({ page }) => {
@@ -80,7 +84,6 @@ test('Deploy', async ({ page }) => {
   await deploy(page)
   await expect(page.getByText('Deployment failed')).toBeVisible()
 
-  await page.getByText('/', { exact: true }).click()
   await page.getByText('rime', { exact: true }).click({
     button: 'right'
   })
@@ -98,7 +101,6 @@ test('Deploy', async ({ page }) => {
   await page.locator('.n-dialog .n-button').getByText('Upload').click()
 
   const content = page.locator('.cm-content')
-  await page.getByText('rime', { exact: true }).click()
   await page.getByText('default.yaml', { exact: true }).click()
   await content.click()
   await page.keyboard.press('Control+f')

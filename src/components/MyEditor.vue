@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { toRaw } from 'vue'
+import { ref, toRaw, onMounted } from 'vue'
 import { NButton, useNotification } from 'naive-ui'
 import { json } from '@codemirror/legacy-modes/mode/javascript'
 import { lua } from '@codemirror/legacy-modes/mode/lua'
@@ -75,6 +75,19 @@ worker.control('deployStatus', async (status: 'start' | 'failure' | 'success', s
       break
   }
 })
+
+const wc = ref<InstanceType<typeof WasmCode>>()
+
+onMounted(() => {
+  [
+    '/',
+    '/rime/',
+    '/usr/',
+    '/usr/local/',
+    '/usr/local/share/',
+    '/usr/local/share/opencc/'
+  ].forEach(wc.value!.expandFolder)
+})
 </script>
 
 <template>
@@ -87,6 +100,7 @@ worker.control('deployStatus', async (status: 'start' | 'failure' | 'success', s
       Deploy
     </n-button>
     <wasm-code
+      ref="wc"
       :fs="FS"
       height="80vh"
       :lang-parser-map="langParserMap"
