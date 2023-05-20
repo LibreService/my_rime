@@ -221,9 +221,13 @@ if (updatedTargets.length) {
   for (const target of updatedTargets) {
     console.log(target)
   }
-  writeFileSync('target-files.json', JSON.stringify(targetFiles))
 } else {
   console.log('All targets are already up to date.')
+}
+
+// add/modify || remove
+if (updatedTargets.length || Object.keys(targetFiles).length !== Object.keys(oldTargetFiles).length) {
+  writeFileSync('target-files.json', JSON.stringify(targetFiles))
 }
 
 writeFileSync('schema-name.json', JSON.stringify(schemaName))
