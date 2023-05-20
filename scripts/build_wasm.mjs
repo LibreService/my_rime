@@ -1,9 +1,11 @@
 import { spawnSync } from 'child_process'
+import { exit } from 'process'
 import { readFileSync } from 'fs'
 import { ensure } from './util.mjs'
 
 const OPENCC_TARGET = '/usr/local/share/opencc'
 const OPENCC_HOST = `build/sysroot/${OPENCC_TARGET}`
+const LIB_PATH = 'build/sysroot/usr/local/lib'
 
 const preloadFiles = []
 function preload (file) {
@@ -48,7 +50,7 @@ for (const file of preloadFiles) {
 }
 
 const linkArgs = [
-  '-L', 'build/sysroot/usr/local/lib',
+  '-L', LIB_PATH,
   // To include __attribute__((constructor)) in librime-lua, see https://stackoverflow.com/a/842770
   '-Wl,--whole-archive', '-l', 'rime', '-Wl,--no-whole-archive',
   '-l:libboost_filesystem.bc',
@@ -58,8 +60,25 @@ const linkArgs = [
   '-l', 'opencc'
 ]
 
-if (process.env.ENABLE_LOGGING === 'ON') {
+// In case you forget setting ENABLE_LOGGING
+function isLibRimeBuiltWithGLog () {
+  try {
+    ensure(spawnSync('grep', ['LogMessage', `${LIB_PATH}/librime.a`]))
+    return true
+  } catch {
+    return false
+  }
+}
+
+if (process.env.ENABLE_LOGGING === 'ON' || isLibRimeBuiltWithGLog()) {
   linkArgs.push('-l', 'glog')
+}
+
+try {
+  ensure(spawnSync('em++', ['-v']))
+} catch {
+  console.error('Command em++ not available. Please activate emscripten environment.')
+  exit(1)
 }
 
 ensure(spawnSync('em++', [
