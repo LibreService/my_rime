@@ -3,7 +3,7 @@ import { NConfigProvider, NNotificationProvider, NH1, darkTheme, useOsTheme } fr
 import { MyLayout, MyHeader, MyFooter } from '@libreservice/my-widget'
 import MyPwa from './components/MyPwa.vue'
 import MyFont from './components/MyFont.vue'
-import { homepage } from '../package.json'
+import { homepage, appName } from '../package.json'
 
 const osThemeRef = useOsTheme()
 </script>
@@ -21,7 +21,7 @@ const osThemeRef = useOsTheme()
       </template>
       <template #content>
         <div style="cursor: pointer; text-align: center; margin-top: 16px">
-          <n-h1>My RIME</n-h1>
+          <n-h1>{{ appName }}</n-h1>
         </div>
         <n-notification-provider :max="1">
           <router-view v-slot="{ Component }">

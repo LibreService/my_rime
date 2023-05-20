@@ -4,6 +4,7 @@ import vue from '@vitejs/plugin-vue'
 import replace from '@rollup/plugin-replace'
 import { run } from 'vite-plugin-run'
 import { VitePWA, VitePWAOptions } from 'vite-plugin-pwa'
+import { appName } from './package.json'
 
 const resources = ['rime.data', 'rime.js', 'rime.wasm', 'HanaMinB.woff2']
 
@@ -39,8 +40,8 @@ const plugins = [
     registerType: 'autoUpdate',
     workbox,
     manifest: {
-      name: 'My RIME',
-      short_name: 'My RIME',
+      name: appName,
+      short_name: appName,
       icons: [
         {
           src: 'LibreService.svg',

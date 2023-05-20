@@ -4,6 +4,7 @@
   "files": [
     "dist"
   ],
+  "appName": "My RIME",
   "homepage": "https://github.com/LibreService/my_rime",
   "author": {
     "name": "Qijia Liu",
