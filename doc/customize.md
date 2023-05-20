@@ -11,7 +11,9 @@ However, you are more than welcomed to host a customized version of My RIME to d
 
 ## Step
 * Clone the repo. Do not use `--recurse-submodules`.
-* Replicate build steps locally. You may reference [README](../README.md) or `build` job of [CI script](../.github/workflows/build.yml). Those steps work on Ubuntu latest stable and LTS release.
+* Replicate build steps locally. You may reference [README](../README.md), [Dockerfile](../Dockerfile) or `build` job of [CI script](../.github/workflows/build.yml).
+Those steps work on Ubuntu latest stable and LTS release.
+It's highly recommended to be done BEFORE your customization, in order to locate problems.
 * Customize [schemas.json](../schemas.json).
 * If your IME uses lua, place your `rime.lua` and `lua` directory under [rime-config](../rime-config/).
 * Run `pnpm run schema`.
@@ -32,6 +34,7 @@ For each object, here are key and value definitions:
 * `id: string`, the schema id that you place in `default.yaml` for desktop RIME.
 * `name: string`, the label you want to show as IME name for user to select.
 * `disabled?: boolean`, whether the IME is only used for reverse-lookup by other IMEs so you don't want to show it in select. Default `false`.
+* `group?: string`, group of the IME. Default `undefined`.
 * `emoji?: boolean`, whether integrate [emoji](https://github.com/rime/rime-emoji). Default `false`.
 * `target: string`, the same argument you use when installing by plum: `bash rime-install <target>`.
 * `dependencies?: string[]`, schema ids that are either a hard dependency (e.g. `luna_pinyin` for `double_pinyin`) or a soft (required by reverse-lookup) dependency (e.g. `stroke` for `luna_pinyin`). Make sure you have them defined in other objects. Default `[]`.
@@ -50,3 +53,13 @@ If you can understand this, you should agree that `undefined` is equivalent to `
   * `name: string`, the label.
   * `disabled?: boolean`, same with the `disabled` in parent level.
 * `license: string`, a SPDX license identifier used in `package.json`.
+
+## Distribute
+As per [LICENSE](../LICENSE) requires, you have to
+* Adopt the same AGPL license to your distribution.
+* Include [my](https://github.com/eagleoflqj) copyright.
+The easiest way to comply is to put a link to https://github.com/LibreService/my_rime in your site.
+
+if you distribute it to a public-accessible site.
+
+You are not required, but welcomed to make your IME (*.schema.yaml, *.dict.yaml, *.lua) [Open Source](https://opensource.org/osd/) and plum compatible.

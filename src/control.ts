@@ -26,10 +26,20 @@ const schemaVariantsIndex: {
   [key: string]: Ref<number>
 } = {}
 
-const selectOptions = ref<{
-  label: string
-  value: string
-}[]>([])
+const selectOptions = ref<(
+  {
+    label: string
+  } & ({
+    value: string
+  } | {
+    type: 'group'
+    key: string,
+    children: {
+      label: string
+      value: string
+    }[]
+  })
+)[]>([])
 
 type Variants = {
   id: string,
@@ -71,6 +81,7 @@ function convertVariants (variants: Variants | undefined) {
 for (const schema of schemas as {
   id: string
   name: string
+  group?: string
   disabled?: boolean
   hideComment?: HideComment
   family?: {
@@ -86,11 +97,31 @@ for (const schema of schemas as {
     continue
   }
 
-  function helper (id: string, name: string, extended: boolean | undefined, hideComment: HideComment | undefined) {
-    selectOptions.value.push({
+  function helper (id: string, name: string, group: string | undefined, extended: boolean | undefined, hideComment: HideComment | undefined) {
+    const item = {
       label: name,
       value: id
-    })
+    }
+    if (group) {
+      let found = false
+      for (const option of selectOptions.value) {
+        if ('children' in option && option.label === group) {
+          option.children.push(item)
+          found = true
+          break
+        }
+      }
+      if (!found) {
+        selectOptions.value.push({
+          type: 'group',
+          label: group,
+          key: group,
+          children: [item]
+        })
+      }
+    } else {
+      selectOptions.value.push(item)
+    }
     schemaVariantsIndex[id] = ref<number>(0)
     if (extended) {
       schemaExtended.push(id)
@@ -100,14 +131,14 @@ for (const schema of schemas as {
     }
   }
 
-  helper(schema.id, schema.name, schema.extended, schema.hideComment)
+  helper(schema.id, schema.name, schema.group, schema.extended, schema.hideComment)
   schemaVariants[schema.id] = convertVariants(schema.variants)
   if (schema.family) {
     for (const { id, name, disabled, variants } of schema.family) {
       if (disabled) {
         continue
       }
-      helper(id, name, schema.extended, schema.hideComment)
+      helper(id, name, schema.group, schema.extended, schema.hideComment)
       schemaVariants[id] = variants ? convertVariants(variants) : schemaVariants[schema.id]
     }
   }

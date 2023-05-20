@@ -57,17 +57,18 @@ worker.control('deployStatus', async (status: 'start' | 'failure' | 'success', s
       })
       deployed.value = true
       selectOptions.value = []
-      for (const schema of JSON.parse(schemas) as {
-        id: string,
-        name: string
-      }[]) {
-        selectOptions.value.push({
-          label: schema.name,
-          value: schema.id
-        })
-      }
       {
-        const currentSchema = selectOptions.value[0].value
+        const schemasJson = JSON.parse(schemas) as {
+          id: string,
+          name: string
+        }[]
+        for (const schema of schemasJson) {
+          selectOptions.value.push({
+            label: schema.name,
+            value: schema.id
+          })
+        }
+        const currentSchema = schemasJson[0].id
         await changeIME(currentSchema)
         menu?.displayIME(currentSchema)
       }

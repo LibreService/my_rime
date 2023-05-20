@@ -2,6 +2,7 @@
   {
     "id": "luna_pinyin",
     "name": "朙月拼音",
+    "group": "音码",
     "emoji": true,
     "target": "luna-pinyin",
     "dependencies": ["stroke"],
@@ -21,6 +22,7 @@
   {
     "id": "jyut6ping3",
     "name": "粤语拼音",
+    "group": "方言",
     "target": "cantonese",
     "dependencies": ["luna_pinyin", "stroke", "cangjie5"],
     "variants": [
@@ -53,6 +55,7 @@
   {
     "id": "double_pinyin",
     "name": "自然码双拼",
+    "group": "双拼",
     "target": "double-pinyin",
     "dependencies": ["luna_pinyin"],
     "family": [
@@ -78,6 +81,7 @@
   {
     "id": "wubi86",
     "name": "86五笔",
+    "group": "形码",
     "target": "wubi",
     "dependencies": ["pinyin_simp"],
     "variants": [],
@@ -107,6 +111,7 @@
   {
     "id": "pinyin_simp",
     "name": "袖珍简拼",
+    "group": "音码",
     "target": "pinyin-simp",
     "dependencies": ["stroke"],
     "variants": [],
@@ -115,6 +120,7 @@
   {
     "id": "terra_pinyin",
     "name": "地球拼音",
+    "group": "音码",
     "target": "terra-pinyin",
     "dependencies": ["stroke"],
     "license": "LGPL-3.0-only"
@@ -122,18 +128,21 @@
   {
     "id": "ipa_xsampa",
     "name": "X-SAMPA",
+    "group": "其他",
     "target": "ipa",
     "license": "LGPL-3.0-only"
   },
   {
     "id": "ipa_yunlong",
     "name": "云龙国际音标",
+    "group": "其他",
     "target": "ipa",
     "license": "LGPL-3.0-only"
   },
   {
     "id": "bopomofo",
     "name": "注音",
+    "group": "音码",
     "target": "bopomofo",
     "dependencies": ["terra_pinyin", "stroke"],
     "variants": [
@@ -161,6 +170,7 @@
   {
     "id": "combo_pinyin",
     "name": "宫保拼音·七指禅",
+    "group": "音码",
     "target": "combo-pinyin",
     "dependencies": ["luna_pinyin"],
     "family": [
@@ -182,6 +192,7 @@
   {
     "id": "zyenpheng",
     "name": "中古全拼",
+    "group": "方言",
     "target": "middle-chinese",
     "dependencies": ["luna_pinyin"],
     "family": [
@@ -195,6 +206,7 @@
   {
     "id": "cangjie5",
     "name": "仓颉五代",
+    "group": "形码",
     "target": "cangjie",
     "dependencies": ["luna_quanpin"],
     "extended": true,
@@ -209,6 +221,7 @@
   {
     "id": "stroke",
     "name": "五笔画",
+    "group": "形码",
     "target": "stroke",
     "dependencies": ["luna_pinyin"],
     "variants": [],
@@ -217,6 +230,7 @@
   {
     "id": "array30",
     "name": "行列30",
+    "group": "形码",
     "target": "array",
     "dependencies": ["luna_quanpin"],
     "extended": true,
@@ -226,6 +240,7 @@
   {
     "id": "wugniu_lopha",
     "name": "上海吴语·老派",
+    "group": "方言",
     "target": "wugniu",
     "dependencies": ["luna_pinyin"],
     "family": [
@@ -239,6 +254,7 @@
   {
     "id": "soutzoe",
     "name": "苏州吴语",
+    "group": "方言",
     "target": "soutzoe",
     "dependencies": ["luna_pinyin"],
     "license": "GPL-3.0-only"
@@ -246,6 +262,7 @@
   {
     "id": "stenotype",
     "name": "打字速记法",
+    "group": "音码",
     "target": "stenotype",
     "dependencies": ["luna_pinyin"],
     "license": "GPL-3.0-only"
@@ -253,6 +270,7 @@
   {
     "id": "scj6",
     "name": "快速仓颉",
+    "group": "形码",
     "target": "scj",
     "dependencies": ["luna_quanpin"],
     "license": "GPL-3.0-only"
@@ -260,6 +278,7 @@
   {
     "id": "quick5",
     "name": "速成",
+    "group": "形码",
     "target": "quick",
     "dependencies": ["luna_quanpin"],
     "license": "LGPL-3.0-only"
