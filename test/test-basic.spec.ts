@@ -22,6 +22,7 @@ import {
   callOnDownload,
   patch
 } from './util'
+import fonts from '../fonts.json'
 
 test('Simplified', async ({ page }) => {
   await init(page)
@@ -323,17 +324,25 @@ test('IndexedDB cache', async ({ page }) => {
 })
 
 test('Preload font', async ({ page }) => {
-  const resource = /\/HanaMinB\.woff2$/
-  let resolveDownload: (request: Request) => void
-  const promise = new Promise(resolve => {
-    resolveDownload = callOnDownload(resolve, resource)
-  })
-  // @ts-ignore
-  page.on('request', resolveDownload)
-  await init(page)
-  await promise
-  await textarea(page).fill('𤓰')
-  while (!await page.evaluate(() => document.fonts.check('16px HanaMin')));
+  for (const {
+    name,
+    fontFamily,
+    file
+  } of fonts) {
+    const resource = new RegExp(`/${file}$`)
+    let resolveDownload: (request: Request) => void
+    const promise = new Promise(resolve => {
+      resolveDownload = callOnDownload(resolve, resource)
+    })
+    // @ts-ignore
+    page.on('request', resolveDownload)
+    await init(page)
+    await page.getByText(name).click()
+    await promise
+    expect(await page.evaluate(() => document.fonts.keys().next().value.family)).toEqual(fontFamily)
+    // @ts-ignore
+    page.off('request', resolveDownload)
+  }
 })
 
 test('Cut button', async ({ page }) => {

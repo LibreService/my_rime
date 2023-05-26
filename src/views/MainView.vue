@@ -4,6 +4,7 @@ import { NInput, NSpace, NButtonGroup, NButton, NIcon, NSwitch } from 'naive-ui'
 import { Cut20Regular, Copy20Regular, ClipboardLink20Regular } from '@vicons/fluent'
 import MyMenu from '../components/MyMenu.vue'
 import MyPanel from '../components/MyPanel.vue'
+import MyFont from '../components/MyFont.vue'
 import type MySimulator from '../components/MySimulator.vue'
 import type MyEditor from '../components/MyEditor.vue'
 import { getTextarea, getQueryString, isMobile } from '../util'
@@ -124,6 +125,7 @@ const AsyncEditor = defineAsyncComponent(() => import('../components/MyEditor.vu
       :debug-mode="simulator?.debugMode"
       :on-update-schema="menu?.selectIME"
     />
+    <my-font />
     <n-space>
       Advanced
       <n-switch

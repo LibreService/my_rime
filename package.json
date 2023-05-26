@@ -15,7 +15,7 @@
   "scripts": {
     "submodule": "bash scripts/update_submodule.sh",
     "worker": "rollup -c rollup.worker-config.mjs",
-    "font": "bash scripts/download_font.sh",
+    "font": "node scripts/download_font.mjs",
     "native": "bash scripts/build_native.sh",
     "schema": "node scripts/install_schemas.mjs",
     "lib": "bash scripts/build_lib.sh",
@@ -24,7 +24,7 @@
     "lint": "eslint --ext .ts,.js,.mjs,.vue scripts src test",
     "lint:fix": "eslint --ext .ts,.js,.mjs,.vue --fix scripts src test",
     "check": "vue-tsc --noEmit",
-    "build": "pnpm run check && rm -rf public/*.js.map && node scripts/clean_ime.mjs && NODE_ENV=production pnpm run worker && vite build",
+    "build": "pnpm run check && rm -rf public/*.js.map && node scripts/clean_ime.mjs && NODE_ENV=production pnpm run worker && vite build && node scripts/clean_font.mjs",
     "test": "playwright test --browser all test/ && playwright test test-device/",
     "preview": "vite preview --host"
   },

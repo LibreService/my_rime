@@ -1,3 +1,5 @@
+const rf = { recursive: true, force: true }
+
 function ensure (result) {
   if (result.status !== 0) {
     throw new Error('Command fails.')
@@ -5,4 +7,7 @@ function ensure (result) {
   return result
 }
 
-export { ensure }
+export {
+  rf,
+  ensure
+}

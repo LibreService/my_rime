@@ -1,8 +1,8 @@
 import { rmSync, readFileSync, readdirSync } from 'fs'
 import { exit } from 'process'
+import { rf } from './util.mjs'
 
 const imeDir = 'public/ime'
-const rf = { recursive: true, force: true }
 
 if (process.env.LIBRESERVICE_CDN) {
   rmSync(imeDir, rf)

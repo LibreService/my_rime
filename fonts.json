@@ -1,0 +1,14 @@
+[
+  {
+    "name": "遍黑体",
+    "fontFamily": "Plangothic",
+    "file": "PlangothicP2-Regular.woff2",
+    "version": "0.1.0"
+  },
+  {
+    "name": "花园明朝",
+    "fontFamily": "HanaMin",
+    "file": "HanaMinB.woff2",
+    "version": "0.2.0"
+  }
+]
