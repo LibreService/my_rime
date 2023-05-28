@@ -22,7 +22,6 @@ import {
   callOnDownload,
   patch
 } from './util'
-import fonts from '../fonts.json'
 
 test('Simplified', async ({ page }) => {
   await init(page)
@@ -321,28 +320,6 @@ test('IndexedDB cache', async ({ page }) => {
   await textarea(page).click()
   await input(page, 'huan', 'cun ')
   await Promise.race([expectValue(page, '缓存'), promise])
-})
-
-test('Preload font', async ({ page }) => {
-  for (const {
-    name,
-    fontFamily,
-    file
-  } of fonts) {
-    const resource = new RegExp(`/${file}$`)
-    let resolveDownload: (request: Request) => void
-    const promise = new Promise(resolve => {
-      resolveDownload = callOnDownload(resolve, resource)
-    })
-    // @ts-ignore
-    page.on('request', resolveDownload)
-    await init(page)
-    await page.getByText(name).click()
-    await promise
-    expect(await page.evaluate(() => document.fonts.keys().next().value.family)).toEqual(fontFamily)
-    // @ts-ignore
-    page.off('request', resolveDownload)
-  }
 })
 
 test('Cut button', async ({ page }) => {

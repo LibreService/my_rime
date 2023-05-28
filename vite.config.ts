@@ -5,18 +5,11 @@ import replace from '@rollup/plugin-replace'
 import { run } from 'vite-plugin-run'
 import { VitePWA, VitePWAOptions } from 'vite-plugin-pwa'
 import { appName } from './package.json'
-import fonts from './fonts.json'
 
 const resources = ['rime.data', 'rime.js', 'rime.wasm']
-const fontMap: { [key: string]: string } = {}
-
-for (const font of fonts) {
-  resources.push(font.file)
-  fontMap[font.file] = font.version
-}
 
 const workbox: VitePWAOptions["workbox"] = {
-  maximumFileSizeToCacheInBytes: 13631488,
+  maximumFileSizeToCacheInBytes: 3145728,
   globPatterns: [
     '**/*.{js,css,html}',
     'apple-touch-icon.png',
@@ -28,11 +21,7 @@ if (process.env.LIBRESERVICE_CDN) {
   workbox.manifestTransforms = [
     manifest => ({
       manifest: manifest.map(entry => resources.includes(entry.url) ? {
-        url: (
-          entry.url in fontMap ?
-          `https://cdn.jsdelivr.net/npm/@libreservice/font-collection@${fontMap[entry.url]}/dist/`:
-          process.env.LIBRESERVICE_CDN
-        ) + entry.url,
+        url: process.env.LIBRESERVICE_CDN + entry.url,
         revision: entry.revision,
         size: entry.size
       } : entry),

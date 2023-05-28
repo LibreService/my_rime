@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { NSpace, NCheckboxGroup, NCheckbox } from 'naive-ui'
+import { LazyCache } from '@libreservice/lazy-cache'
 import fonts from '../../fonts.json'
 
 let defaultFont = ''
@@ -8,7 +9,9 @@ const UbuntuFont = 'Noto Sans CJK SC'
 const WindowsFont = 'Microsoft YaHei'
 const macOSFont = 'PingFang SC'
 
-function loadFont (font: string) {
+const lazyCache = new LazyCache('font')
+
+async function loadFont (font: string) {
   if (loadedFonts.includes(font)) {
     return
   }
@@ -25,11 +28,14 @@ function loadFont (font: string) {
           ? `https://cdn.jsdelivr.net/npm/@libreservice/font-collection@${version}/dist/`
           : './'
       ) + file
+      const buffer = await lazyCache.get(file, version, url)
+      const blob = new Blob([buffer], { type: 'font/woff2' })
+      const blobURL = URL.createObjectURL(blob)
       const style = document.createElement('style')
       style.innerHTML = `
 @font-face {
   font-family: ${fontFamily};
-  src: url(${url}) format("woff2")
+  src: url(${blobURL}) format("woff2")
 }`
       document.body.appendChild(style)
       break
@@ -40,9 +46,9 @@ function loadFont (font: string) {
 const loadedFonts: string[] = []
 const selectedFonts = ref<string[]>([])
 
-function updatedFonts (value: (string | number)[]) {
+async function updateFonts (value: (string | number)[]) {
   selectedFonts.value = value as string[]
-  selectedFonts.value.forEach(loadFont)
+  await Promise.all(selectedFonts.value.map(loadFont))
   document.body.style.fontFamily = [
     defaultFont,
     UbuntuFont,
@@ -62,7 +68,7 @@ onMounted(() => {
     Font for uncommon characters
     <n-checkbox-group
       :value="selectedFonts"
-      @update:value="updatedFonts"
+      @update:value="updateFonts"
     >
       <n-checkbox
         v-for="font of fonts"
