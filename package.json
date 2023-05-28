@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@codemirror/legacy-modes": "^6.3.2",
+    "@libreservice/lazy-cache": "^0.1.0",
     "@libreservice/my-widget": "^0.1.2",
     "@libreservice/my-worker": "^0.4.0",
     "@libreservice/wasm-code": "^0.1.1",

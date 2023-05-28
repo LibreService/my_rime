@@ -1,14 +1,11 @@
 import { expose, control, loadWasm, fsOperate } from '@libreservice/my-worker'
-import { openDB } from 'idb'
+import { LazyCache } from '@libreservice/lazy-cache'
 import schemaName from '../schema-name.json'
 import schemaFiles from '../schema-files.json'
 import schemaTarget from '../schema-target.json'
 import dependencyMap from '../dependency-map.json'
 import targetFiles from '../target-files.json'
 import targetVersion from '../target-version.json'
-
-const HASH = 'hash'
-const CONTENT = 'content'
 
 function getURL (target: string, name: string) {
   if ('__RIME_CDN__') { // eslint-disable-line no-constant-condition
@@ -17,12 +14,7 @@ function getURL (target: string, name: string) {
   return `ime/${target}/${name}`
 }
 
-const dbPromise = openDB('ime', 1, {
-  upgrade (db) {
-    db.createObjectStore(HASH)
-    db.createObjectStore(CONTENT)
-  }
-})
+const lazyCache = new LazyCache('ime')
 
 async function setIME (schemaId: string) {
   const fetched: string[] = []
@@ -58,26 +50,12 @@ async function setIME (schemaId: string) {
     return files
   }
   const files = getFiles(schemaId)
-  const db = await dbPromise.catch(() => undefined) // not available in Firefox Private Browsing
   await Promise.all(files.map(async ({ name, target, md5 }) => {
     const path = `build/${name}`
     try {
       Module.FS.lookupPath(path)
     } catch (e) { // not exists
-      const storedHash: string | undefined = await db?.get(HASH, name)
-      let ab: ArrayBuffer
-      if (storedHash === md5) {
-        ab = await db!.get(CONTENT, name)
-      } else {
-        const url = getURL(target, name)
-        const response = await fetch(url)
-        if (!response.ok) {
-          throw new Error(`Fail to download ${name}`)
-        }
-        ab = await response.arrayBuffer()
-        await db?.put(CONTENT, ab, name)
-        await db?.put(HASH, md5, name)
-      }
+      const ab = await lazyCache.get(name, md5, getURL(target, name))
       Module.FS.writeFile(path, new Uint8Array(ab))
     }
   }))

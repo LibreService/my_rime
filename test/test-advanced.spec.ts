@@ -101,7 +101,7 @@ test('Deploy', async ({ page }) => {
   await page.locator('.n-dialog .n-button').getByText('Upload').click()
 
   const content = page.locator('.cm-content')
-  await page.getByText('default.yaml', { exact: true }).click()
+  await page.locator('.n-tree').getByText('default.yaml', { exact: true }).click()
   await content.click()
   await page.keyboard.press('Control+f')
   await page.keyboard.insertText('  - schema: luna_pinyin_fluency[\\s\\S]+- schema: quick5\\n')

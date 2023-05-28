@@ -5,6 +5,13 @@ Chinese IME powered by [RIME](https://github.com/rime/librime).
 
 https://my-rime.vercel.app/
 
+
+This is a **STATIC** website so you **DON'T** need to own a server to host it.
+
+All computation is performed in browser, thanks to Web Assembly.
+
+It's also a [PWA](https://web.dev/progressive-web-apps/), so you can install it like a native App and use it **OFFLINE**.
+
 If you want to distribute your own IME, see [customize](doc/customize.md).
 
 If you want to deploy schemas dynamically (online, like how you deploy in Desktop/Mobile platforms), see [deploy](doc/deploy.md).
