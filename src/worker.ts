@@ -16,7 +16,7 @@ function getURL (target: string, name: string) {
 
 const lazyCache = new LazyCache('ime')
 
-async function setIME (schemaId: string) {
+async function fetchPrebuilt (schemaId: string) {
   const fetched: string[] = []
   function getFiles (key: string) {
     if (fetched.includes(key)) {
@@ -59,6 +59,12 @@ async function setIME (schemaId: string) {
       Module.FS.writeFile(path, new Uint8Array(ab))
     }
   }))
+}
+
+async function setIME (schemaId: string) {
+  if (!deployed) {
+    await fetchPrebuilt(schemaId)
+  }
   Module.ccall('set_ime', 'null', ['string'], [schemaId])
 }
 
@@ -73,8 +79,15 @@ const readyPromise = loadWasm('rime.js', {
   }
 })
 
+let deployed = false
+const deployStatus = control('deployStatus')
 // @ts-ignore
-globalThis._deployStatus = control('deployStatus') // called from api.cpp
+globalThis._deployStatus = (status: 'start' | 'failure' | 'success', schemas: string) => { // called from api.cpp
+  if (status === 'success') {
+    deployed = true
+  }
+  deployStatus(status, schemas)
+}
 
 expose({
   fsOperate,

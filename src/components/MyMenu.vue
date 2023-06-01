@@ -45,7 +45,7 @@ init(getQueryString('schemaId'), getQueryString('variantName')).then(() => {
 })
 
 const variantLabel = computed(() => showVariant.value && !deployed.value ? variant.value.name : '')
-const singleVariant = computed(() => variants.value.length === 1)
+const singleVariant = computed(() => !deployed.value && variants.value.length === 1)
 
 watchEffect(() => {
   localStorage.setItem('schemaId', ime.value)

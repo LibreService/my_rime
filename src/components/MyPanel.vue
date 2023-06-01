@@ -128,7 +128,7 @@ function insert (toInsert: string) {
 async function input (rimeKey: string) {
   const textarea = getTextarea(textareaSelector)
   const result = JSON.parse(await process(rimeKey)) as RIME_RESULT
-  if (result.updatedOptions) {
+  if (!('updatedSchema' in result) && result.updatedOptions) {
     syncOptions(result.updatedOptions)
   }
   if (result.state === 0) { // COMMITTED
