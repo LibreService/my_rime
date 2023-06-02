@@ -118,6 +118,13 @@ extern "C" {
                 candidates.push_back(candidate);
             }
             obj["candidates"] = candidates;
+            if (context.select_labels != NULL) {
+                boost::json::array select_labels;
+                for (int i = 0; i < menu.num_candidates; ++i) {
+                    select_labels.push_back(context.select_labels[i]);
+                }
+                obj["selectLabels"] = select_labels;
+            }
             has_pre_edit = true;
         } else {
             if (has_committed) {
