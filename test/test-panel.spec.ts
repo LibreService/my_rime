@@ -1,5 +1,12 @@
 import { test, expect } from '@playwright/test'
-import { init, expectValue, input, panel, item } from './util'
+import {
+  init,
+  expectValue,
+  input,
+  panel,
+  item,
+  patch
+} from './util'
 
 test('Esc', async ({ page }) => {
   await init(page)
@@ -119,4 +126,16 @@ test('Delete candidate', async ({ page }) => {
   await page.keyboard.press('Shift+Delete')
   await expect(item(page, '1 自助餐')).toBeVisible()
   await expect(item(page, '2 制造出')).toBeVisible()
+})
+
+test('Alternative select labels', async ({ page }) => {
+  await patch(page, (content: any) => {
+    content.menu = {
+      alternative_select_labels: ['1', '[', '3', '4', '5']
+    }
+  })
+  await init(page)
+
+  await input(page, 'xuan', 'zi')
+  await expect(item(page, '[ 选字')).toBeVisible()
 })
