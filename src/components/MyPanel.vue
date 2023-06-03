@@ -142,7 +142,7 @@ async function input (rimeKey: string) {
     preEditTail.value = result.tail
     highlighted.value = (result.highlighted + 1).toString()
     menuOptions.value = result.candidates.map((candidate, i) => {
-      let label = `${i + 1} ${candidate.text}`
+      let label = `${result.selectLabels?.[i] || i + 1} ${candidate.text}`
       if (hideComment.value === false || (hideComment.value === 'emoji' && !isEmoji(candidate.text))) {
         label += ' ' + candidate.comment
       }

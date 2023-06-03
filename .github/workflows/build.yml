@@ -57,7 +57,6 @@ jobs:
       - name: Tar files
         run: tar --exclude=build/librime_native/bin/build -cvf artifact.tar build/librime_native/bin dist
       - name: Upload artifact
-        if: ${{ github.ref == 'refs/heads/master' }}
         uses: actions/upload-artifact@v3
         with:
           name: artifact.tar
@@ -103,6 +102,7 @@ jobs:
 
   release:
     needs: test
+    if: ${{ github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write

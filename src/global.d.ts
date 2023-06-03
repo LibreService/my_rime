@@ -21,6 +21,7 @@ declare global {
     page: number
     isLastPage: boolean
     highlighted: number
+    selectLabels?: string[]
     candidates: {
       text: string
       comment: string
