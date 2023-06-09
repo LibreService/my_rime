@@ -9,6 +9,8 @@ const UbuntuFont = 'Noto Sans CJK SC'
 const WindowsFont = 'Microsoft YaHei'
 const macOSFont = 'PingFang SC'
 
+const storageKey = 'selectedFonts'
+
 const lazyCache = new LazyCache('font')
 
 async function loadFont (font: string) {
@@ -48,6 +50,7 @@ const selectedFonts = ref<string[]>([])
 
 async function updateFonts (value: (string | number)[]) {
   selectedFonts.value = value as string[]
+  localStorage.setItem(storageKey, JSON.stringify(selectedFonts.value))
   await Promise.all(selectedFonts.value.map(loadFont))
   document.body.style.fontFamily = [
     defaultFont,
@@ -57,6 +60,11 @@ async function updateFonts (value: (string | number)[]) {
     ...selectedFonts.value
   ].join(', ')
 }
+
+try {
+  const supportedFonts = fonts.map(({ fontFamily }) => fontFamily)
+  updateFonts((JSON.parse(localStorage.getItem(storageKey) || '[]') as string[]).filter(font => supportedFonts.includes(font)))
+} catch {}
 
 onMounted(() => {
   defaultFont = getComputedStyle(document.body).fontFamily
