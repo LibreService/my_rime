@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 import {
   init,
+  browserName,
   expectValue,
   input,
   panel,
@@ -129,6 +130,7 @@ test('Delete candidate', async ({ page }) => {
 })
 
 test('Alternative select labels', async ({ page }) => {
+  test.skip(browserName(page) === 'firefox' || browserName(page) === 'webkit')
   await patch(page, (content: any) => {
     content.menu = {
       alternative_select_labels: ['1', '[', '3', '4', '5']

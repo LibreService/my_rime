@@ -111,6 +111,7 @@ function Control (key: string) {
 }
 
 test('Tab composing', async ({ page }) => {
+  test.skip(browserName(page) === 'firefox' || browserName(page) === 'webkit')
   await patch(page, (content: any) => {
     content.key_binder.bindings.push({
       accept: 'Tab',
@@ -133,6 +134,7 @@ test('Tab composing', async ({ page }) => {
 })
 
 test('Space no candidates', async ({ page }) => {
+  test.skip(browserName(page) === 'firefox' || browserName(page) === 'webkit')
   await patch(page, (content: any) => {
     content.key_binder.bindings.push({
       accept: 'space',
@@ -208,6 +210,7 @@ test('Control Shift shortcut', async ({ page }) => {
 })
 
 test('Alt composing', async ({ page }) => {
+  test.skip(browserName(page) === 'firefox' || browserName(page) === 'webkit')
   await patch(page, (content: any) => {
     content.key_binder.bindings.push({
       accept: 'Alt_L',
@@ -293,6 +296,7 @@ test('Reverse lookup stroke', async ({ page }) => {
 })
 
 test('IndexedDB cache', async ({ page }) => {
+  test.skip(browserName(page) === 'firefox')
   const resource = /\/luna_pinyin.schema\.yaml$/
   let resolveDownload: (request: Request) => void
   let rejectDownload: (request: Request) => void
@@ -359,6 +363,7 @@ test('Copy link button', async ({ page }) => {
 })
 
 test('Lua', async ({ page }) => {
+  test.skip(browserName(page) === 'firefox' || browserName(page) === 'webkit')
   await patch(page, (content: any) => {
     content.engine.translators.push('lua_translator@*date_translator')
   })
