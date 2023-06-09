@@ -69,7 +69,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        browser: [chromium, firefox, webkit]
+        browser: [chromium, firefox] # webkit
         include:
           - os: macos-latest
             browser: webkit
@@ -84,6 +84,7 @@ jobs:
         run: |
           npm i -g pnpm
           pnpm i
+          npx playwright install
           npx playwright install-deps ${{ matrix.browser }}
       - name: Download artifact
         uses: actions/download-artifact@v3

@@ -57,6 +57,11 @@ std::string get_schema_name(std::string schema) {
     return schema_name[schema];
 }
 
+void startRime () {
+    RimeInitialize(NULL);
+    RimeSetNotificationHandler(handler, NULL);
+}
+
 extern "C" {
     void set_option(const char *option, int value) {
         RimeSetOption(session_id, option, value);
@@ -64,8 +69,7 @@ extern "C" {
 
     void init() {
         RimeSetup(NULL);
-        RimeInitialize(NULL);
-        RimeSetNotificationHandler(handler, NULL);
+        startRime();
         session_id = RimeCreateSession();
         RIME_STRUCT_INIT(RimeCommit, commit);
         RIME_STRUCT_INIT(RimeContext, context);
@@ -149,6 +153,8 @@ extern "C" {
 
     void deploy () {
         RimeDestroySession(session_id);
+        RimeFinalize();
+        startRime();
         RimeStartMaintenance(true);
         session_id = RimeCreateSession();
     }

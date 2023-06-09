@@ -47,7 +47,10 @@ It's not recommended to clone recursively, as many boost libs are not needed.
 pnpm run submodule
 ```
 ### Get font
-Uncommon characters are rendered using [花园明朝](https://github.com/max32002/max-hana).
+Uncommon characters are rendered using
+[遍黑体](https://github.com/Fitzgerald-Porthmouth-Koenigsegg/Plangothic-Project)
+and
+[花园明朝](https://github.com/max32002/max-hana).
 ```sh
 pnpm run font
 ```

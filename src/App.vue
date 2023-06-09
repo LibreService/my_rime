@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import { NConfigProvider, NNotificationProvider, NH1, darkTheme, useOsTheme } from 'naive-ui'
+import {
+  NConfigProvider,
+  NNotificationProvider,
+  NDialogProvider,
+  NMessageProvider,
+  NH1,
+  darkTheme,
+  useOsTheme
+} from 'naive-ui'
 import { MyLayout, MyHeader, MyFooter } from '@libreservice/my-widget'
 import MyPwa from './components/MyPwa.vue'
 import { homepage, appName } from '../package.json'
@@ -22,11 +30,15 @@ const osThemeRef = useOsTheme()
           <n-h1>{{ appName }}</n-h1>
         </div>
         <n-notification-provider :max="1">
-          <router-view v-slot="{ Component }">
-            <keep-alive>
-              <component :is="Component" />
-            </keep-alive>
-          </router-view>
+          <n-dialog-provider>
+            <n-message-provider>
+              <router-view v-slot="{ Component }">
+                <keep-alive>
+                  <component :is="Component" />
+                </keep-alive>
+              </router-view>
+            </n-message-provider>
+          </n-dialog-provider>
         </n-notification-provider>
       </template>
       <template #footer>

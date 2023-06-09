@@ -5,8 +5,10 @@ import { Cut20Regular, Copy20Regular, ClipboardLink20Regular } from '@vicons/flu
 import MyMenu from '../components/MyMenu.vue'
 import MyPanel from '../components/MyPanel.vue'
 import MyFont from '../components/MyFont.vue'
+import MyDeployer from '../components/MyDeployer.vue'
 import type MySimulator from '../components/MySimulator.vue'
 import type MyEditor from '../components/MyEditor.vue'
+import MicroPlum from '../components/micro-plum/MicroPlum.vue'
 import { getTextarea, getQueryString, isMobile } from '../util'
 import { schemaId, variant } from '../control'
 
@@ -126,6 +128,8 @@ const AsyncEditor = defineAsyncComponent(() => import('../components/MyEditor.vu
       :on-update-schema="menu?.selectIME"
     />
     <my-font />
+    <my-deployer :menu="menu" />
+    <micro-plum />
     <n-space>
       Advanced
       <n-switch
@@ -145,13 +149,12 @@ const AsyncEditor = defineAsyncComponent(() => import('../components/MyEditor.vu
       v-if="editorLoaded"
       v-show="showEditor"
       ref="editor"
-      :menu="menu"
     />
   </n-space>
 </template>
 
 <style scoped>
-.n-button {
+.n-button-group .n-button {
   font-size: 24px;
 }
 </style>

@@ -247,7 +247,7 @@ function syncOptions (updatedOptions: string[]) {
         return
       }
     }
-    if (variants.value.length === 2) {
+    if (!deployed.value && variants.value.length === 2) {
       for (const [i, v] of variants.value.entries()) {
         if ((v.id === updatedOption && v.value) || (`!${v.id}` === updatedOption && !v.value)) {
           variantIndex.value = i

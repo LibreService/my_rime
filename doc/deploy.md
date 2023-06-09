@@ -1,4 +1,21 @@
 # Deploy
+## Use [Micro Plum](https://github.com/LibreService/micro_plum)
+Click `Micro Plum`.
+
+Either provide
+* a single schema URL
+(e.g. https://github.com/rime/rime-luna-pinyin/blob/master/luna_pinyin.schema.yaml),
+
+or
+* a plum target
+(e.g. rime/rime-luna-pinyin)
+and a list of schema Ids
+(e.g. luna_pinyin).
+
+Click `Install`.
+
+Select the schemas and click `Deploy`.
+## Manual upload
 Turn on `Advanced` switch or append `debug=on` URL parameter,
 so that you can interact with emscripten's file system.
 
