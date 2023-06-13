@@ -9,6 +9,7 @@ import MyDeployer from '../components/MyDeployer.vue'
 import type MySimulator from '../components/MySimulator.vue'
 import type MyEditor from '../components/MyEditor.vue'
 import MicroPlum from '../components/micro-plum/MicroPlum.vue'
+import MyPlatform from '../components/MyPlatform.vue'
 import { getTextarea, getQueryString, isMobile } from '../util'
 import { schemaId, variant } from '../control'
 
@@ -150,6 +151,7 @@ const AsyncEditor = defineAsyncComponent(() => import('../components/MyEditor.vu
       v-show="showEditor"
       ref="editor"
     />
+    <my-platform />
   </n-space>
 </template>
 
