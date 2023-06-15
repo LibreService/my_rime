@@ -50,6 +50,7 @@ for (const file of preloadFiles) {
 }
 
 const linkArgs = [
+  '-fexceptions',
   '-L', LIB_PATH,
   // To include __attribute__((constructor)) in librime-lua, see https://stackoverflow.com/a/842770
   '-Wl,--whole-archive', '-l', 'rime', '-Wl,--no-whole-archive',

@@ -2,6 +2,8 @@ set -e
 
 : "${ENABLE_LOGGING:=OFF}"
 
+export CXXFLAGS=-fexceptions
+
 root=$PWD
 n=`nproc --all`
 
