@@ -82,7 +82,7 @@ const rules = {
         return
       }
       if ((schemaURL.value && !normalizeTarget(schemaURL.value)?.schema) ||
-        (!schemaURL.value && !installedPrerequisites.value)) {
+        (!schemaURL.value && !installPrerequisites.value)) {
         return new Error('Invalid URL')
       }
     }

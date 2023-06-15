@@ -8,7 +8,7 @@ cmake librime/deps/opencc -B build/opencc_native \
 make -C build/opencc_native/data install -j $n
 
 pushd librime
-if [[ -z `git status --porcelain --ignore-submodules` ]]; then
+if [[ -z `git status --porcelain -uno --ignore-submodules` ]]; then
   git apply $root/librime_patch
 fi
 popd
