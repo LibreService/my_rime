@@ -3,6 +3,7 @@ set -e
 root=$PWD
 
 opencc_blddir=build/opencc_native
+rm -rf $opencc_blddir
 cmake librime/deps/opencc -B $opencc_blddir -G Ninja \
   -DCMAKE_INSTALL_PREFIX:PATH=/usr/local \
   -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
@@ -18,6 +19,7 @@ popd
 rm -rf librime/plugins/lua
 
 librime_blddir=build/librime_native
+rm -rf $librime_blddir
 cmake librime -B $librime_blddir -G Ninja \
   -DBUILD_TEST:BOOL=OFF \
   -DENABLE_LOGGING:BOOL=OFF \
