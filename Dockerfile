@@ -1,4 +1,4 @@
-FROM node:18.15.0-bullseye as builder
+FROM node:20.3.1-bookworm as builder
 
 ARG ENABLE_LOGGING=OFF
 
@@ -7,6 +7,7 @@ ENV ENABLE_LOGGING ${ENABLE_LOGGING}
 # Install tools and dependencies
 RUN apt update && apt install -y \
     cmake \
+    ninja-build \
     libboost-dev \
     libboost-filesystem-dev \
     libboost-regex-dev \
@@ -44,6 +45,6 @@ RUN export PATH="$PATH:/emsdk/upstream/emscripten" && \
 RUN pnpm run build
 
 
-FROM nginx:1.23.3-alpine-slim
+FROM nginx:1.25.1-alpine-slim
 
 COPY --from=builder /my_rime/dist /usr/share/nginx/html
