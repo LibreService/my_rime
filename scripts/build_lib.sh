@@ -22,59 +22,74 @@ mkdir -p librime-lua/thirdparty
 [[ -L librime-lua/thirdparty/lua5.4 ]] || ln -s ../../lua librime-lua/thirdparty/lua5.4
 rm -f lua/onelua.c
 
-emcmake cmake librime/deps/yaml-cpp -B build/yaml-cpp \
-	-DBUILD_SHARED_LIBS:BOOL=OFF \
-	-DYAML_CPP_BUILD_CONTRIB:BOOL=OFF \
-	-DYAML_CPP_BUILD_TESTS:BOOL=OFF \
-	-DYAML_CPP_BUILD_TOOLS:BOOL=OFF \
-  -DCMAKE_BUILD_TYPE:STRING="Release" \
-  -DCMAKE_INSTALL_PREFIX:PATH=/usr/local
-make DESTDIR=$root/build/sysroot -C build/yaml-cpp install -j $n
+PREFIX=/usr/local
+CMAKE_DEF="""
+  -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX
+  -DCMAKE_BUILD_TYPE:STRING=Release
+  -DBUILD_TESTING:BOOL=OFF
+  -DBUILD_SHARED_LIBS:BOOL=OFF
+  -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
+"""
 
-emcmake cmake librime/deps/leveldb -B build/leveldb \
-  -DBUILD_SHARED_LIBS:BOOL=OFF \
+yaml_cpp_blddir=build/yaml-cpp
+rm -rf $yaml_cpp_blddir
+emcmake cmake librime/deps/yaml-cpp -B $yaml_cpp_blddir -G Ninja \
+  $CMAKE_DEF \
+  -DYAML_CPP_BUILD_CONTRIB:BOOL=OFF \
+  -DYAML_CPP_BUILD_TESTS:BOOL=OFF \
+  -DYAML_CPP_BUILD_TOOLS:BOOL=OFF
+cmake --build $yaml_cpp_blddir
+DESTDIR=$root/build/sysroot cmake --install $yaml_cpp_blddir
+
+leveldb_blddir=build/leveldb
+rm -rf $leveldb_blddir
+emcmake cmake librime/deps/leveldb -B build/leveldb -G Ninja \
+  $CMAKE_DEF \
   -DLEVELDB_BUILD_BENCHMARKS:BOOL=OFF \
-  -DLEVELDB_BUILD_TESTS:BOOL=OFF \
-  -DCMAKE_BUILD_TYPE:STRING="Release" \
-  -DCMAKE_INSTALL_PREFIX:PATH=/usr/local
-make DESTDIR=$root/build/sysroot -C build/leveldb install -j $n
+  -DLEVELDB_BUILD_TESTS:BOOL=OFF
+cmake --build $leveldb_blddir
+DESTDIR=$root/build/sysroot cmake --install $leveldb_blddir
 
-emcmake cmake librime/deps -B build/marisa-trie \
-  -DCMAKE_BUILD_TYPE:STRING="Release" \
-	-DCMAKE_INSTALL_PREFIX:PATH=/usr/local
-make DESTDIR=$root/build/sysroot -C build/marisa-trie install -j $n
+marisa_trie_blddir=build/marisa-trie
+rm -rf $marisa_trie_blddir
+emcmake cmake librime/deps -B $marisa_trie_blddir -G Ninja \
+  $CMAKE_DEF
+cmake --build $marisa_trie_blddir 
+DESTDIR=$root/build/sysroot cmake --install $marisa_trie_blddir
 
 pushd librime/deps/opencc
 if [[ -z `git status --porcelain` ]]; then
   git apply $root/opencc_patch
 fi
 popd
-emcmake cmake librime/deps/opencc -B build/opencc_wasm \
-  -DBUILD_SHARED_LIBS:BOOL=OFF \
-  -DCMAKE_BUILD_TYPE:STRING="Release" \
-  -DCMAKE_INSTALL_PREFIX:PATH=/usr/local
-make DESTDIR=$root/build/sysroot -C build/opencc_wasm install -j $n
+opencc_blddir=build/opencc_wasm
+rm -rf $opencc_blddir
+emcmake cmake librime/deps/opencc -B $opencc_blddir -G Ninja \
+  $CMAKE_DEF
+cmake --build $opencc_blddir 
+DESTDIR=$root/build/sysroot cmake --install $opencc_blddir
 
 if [[ $ENABLE_LOGGING == 'ON' ]]; then
   pushd librime/deps/glog
   git pull https://github.com/google/glog master
   popd
-  emcmake cmake librime/deps/glog -B build/glog \
-    -DBUILD_SHARED_LIBS:BOOL=OFF \
-    -DBUILD_TESTING:BOOL=OFF \
+  glog_blddir=build/glog
+  rm -rf $glog_blddir
+  emcmake cmake librime/deps/glog -B $glog_blddir -G Ninja \
+    $CMAKE_DEF \
     -DWITH_GFLAGS:BOOL=OFF \
-    -DWITH_UNWIND:BOOL=OFF \
-    -DCMAKE_BUILD_TYPE:STRING="Release" \
-    -DCMAKE_INSTALL_PREFIX:PATH=/usr/local
-  make DESTDIR=$root/build/sysroot -C build/glog install -j $n
+    -DWITH_UNWIND:BOOL=OFF
+  cmake --build $glog_blddir 
+  DESTDIR=$root/build/sysroot cmake --install $glog_blddir
 fi
 
-emcmake cmake librime -B build/librime_wasm \
+librime_blddir=build/librime_wasm
+rm -rf $librime_blddir
+emcmake cmake librime -B $librime_blddir -G Ninja \
+  $CMAKE_DEF \
   -DCMAKE_FIND_ROOT_PATH:PATH=$root/build/sysroot/usr/local \
-  -DBUILD_SHARED_LIBS:BOOL=OFF \
-  -DBUILD_STATIC:BOOL=ON \
   -DBUILD_TEST:BOOL=OFF \
-  -DENABLE_LOGGING:BOOL=$ENABLE_LOGGING \
-  -DCMAKE_BUILD_TYPE:STRING="Release" \
-  -DCMAKE_INSTALL_PREFIX:PATH=/usr/local
-make DESTDIR=$root/build/sysroot -C build/librime_wasm install -j $n
+  -DBUILD_STATIC:BOOL=ON \
+  -DENABLE_LOGGING:BOOL=$ENABLE_LOGGING
+cmake --build $librime_blddir 
+DESTDIR=$root/build/sysroot cmake --install $librime_blddir
