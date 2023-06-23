@@ -32,6 +32,7 @@ CMAKE_DEF="""
 """
 
 yaml_cpp_blddir=build/yaml-cpp
+rm -rf $yaml_cpp_blddir
 emcmake cmake librime/deps/yaml-cpp -B $yaml_cpp_blddir -G Ninja \
   $CMAKE_DEF \
   -DYAML_CPP_BUILD_CONTRIB:BOOL=OFF \
@@ -41,6 +42,7 @@ cmake --build $yaml_cpp_blddir
 DESTDIR=$root/build/sysroot cmake --install $yaml_cpp_blddir
 
 leveldb_blddir=build/leveldb
+rm -rf $leveldb_blddir
 emcmake cmake librime/deps/leveldb -B build/leveldb -G Ninja \
   $CMAKE_DEF \
   -DLEVELDB_BUILD_BENCHMARKS:BOOL=OFF \
@@ -49,6 +51,7 @@ cmake --build $leveldb_blddir
 DESTDIR=$root/build/sysroot cmake --install $leveldb_blddir
 
 marisa_trie_blddir=build/marisa-trie
+rm -rf $marisa_trie_blddir
 emcmake cmake librime/deps -B $marisa_trie_blddir -G Ninja \
   $CMAKE_DEF
 cmake --build $marisa_trie_blddir 
@@ -60,6 +63,7 @@ if [[ -z `git status --porcelain` ]]; then
 fi
 popd
 opencc_blddir=build/opencc_wasm
+rm -rf $opencc_blddir
 emcmake cmake librime/deps/opencc -B $opencc_blddir -G Ninja \
   $CMAKE_DEF
 cmake --build $opencc_blddir 
@@ -70,6 +74,7 @@ if [[ $ENABLE_LOGGING == 'ON' ]]; then
   git pull https://github.com/google/glog master
   popd
   glog_blddir=build/glog
+  rm -rf $glog_blddir
   emcmake cmake librime/deps/glog -B $glog_blddir -G Ninja \
     $CMAKE_DEF \
     -DWITH_GFLAGS:BOOL=OFF \
@@ -79,6 +84,7 @@ if [[ $ENABLE_LOGGING == 'ON' ]]; then
 fi
 
 librime_blddir=build/librime_wasm
+rm -rf $librime_blddir
 emcmake cmake librime -B $librime_blddir -G Ninja \
   $CMAKE_DEF \
   -DCMAKE_FIND_ROOT_PATH:PATH=$root/build/sysroot/usr/local \
