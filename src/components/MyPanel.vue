@@ -5,7 +5,10 @@ import { CaretLeft, CaretRight } from '@vicons/fa'
 // @ts-ignore
 import getCaretCoordinates from 'textarea-caret'
 import emojiRegex from 'emoji-regex'
-import { process } from '../workerAPI'
+import {
+  process,
+  selectCandidateOnCurrentPage
+} from '../workerAPI'
 import { hideComment, changeLanguage, syncOptions } from '../control'
 import { isMobile, getTextarea } from '../util'
 
@@ -36,7 +39,7 @@ const preEditBody = ref<string>('')
 const preEditTail = ref<string>('')
 
 const menuOptions = ref<MenuOption[]>([])
-const highlighted = ref<string>('1')
+const highlighted = ref<number>(0)
 
 const prevDisabled = ref<boolean>(true)
 const nextDisabled = ref<boolean>(false)
@@ -125,9 +128,8 @@ function insert (toInsert: string) {
   })
 }
 
-async function input (rimeKey: string) {
+async function analyze (result: RIME_RESULT, rimeKey: string) {
   const textarea = getTextarea(textareaSelector)
-  const result = JSON.parse(await process(rimeKey)) as RIME_RESULT
   if (!('updatedSchema' in result) && result.updatedOptions) {
     syncOptions(result.updatedOptions)
   }
@@ -140,13 +142,13 @@ async function input (rimeKey: string) {
     preEditHead.value = result.head
     preEditBody.value = result.body
     preEditTail.value = result.tail
-    highlighted.value = (result.highlighted + 1).toString()
+    highlighted.value = result.highlighted
     menuOptions.value = result.candidates.map((candidate, i) => {
       let label = `${result.selectLabels?.[i] || i + 1} ${candidate.text}`
       if (hideComment.value === false || (hideComment.value === 'emoji' && !isEmoji(candidate.text))) {
         label += ' ' + candidate.comment
       }
-      return { label, key: (i + 1).toString() }
+      return { label, key: i }
     })
     prevDisabled.value = result.page === 0
     nextDisabled.value = result.isLastPage
@@ -174,6 +176,11 @@ async function input (rimeKey: string) {
     }
   }
   textarea.focus()
+}
+
+async function input (rimeKey: string) {
+  const result = JSON.parse(await process(rimeKey)) as RIME_RESULT
+  return analyze(result, rimeKey)
 }
 
 // begin: code specific to Android Chromium
@@ -295,8 +302,9 @@ function onKeyup (e: KeyboardEvent) {
   }
 }
 
-function onClick (key: string) {
-  input(key)
+async function onClick (key: number) {
+  const result = JSON.parse(await selectCandidateOnCurrentPage(key))
+  return analyze(result, '')
 }
 
 function singleTouch (e: TouchEvent) {

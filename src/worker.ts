@@ -100,5 +100,8 @@ expose({
   },
   process (input: string): string {
     return Module.ccall('process', 'string', ['string'], [input])
+  },
+  selectCandidateOnCurrentPage (index: number): string {
+    return Module.ccall('select_candidate_on_current_page', 'string', ['number'], [index])
   }
 }, readyPromise)

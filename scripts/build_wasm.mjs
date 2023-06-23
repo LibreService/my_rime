@@ -37,7 +37,7 @@ const compileArgs = [
   '-std=c++14',
   '-O2',
   '-s', 'ALLOW_MEMORY_GROWTH=1',
-  '-s', 'EXPORTED_FUNCTIONS=_init,_set_schema_name,_set_option,_set_ime,_process,_deploy',
+  '-s', 'EXPORTED_FUNCTIONS=_init,_set_schema_name,_set_option,_set_ime,_process,_select_candidate_on_current_page,_deploy',
   '-s', 'EXPORTED_RUNTIME_METHODS=["ccall","FS"]',
   '--preload-file', 'rime-config@rime',
   '--preload-file', 'build/librime_native/bin/build/default.yaml@rime/build/default.yaml',

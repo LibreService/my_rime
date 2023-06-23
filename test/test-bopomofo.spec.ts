@@ -39,6 +39,15 @@ test('Space/ABCDE', async ({ page }) => {
   await expectValue(page, '拍')
 })
 
+test('Number/Click', async ({ page }) => {
+  await init(page, ime, schemaId)
+
+  await input(page, 'ji32')
+  await item(page, '1 我的').click()
+  await page.keyboard.press('Enter')
+  await expectValue(page, '我的')
+})
+
 test('Reverse lookup stroke', async ({ page }) => {
   await init(page, ime, schemaId)
 
