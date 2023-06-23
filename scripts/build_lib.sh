@@ -24,35 +24,35 @@ rm -f lua/onelua.c
 
 PREFIX=/usr/local
 CMAKE_DEF="""
-        -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX
-        -DCMAKE_BUILD_TYPE:STRING=Release
-        -DBUILD_TESTING:BOOL=OFF
-        -DBUILD_SHARED_LIBS:BOOL=OFF
-        -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
+  -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX
+  -DCMAKE_BUILD_TYPE:STRING=Release
+  -DBUILD_TESTING:BOOL=OFF
+  -DBUILD_SHARED_LIBS:BOOL=OFF
+  -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
 """
 
 yaml_cpp_blddir=build/yaml-cpp
 emcmake cmake librime/deps/yaml-cpp -B $yaml_cpp_blddir -G Ninja \
   $CMAKE_DEF \
-	-DYAML_CPP_BUILD_CONTRIB:BOOL=OFF \
-	-DYAML_CPP_BUILD_TESTS:BOOL=OFF \
-	-DYAML_CPP_BUILD_TOOLS:BOOL=OFF
-emcmake cmake --build $yaml_cpp_blddir
-emcmake DESTDIR=$root/build/sysroot cmake --install $yaml_cpp_blddir
+  -DYAML_CPP_BUILD_CONTRIB:BOOL=OFF \
+  -DYAML_CPP_BUILD_TESTS:BOOL=OFF \
+  -DYAML_CPP_BUILD_TOOLS:BOOL=OFF
+cmake --build $yaml_cpp_blddir
+DESTDIR=$root/build/sysroot cmake --install $yaml_cpp_blddir
 
 leveldb_blddir=build/leveldb
 emcmake cmake librime/deps/leveldb -B build/leveldb -G Ninja \
   $CMAKE_DEF \
   -DLEVELDB_BUILD_BENCHMARKS:BOOL=OFF \
   -DLEVELDB_BUILD_TESTS:BOOL=OFF
-emcmake cmake --build $leveldb_blddir
-emcmake DESTDIR=$root/build/sysroot cmake --install $leveldb_blddir
+cmake --build $leveldb_blddir
+DESTDIR=$root/build/sysroot cmake --install $leveldb_blddir
 
 marisa_trie_blddir=build/marisa-trie
 emcmake cmake librime/deps -B $marisa_trie_blddir -G Ninja \
   $CMAKE_DEF
-emcmake cmake --build $marisa_trie_blddir 
-emcmake DESTDIR=$root/build/sysroot cmake --install $marisa_trie_blddir
+cmake --build $marisa_trie_blddir 
+DESTDIR=$root/build/sysroot cmake --install $marisa_trie_blddir
 
 pushd librime/deps/opencc
 if [[ -z `git status --porcelain` ]]; then
@@ -62,8 +62,8 @@ popd
 opencc_blddir=build/opencc_wasm
 emcmake cmake librime/deps/opencc -B $opencc_blddir -G Ninja \
   $CMAKE_DEF
-emcmake cmake --build $opencc_blddir 
-emcmake DESTDIR=$root/build/sysroot cmake --install $opencc_blddir
+cmake --build $opencc_blddir 
+DESTDIR=$root/build/sysroot cmake --install $opencc_blddir
 
 if [[ $ENABLE_LOGGING == 'ON' ]]; then
   pushd librime/deps/glog
@@ -74,8 +74,8 @@ if [[ $ENABLE_LOGGING == 'ON' ]]; then
     $CMAKE_DEF \
     -DWITH_GFLAGS:BOOL=OFF \
     -DWITH_UNWIND:BOOL=OFF
-  emcmake cmake --build $glog_blddir 
-  emcmake DESTDIR=$root/build/sysroot cmake --install $glog_blddir
+  cmake --build $glog_blddir 
+  DESTDIR=$root/build/sysroot cmake --install $glog_blddir
 fi
 
 librime_blddir=build/librime_wasm
@@ -85,5 +85,5 @@ emcmake cmake librime -B $librime_blddir -G Ninja \
   -DBUILD_TEST:BOOL=OFF \
   -DBUILD_STATIC:BOOL=ON \
   -DENABLE_LOGGING:BOOL=$ENABLE_LOGGING
-emcmake cmake --build $librime_blddir 
-emcmake DESTDIR=$root/build/sysroot cmake --install $librime_blddir
+cmake --build $librime_blddir 
+DESTDIR=$root/build/sysroot cmake --install $librime_blddir

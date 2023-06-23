@@ -1,7 +1,6 @@
 set -e
 
 root=$PWD
-n=`nproc --all`
 
 opencc_blddir=build/opencc_native
 cmake librime/deps/opencc -B $opencc_blddir -G Ninja \
