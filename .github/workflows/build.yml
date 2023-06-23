@@ -20,7 +20,8 @@ jobs:
             libyaml-cpp-dev \
             libleveldb-dev \
             libmarisa-dev \
-            libopencc-dev
+            libopencc-dev \
+            ninja-build
       - name: Use Node.js latest
         uses: actions/setup-node@v2
         with:

@@ -3,9 +3,12 @@ set -e
 root=$PWD
 n=`nproc --all`
 
-cmake librime/deps/opencc -B build/opencc_native \
-  -DCMAKE_INSTALL_PREFIX:PATH=$root/build/sysroot/usr/local
-make -C build/opencc_native/data install -j $n
+opencc_blddir=build/opencc_native
+cmake librime/deps/opencc -B $opencc_blddir -G Ninja \
+  -DCMAKE_INSTALL_PREFIX:PATH=/usr/local \
+  -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
+cmake --build $opencc_blddir
+DESTDIR=$root/build/sysroot cmake --install $opencc_blddir
 
 pushd librime
 if [[ -z `git status --porcelain -uno --ignore-submodules` ]]; then
@@ -15,8 +18,10 @@ popd
 
 rm -rf librime/plugins/lua
 
-cmake librime -B build/librime_native \
+librime_blddir=build/librime_native
+cmake librime -B $librime_blddir -G Ninja \
   -DBUILD_TEST:BOOL=OFF \
   -DENABLE_LOGGING:BOOL=OFF \
-  -DCMAKE_BUILD_TYPE:STRING="Release"
-make -C build/librime_native -j $n
+  -DCMAKE_BUILD_TYPE:STRING="Release" \
+  -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
+cmake --build $librime_blddir
