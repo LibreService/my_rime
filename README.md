@@ -28,9 +28,13 @@ You may use [nvm](https://github.com/nvm-sh/nvm) to install node.
 npm i -g pnpm
 pnpm i
 ```
-### Install RIME dependencies
+### Install build and RIME dependencies
 ```sh
-apt install libboost-dev \
+apt install -y \
+  cmake \
+  ninja-build \
+  clang-format \
+  libboost-dev \
   libboost-filesystem-dev \
   libboost-regex-dev \
   libboost-system-dev \

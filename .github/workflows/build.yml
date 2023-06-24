@@ -14,6 +14,7 @@ jobs:
       - name: Install RIME dependencies
         run: |
           sudo apt install -y ninja-build \
+            clang-format \
             libboost-dev \
             libboost-filesystem-dev \
             libboost-regex-dev \
