@@ -1,9 +1,9 @@
 diff --git a/src/rime/config/build_info_plugin.cc b/src/rime/config/build_info_plugin.cc
-index 4df1e65..eaf858c 100644
+index a60b6b5..eb521bb 100644
 --- a/src/rime/config/build_info_plugin.cc
 +++ b/src/rime/config/build_info_plugin.cc
-@@ -19,6 +19,7 @@ bool BuildInfoPlugin::ReviewLinkOutput(
-     ConfigCompiler* compiler, an<ConfigResource> resource) {
+@@ -19,6 +19,7 @@ bool BuildInfoPlugin::ReviewLinkOutput(ConfigCompiler* compiler,
+                                        an<ConfigResource> resource) {
    auto build_info = (*resource)["__build_info"];
    build_info["rime_version"] = RIME_VERSION;
 +  return true;
@@ -11,19 +11,19 @@ index 4df1e65..eaf858c 100644
    compiler->EnumerateResources([&](an<ConfigResource> resource) {
      if (!resource->loaded) {
 diff --git a/src/rime/deployer.cc b/src/rime/deployer.cc
-index fc43344..830333e 100644
+index 1394679..37a7951 100644
 --- a/src/rime/deployer.cc
 +++ b/src/rime/deployer.cc
-@@ -109,6 +109,7 @@ bool Deployer::StartWork(bool maintenance_mode) {
+@@ -108,6 +108,7 @@ bool Deployer::StartWork(bool maintenance_mode) {
    }
-   LOG(INFO) << "starting work thread for "
-             << pending_tasks_.size() << " tasks.";
+   LOG(INFO) << "starting work thread for " << pending_tasks_.size()
+             << " tasks.";
 +  return Run();
    work_ = std::async(std::launch::async, [this] { Run(); });
    return work_.valid();
  }
 diff --git a/src/rime/schema.cc b/src/rime/schema.cc
-index 577bb31..22b9d40 100644
+index 559cb7a..9e49a03 100644
 --- a/src/rime/schema.cc
 +++ b/src/rime/schema.cc
 @@ -4,9 +4,17 @@
@@ -36,26 +36,28 @@ index 577bb31..22b9d40 100644
  
 +#ifdef __EMSCRIPTEN__
 +namespace my_rime {
-+  extern bool deployed;
-+  extern std::string get_schema_name(std::string);
-+}
++extern bool deployed;
++extern std::string get_schema_name(std::string);
++}  // namespace my_rime
 +#endif
 +
  namespace rime {
  
- Schema::Schema()
-@@ -28,6 +36,11 @@ void Schema::FetchUsefulConfigItems() {
+ Schema::Schema() : schema_id_(".default") {
+@@ -26,7 +34,12 @@ void Schema::FetchUsefulConfigItems() {
      schema_name_ = schema_id_ + "?";
      return;
    }
-+  #ifdef __EMSCRIPTEN__
+-  if (!config_->GetString("schema/name", &schema_name_)) {
++#ifdef __EMSCRIPTEN__
 +  if (!my_rime::deployed) {
 +    schema_name_ = my_rime::get_schema_name(schema_id_);
 +  } else
-+  #endif
-   if (!config_->GetString("schema/name", &schema_name_)) {
++#endif
++      if (!config_->GetString("schema/name", &schema_name_)) {
      schema_name_ = schema_id_;
    }
+   config_->GetInt("menu/page_size", &page_size_);
 diff --git a/tools/CMakeLists.txt b/tools/CMakeLists.txt
 index 18e3407..b79a0c1 100644
 --- a/tools/CMakeLists.txt
