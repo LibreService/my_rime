@@ -10,5 +10,11 @@
     "fontFamily": "HanaMin",
     "file": "HanaMinB.woff2",
     "version": "0.2.0"
+  },
+  {
+    "name": "一点明朝",
+    "fontFamily": "I Ming",
+    "file": "I.Ming.woff2",
+    "version": "0.3.0"
   }
 ]
