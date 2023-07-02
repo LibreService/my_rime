@@ -1,7 +1,7 @@
-# My RIME
+# My RIME 梧桐输入法
 ![](https://img.shields.io/github/license/LibreService/my_rime)
 
-Chinese IME powered by [RIME](https://github.com/rime/librime).
+Online Chinese IME powered by [RIME](https://github.com/rime/librime).
 
 https://my-rime.vercel.app/
 
@@ -52,9 +52,10 @@ pnpm run submodule
 ```
 ### Get font
 Uncommon characters are rendered using
-[遍黑体](https://github.com/Fitzgerald-Porthmouth-Koenigsegg/Plangothic-Project)
+[遍黑体](https://github.com/Fitzgerald-Porthmouth-Koenigsegg/Plangothic-Project),
+[花园明朝](https://github.com/max32002/max-hana)
 and
-[花园明朝](https://github.com/max32002/max-hana).
+[一点明朝](https://github.com/ichitenfont/I.Ming).
 ```sh
 pnpm run font
 ```
