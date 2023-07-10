@@ -65,7 +65,9 @@ popd
 opencc_blddir=build/opencc_wasm
 rm -rf $opencc_blddir
 emcmake cmake librime/deps/opencc -B $opencc_blddir -G Ninja \
-  $CMAKE_DEF
+  $CMAKE_DEF \
+  -DCMAKE_FIND_ROOT_PATH:PATH=$root/build/sysroot/usr/local \
+  -DUSE_SYSTEM_MARISA:BOOL=ON
 cmake --build $opencc_blddir 
 DESTDIR=$root/build/sysroot cmake --install $opencc_blddir
 
@@ -79,7 +81,7 @@ if [[ $ENABLE_LOGGING == 'ON' ]]; then
     $CMAKE_DEF \
     -DWITH_GFLAGS:BOOL=OFF \
     -DWITH_UNWIND:BOOL=OFF
-  cmake --build $glog_blddir 
+  cmake --build $glog_blddir
   DESTDIR=$root/build/sysroot cmake --install $glog_blddir
 fi
 
