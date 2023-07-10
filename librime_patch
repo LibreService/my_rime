@@ -1,5 +1,33 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index c36bca2e..99b494f3 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -45,6 +45,9 @@ if (ENABLE_ASAN)
+   set(CMAKE_SHARED_LINKER_FLAGS "${asan_lflags} ${CMAKE_SHARED_LINKER_FLAGS}")
+ endif()
+ 
++# Reproducible build
++set(CMAKE_CXX_FLAGS "-ffile-prefix-map=${CMAKE_CURRENT_SOURCE_DIR}=. -DBOOST_DISABLE_CURRENT_LOCATION ${CMAKE_CXX_FLAGS}")
++
+ set(Boost_USE_STATIC_LIBS ${BUILD_STATIC})
+ set(Gflags_STATIC ${BUILD_STATIC})
+ set(Glog_STATIC ${BUILD_STATIC})
+diff --git a/deps/CMakeLists.txt b/deps/CMakeLists.txt
+index a20440b3..515965f4 100644
+--- a/deps/CMakeLists.txt
++++ b/deps/CMakeLists.txt
+@@ -8,6 +8,9 @@ cmake_minimum_required(VERSION 3.10)
+ # libmarisa don't have cmake based build, but it is relatively small,
+ # so we define library target here
+ 
++# Reproducible build
++add_definitions(-ffile-prefix-map=${CMAKE_CURRENT_SOURCE_DIR}=.)
++
+ if(UNIX)
+   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Weffc++ -Wextra -Wconversion")
+ endif()
 diff --git a/src/rime/config/build_info_plugin.cc b/src/rime/config/build_info_plugin.cc
-index a60b6b5..eb521bb 100644
+index a60b6b56..eb521bb4 100644
 --- a/src/rime/config/build_info_plugin.cc
 +++ b/src/rime/config/build_info_plugin.cc
 @@ -19,6 +19,7 @@ bool BuildInfoPlugin::ReviewLinkOutput(ConfigCompiler* compiler,
@@ -11,7 +39,7 @@ index a60b6b5..eb521bb 100644
    compiler->EnumerateResources([&](an<ConfigResource> resource) {
      if (!resource->loaded) {
 diff --git a/src/rime/deployer.cc b/src/rime/deployer.cc
-index 1394679..37a7951 100644
+index 1394679b..37a7951b 100644
 --- a/src/rime/deployer.cc
 +++ b/src/rime/deployer.cc
 @@ -108,6 +108,7 @@ bool Deployer::StartWork(bool maintenance_mode) {
@@ -23,7 +51,7 @@ index 1394679..37a7951 100644
    return work_.valid();
  }
 diff --git a/src/rime/schema.cc b/src/rime/schema.cc
-index 559cb7a..9e49a03 100644
+index 559cb7a8..9e49a039 100644
 --- a/src/rime/schema.cc
 +++ b/src/rime/schema.cc
 @@ -4,9 +4,17 @@
@@ -59,7 +87,7 @@ index 559cb7a..9e49a03 100644
    }
    config_->GetInt("menu/page_size", &page_size_);
 diff --git a/tools/CMakeLists.txt b/tools/CMakeLists.txt
-index 18e3407..b79a0c1 100644
+index 18e3407f..b79a0c16 100644
 --- a/tools/CMakeLists.txt
 +++ b/tools/CMakeLists.txt
 @@ -44,18 +44,3 @@ install(TARGETS rime_dict_manager DESTINATION ${BIN_INSTALL_DIR})

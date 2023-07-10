@@ -20,6 +20,7 @@
     "schema": "node scripts/install_schemas.mjs",
     "lib": "bash scripts/build_lib.sh",
     "wasm": "node scripts/build_wasm.mjs",
+    "checksum": "node scripts/checksum.mjs",
     "dev": "vite --host",
     "lint": "eslint --ext .ts,.js,.mjs,.vue scripts src test && clang-format -Werror -dry-run wasm/api.cpp",
     "lint:fix": "eslint --ext .ts,.js,.mjs,.vue --fix scripts src test && clang-format -i wasm/api.cpp",

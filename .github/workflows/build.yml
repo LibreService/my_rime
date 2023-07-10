@@ -53,6 +53,9 @@ jobs:
           pnpm run schema
           pnpm run lib
           pnpm run wasm
+      - name: Check wasm reproducibility
+        run: |
+          pnpm run checksum
       - name: Build
         run: |
           pnpm run build

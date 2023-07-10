@@ -1,4 +1,4 @@
-FROM node:20.3.1-bookworm as builder
+FROM node:20.4.0-bookworm as builder
 
 ARG ENABLE_LOGGING=ON
 

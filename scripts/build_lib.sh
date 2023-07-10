@@ -14,7 +14,15 @@ if [[ -z `git status --porcelain` ]]; then
 fi
 popd
 ./bootstrap.sh
-./b2 toolset=emscripten link=static --with-filesystem --with-system --with-regex --disable-icu --prefix=$root/build/sysroot/usr/local install -j $n
+# threading defaults to multi on Linux and single on macOS
+./b2 toolset=emscripten \
+  link=static \
+  threading=single \
+  --with-filesystem \
+  --with-system \
+  --with-regex \
+  --disable-icu \
+  --prefix=$root/build/sysroot/usr/local install -j $n
 popd
 
 [[ -L librime/plugins/lua ]] || ln -s ../../librime-lua librime/plugins/lua
@@ -74,6 +82,9 @@ DESTDIR=$root/build/sysroot cmake --install $opencc_blddir
 if [[ $ENABLE_LOGGING == 'ON' ]]; then
   pushd librime/deps/glog
   git pull https://github.com/google/glog master
+  if [[ -z `git status --porcelain` ]]; then
+    git apply $root/glog_patch
+  fi
   popd
   glog_blddir=build/glog
   rm -rf $glog_blddir

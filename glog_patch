@@ -1,0 +1,14 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index f5c1e55..c181509 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -45,6 +45,9 @@ option (WITH_THREADS "Enable multithreading support" ON)
+ option (WITH_TLS "Enable Thread Local Storage (TLS) support" ON)
+ option (WITH_UNWIND "Enable libunwind support" ON)
+ 
++# Reproducible build
++add_definitions(-ffile-prefix-map=${CMAKE_CURRENT_SOURCE_DIR}=.)
++
+ cmake_dependent_option (WITH_GMOCK "Use Google Mock" ON WITH_GTEST OFF)
+ 
+ set (WITH_FUZZING none CACHE STRING "Fuzzing engine")

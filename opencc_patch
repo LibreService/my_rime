@@ -1,11 +1,14 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index ee08591..aee4fcb 100644
+index ee08591..84e8f47 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -127,12 +127,18 @@ add_definitions(
+@@ -127,12 +127,21 @@ add_definitions(
    -DPACKAGE_NAME="${PACKAGE_NAME}"
  )
  
++# Reproducible build
++add_definitions(-ffile-prefix-map=${CMAKE_CURRENT_SOURCE_DIR}=.)
++
 +if (EMSCRIPTEN)
 +  add_definitions(-I"${CMAKE_CURRENT_SOURCE_DIR}/../../../build/sysroot/usr/local/include")
 +endif()
@@ -22,7 +25,7 @@ index ee08591..aee4fcb 100644
    if (CMAKE_BUILD_TYPE MATCHES Debug)
      add_definitions(-O0 -g3)
    endif ()
-@@ -196,9 +202,11 @@ endif()
+@@ -196,9 +205,11 @@ endif()
  ######## Subdirectories
  
  add_subdirectory(src)

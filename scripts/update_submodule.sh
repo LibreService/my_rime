@@ -1,6 +1,6 @@
 set -e
 
-git submodule update --init --recursive librime
+git submodule update --init --recursive -f librime
 git submodule update --init plum
 git submodule update --init lua
 git submodule update --init librime-lua
