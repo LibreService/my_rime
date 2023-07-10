@@ -63,7 +63,7 @@ pnpm run font
 ```sh
 pnpm run native
 pnpm run schema
-export ENABLE_LOGGING=ON # optional
+export ENABLE_LOGGING=OFF # optional, default ON
 pnpm run lib
 pnpm run wasm
 ```
@@ -74,7 +74,8 @@ pnpm run dev
 The app is accessible at http://localhost:5173
 
 Optionally, go to http://localhost:5173/?debug=on or turn on `Advanced` switch so that you can send raw key sequences to librime,
- e.g. `{Shift+Delete}`, `{Release+a}`. This feature is better used when you set `ENABLE_LOGGING=ON` in the previous step.
+e.g. `{Shift+Delete}`, `{Release+a}`.
+This feature is better used with log enabled.
 ### Lint
 ```sh
 pnpm run lint:fix
@@ -119,7 +120,7 @@ vercel deploy --prebuilt --prod
 ## Docker
 ```sh
 docker build \
-  --build-arg ENABLE_LOGGING=ON \
+  --build-arg ENABLE_LOGGING=OFF \
   -t my-rime .
 docker run --name my-rime -d my-rime
 ```

@@ -61,7 +61,6 @@ const linkArgs = [
   '-l', 'opencc'
 ]
 
-// In case you forget setting ENABLE_LOGGING
 function isLibRimeBuiltWithGLog () {
   try {
     ensure(spawnSync('grep', ['LogMessage', `${LIB_PATH}/librime.a`]))
@@ -71,7 +70,7 @@ function isLibRimeBuiltWithGLog () {
   }
 }
 
-if (process.env.ENABLE_LOGGING === 'ON' || isLibRimeBuiltWithGLog()) {
+if (isLibRimeBuiltWithGLog()) {
   linkArgs.push('-l', 'glog')
 }
 

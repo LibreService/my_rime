@@ -2,13 +2,12 @@ import { spawnSync } from 'child_process'
 import { readFileSync, writeFileSync, mkdirSync, copyFileSync, existsSync, readdirSync } from 'fs'
 import { cwd, chdir, exit } from 'process'
 import yaml from 'js-yaml'
-import { ensure } from './util.mjs'
+import { utf8, ensure, md5sum } from './util.mjs'
 
 const root = cwd()
 const { version } = JSON.parse(readFileSync('package.json'))
 const RIME_DIR = 'build/librime_native/bin'
 const defaultPath = `${RIME_DIR}/default.yaml`
-const utf8 = { encoding: 'utf-8' }
 
 // input file
 const schemas = JSON.parse(readFileSync('schemas.json'))
@@ -173,7 +172,7 @@ for (const [target, schemaIds] of Object.entries(targetSchemas)) {
     const fullPath = `${RIME_DIR}/build/${fileName}`
     copyFileSync(fullPath, `${packageDir}/${fileName}`)
 
-    const md5 = ensure(spawnSync('md5sum', [fullPath], utf8)).stdout.slice(0, 32)
+    const md5 = md5sum(fullPath)
     targetFiles[target].push({ name: fileName, md5 })
   }
 }

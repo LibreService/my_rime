@@ -1,6 +1,6 @@
 set -e
 
-: "${ENABLE_LOGGING:=OFF}"
+: "${ENABLE_LOGGING:=ON}"
 
 export CXXFLAGS=-fexceptions
 
