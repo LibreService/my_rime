@@ -1,11 +1,12 @@
 import { spawnSync } from 'child_process'
 import { exit } from 'process'
-import { readFileSync } from 'fs'
+import { existsSync, readFileSync } from 'fs'
 import { ensure } from './util.mjs'
 
 const OPENCC_TARGET = '/usr/local/share/opencc'
 const OPENCC_HOST = `build/sysroot/${OPENCC_TARGET}`
 const LIB_PATH = 'build/sysroot/usr/local/lib'
+const RIME_PATH = 'build/librime_native/bin'
 
 const preloadFiles = []
 function preload (file) {
@@ -39,14 +40,20 @@ const compileArgs = [
   '-s', 'ALLOW_MEMORY_GROWTH=1',
   '-s', 'EXPORTED_FUNCTIONS=_init,_set_schema_name,_set_option,_set_ime,_process,_select_candidate_on_current_page,_deploy',
   '-s', 'EXPORTED_RUNTIME_METHODS=["ccall","FS"]',
-  '--preload-file', 'rime-config@rime',
-  '--preload-file', 'build/librime_native/bin/build/default.yaml@rime/build/default.yaml',
+  '--preload-file', `${RIME_PATH}/build/default.yaml@rime/build/default.yaml`,
   '-I', 'build/sysroot/usr/local/include',
   '-o', 'public/rime.js'
 ]
 
 for (const file of preloadFiles) {
   compileArgs.push('--preload-file', `${OPENCC_HOST}/${file}@${OPENCC_TARGET}/${file}`)
+}
+
+for (const file of ['rime.lua', 'lua']) {
+  const path = `${RIME_PATH}/${file}`
+  if (existsSync(path)) {
+    compileArgs.push('--preload-file', `${path}@rime/${file}`)
+  }
 }
 
 const linkArgs = [

@@ -26,7 +26,7 @@ jobs:
       - name: Use Node.js latest
         uses: actions/setup-node@v2
         with:
-          node-version: 18.x
+          node-version: 20.x
       - name: Install node dependencies
         run: |
           npm i -g pnpm
@@ -84,7 +84,7 @@ jobs:
       - name: Use Node.js latest
         uses: actions/setup-node@v2
         with:
-          node-version: 18.x
+          node-version: 20.x
       - name: Install node dependencies
         run: |
           npm i -g pnpm

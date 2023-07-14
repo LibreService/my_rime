@@ -15,9 +15,9 @@ However, you are more than welcomed to host a customized version of My RIME to d
 Those steps work on Ubuntu latest stable and LTS release.
 It's highly recommended to be done BEFORE your customization, in order to locate problems.
 * Customize [schemas.json](../schemas.json).
-* If your IME uses lua, place your `rime.lua` and `lua` directory under [rime-config](../rime-config/).
+* If your IME has `*.custom.yaml`, place them under [rime-config](../rime-config/).
 * Run `pnpm run schema`.
-* Run `pnpm run wasm` if the end of previous step's output asks you to do, or if your IME uses lua.
+* Run `pnpm run wasm` (given `pnpm run lib` has already been executed).
 * Test by `pnpm run dev`.
 * Once everything works fine, run `pnpm run build`.
 * The artifact is in `dist`, and you may deploy it to a static web server.

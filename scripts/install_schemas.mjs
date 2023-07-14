@@ -1,7 +1,8 @@
 import { spawnSync } from 'child_process'
-import { readFileSync, writeFileSync, mkdirSync, copyFileSync, existsSync, readdirSync } from 'fs'
+import { readFileSync, writeFileSync, mkdirSync, copyFileSync, readdirSync, cpSync } from 'fs'
 import { cwd, chdir, exit } from 'process'
 import yaml from 'js-yaml'
+import { Recipe } from '@libreservice/micro-plum'
 import { utf8, ensure, md5sum } from './util.mjs'
 
 const root = cwd()
@@ -22,29 +23,30 @@ const dependencyMap = {} // maps schema to dependent schemas
 const openccConfigs = ['t2s.json']
 
 // temp data structures
-const targetSchemas = {} // maps target to a list of schemas
+const targetManifest = {} // maps target to files downloaded from it
 const targetLicense = {}
 const ids = []
 const disabledIds = []
 
-function install (target) {
-  ensure(spawnSync('plum/rime-install', [target], {
-    stdio: 'inherit',
-    env: {
-      ...process.env,
-      rime_dir: RIME_DIR
+async function install (recipe, target) {
+  const manifest = await recipe.load()
+  for (const { file, content } of manifest) {
+    if (content) {
+      const path = `${RIME_DIR}/${file}`
+      mkdirSync(path.slice(0, path.lastIndexOf('/')), { recursive: true })
+      writeFileSync(path, content)
+      if (target && !targetManifest[target].includes(file)) {
+        targetManifest[target].push(file)
+      }
+      console.log(`Installed ${file}`)
     }
-  }))
+  }
 }
 
 function loadOpenCC (config) {
   if (!openccConfigs.includes(config)) {
     openccConfigs.push(config)
   }
-}
-
-function isOfficialIME (target) {
-  return !target.includes('/')
 }
 
 function parseYaml (schemaId) {
@@ -67,7 +69,33 @@ function parseYaml (schemaId) {
   }
 }
 
-['prelude', 'essay', 'emoji'].forEach(install)
+function getPackageDir (target) {
+  return `public/ime/${target}`
+}
+
+function readJson (path, defaultValue) {
+  try {
+    return JSON.parse(readFileSync(path, 'utf-8'))
+  } catch (e) {
+    return defaultValue
+  }
+}
+
+function bumpVersion (oldVersion) {
+  if (!oldVersion) {
+    return version
+  }
+  const [major, minor, patch] = oldVersion.split('.')
+  return [major, minor, Number(patch) + 1].join('.')
+}
+
+// Main
+
+mkdirSync(`${RIME_DIR}/opencc`, { recursive: true })
+for (const fileName of readdirSync('rime-config')) {
+  cpSync(`rime-config/${fileName}`, `${RIME_DIR}/${fileName}`, { recursive: true })
+}
+await Promise.all(['prelude', 'essay', 'emoji'].map(target => install(new Recipe(target))))
 
 // remove emoji_category as I don't want to visit a zoo when I type 东吴
 const emojiJson = `${RIME_DIR}/opencc/emoji.json`
@@ -77,12 +105,12 @@ emojiDict.dicts = emojiDict.dicts.filter(({ file }) => file !== 'emoji_category.
 writeFileSync(emojiJson, JSON.stringify(emojiContent))
 
 for (const schema of schemas) {
-  const { target } = schema
-  if (!(target in targetSchemas)) {
-    targetSchemas[target] = []
+  const recipe = new Recipe(schema.target, { schemaIds: [schema.id] })
+  const target = recipe.repo.match(/(rime\/rime-)?(.*)/)[2]
+  if (!(target in targetManifest)) {
+    targetManifest[target] = []
     targetFiles[target] = []
     targetLicense[target] = schema.license
-    install(target)
   }
   ids.push(schema.id)
   if (schema.disabled) {
@@ -91,15 +119,14 @@ for (const schema of schemas) {
     schemaName[schema.id] = schema.name
   }
   schemaTarget[schema.id] = target
-  targetSchemas[target].push(schema.id)
   if (schema.dependencies) {
     dependencyMap[schema.id] = schema.dependencies
   }
   if (schema.family) {
     for (const { id, name, disabled } of schema.family) {
+      recipe.schemaIds.push(id)
       ids.push(id)
       schemaTarget[id] = target
-      targetSchemas[target].push(id)
       if (disabled) {
         disabledIds.push(id)
       } else if (schema.dependencies) {
@@ -108,9 +135,14 @@ for (const schema of schemas) {
       }
     }
   }
+  await install(recipe, target)
   if (schema.emoji) {
     loadOpenCC('emoji.json')
-    install(`emoji:customize:schema=${schema.id}`)
+    writeFileSync(`${RIME_DIR}/${schema.id}.custom.yaml`,
+`__patch:
+  - patch/+:
+      __include: emoji_suggestion:/patch
+`)
   }
 }
 
@@ -138,24 +170,23 @@ ensure(spawnSync('./rime_console', [], {
 chdir(root)
 ids.forEach(parseYaml)
 
-function getPackageDir (target) {
-  return `public/ime/${target}`
-}
-
-for (const [target, schemaIds] of Object.entries(targetSchemas)) {
-  // find all files that belongs to a target('s npm package)
-  // wtf https://github.com/rime/plum/blob/6f502ff6fa87789847fa18200415318e705bffa4/scripts/resolver.sh#L22
-  const repoDir = `plum/package/${isOfficialIME(target) ? 'rime/' : ''}${target}`.replace('rime-', '')
+for (const [target, manifest] of Object.entries(targetManifest)) {
+  // find all built files that belongs to a target('s npm package)
   const fileNames = []
-  for (const schemaId of schemaIds) {
-    fileNames.push(`${schemaId}.schema.yaml`)
+  const schemaPostfix = '.schema.yaml'
+  for (const file of manifest) {
+    if (!file.endsWith(schemaPostfix)) {
+      continue
+    }
+    const schemaId = file.slice(0, -schemaPostfix.length)
+    fileNames.push(file)
     const { dict, prism } = schemaFiles[schemaId]
     const dictionary = dict || schemaId
     const dictYaml = `${dictionary}.dict.yaml`
     const tableBin = `${dictionary}.table.bin`
     const reverseBin = `${dictionary}.reverse.bin`
     const prismBin = `${prism || dictionary}.prism.bin`
-    if (!fileNames.includes(tableBin) && existsSync(`${repoDir}/${dictYaml}`)) {
+    if (!fileNames.includes(tableBin) && manifest.includes(dictYaml)) {
       fileNames.push(tableBin, reverseBin)
     }
     if (!fileNames.includes(prismBin)) {
@@ -177,22 +208,6 @@ for (const [target, schemaIds] of Object.entries(targetSchemas)) {
   }
 }
 
-function readJson (path, defaultValue) {
-  try {
-    return JSON.parse(readFileSync(path, 'utf-8'))
-  } catch (e) {
-    return defaultValue
-  }
-}
-
-function bumpVersion (oldVersion) {
-  if (!oldVersion) {
-    return version
-  }
-  const [major, minor, patch] = oldVersion.split('.')
-  return [major, minor, Number(patch) + 1].join('.')
-}
-
 const oldTargetFiles = readJson('target-files.json', {})
 
 const updatedTargets = []
@@ -205,7 +220,7 @@ for (const [target, files] of Object.entries(targetFiles)) {
     updatedTargets.push(target)
     newVersion = bumpVersion(oldVersion)
     const packageJson = {
-      name: `@${isOfficialIME(target) ? 'rime-contrib' : ''}/${target}`,
+      name: `@${target.includes('/') ? '' : 'rime-contrib/'}${target}`,
       version: newVersion,
       files: targetFiles[target].map(({ name }) => name),
       license: targetLicense[target]
@@ -234,20 +249,10 @@ writeFileSync('schema-files.json', JSON.stringify(schemaFiles))
 writeFileSync('schema-target.json', JSON.stringify(schemaTarget))
 writeFileSync('dependency-map.json', JSON.stringify(dependencyMap))
 writeFileSync('target-version.json', JSON.stringify(targetVersion))
-
-let oldOpenccConfigs
-try {
-  oldOpenccConfigs = readFileSync('opencc-configs.json', 'utf-8')
-} catch (e) {
-  oldOpenccConfigs = ''
-}
-
-const sortedOpenccConfig = JSON.stringify(openccConfigs.sort())
-if (oldOpenccConfigs !== sortedOpenccConfig) {
-  writeFileSync('opencc-configs.json', sortedOpenccConfig)
-  console.log("opencc-configs.json is updated. You need to run 'pnpm run wasm' again.")
-}
+writeFileSync('opencc-configs.json', JSON.stringify(openccConfigs.sort()))
 
 for (const fileName of readdirSync(`${RIME_DIR}/opencc`)) {
   copyFileSync(`${RIME_DIR}/opencc/${fileName}`, `build/sysroot/usr/local/share/opencc/${fileName}`)
 }
+
+console.log("Run 'pnpm run wasm' before 'pnpm run dev' to update rime.data.")
