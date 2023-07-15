@@ -15,7 +15,7 @@ const compileArgs = [
   '-s', 'EXPORTED_FUNCTIONS=_init,_set_schema_name,_set_option,_set_ime,_process,_select_candidate_on_current_page,_deploy',
   '-s', 'EXPORTED_RUNTIME_METHODS=["ccall","FS"]',
   '--preload-file', `${OPENCC_HOST}@${OPENCC_TARGET}`,
-  '--preload-file', `${RIME_PATH}/build/default.yaml@rime/build/default.yaml`,
+  '--preload-file', `${RIME_PATH}/build/default.yaml@/usr/share/rime-data/build/default.yaml`,
   '-I', 'build/sysroot/usr/include',
   '-o', 'public/rime.js'
 ]

@@ -56,7 +56,10 @@ void handler(void *context_object, RimeSessionId session_id,
 std::string get_schema_name(std::string schema) { return schema_name[schema]; }
 
 void startRime() {
-  RimeInitialize(NULL);
+  RIME_STRUCT(RimeTraits, traits);
+  traits.user_data_dir = "/rime";
+  traits.shared_data_dir = "/usr/share/rime-data";
+  RimeInitialize(&traits);
   RimeSetNotificationHandler(handler, NULL);
 }
 

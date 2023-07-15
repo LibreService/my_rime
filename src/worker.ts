@@ -51,7 +51,7 @@ async function fetchPrebuilt (schemaId: string) {
   }
   const files = getFiles(schemaId)
   await Promise.all(files.map(async ({ name, target, md5 }) => {
-    const path = `build/${name}`
+    const path = `/usr/share/rime-data/build/${name}`
     try {
       Module.FS.lookupPath(path)
     } catch (e) { // not exists
@@ -71,7 +71,6 @@ async function setIME (schemaId: string) {
 const readyPromise = loadWasm('rime.js', {
   url: '__LIBRESERVICE_CDN__',
   init () {
-    Module.FS.chdir('rime') // set up user/shared dir for init
     Module.ccall('init', 'null', [], [])
     for (const [schema, name] of Object.entries(schemaName)) {
       Module.ccall('set_schema_name', 'null', ['string', 'string'], [schema, name])

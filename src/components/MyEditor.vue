@@ -25,7 +25,8 @@ onMounted(() => {
     '/rime/',
     '/usr/',
     '/usr/share/',
-    '/usr/share/opencc/'
+    '/usr/share/opencc/',
+    '/usr/share/rime-data/'
   ].forEach(wc.value!.expandFolder)
 })
 </script>

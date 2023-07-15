@@ -8,9 +8,9 @@ Either provide
 
 or
 * a plum target
-(e.g. rime/rime-luna-pinyin)
+(e.g. `rime/rime-luna-pinyin`)
 and a list of schema Ids
-(e.g. luna_pinyin).
+(e.g. `luna_pinyin`, `luna_pinyin_fluency`).
 
 Click `Install`.
 
@@ -29,6 +29,6 @@ After making changes, click `Deploy`.
 > **_NOTE:_** Because MEMFS is used, all changes will be lost after refresh.
 
 Some conventions:
-* The rime directory is `/rime`.
+* The user data directory is `/rime`.
+* The shared data directory is `/usr/share/rime-data`.
 * OpenCC files are at `/usr/share/opencc`.
-* All files in [rime-config](../rime-config/) will be available at `/rime` after you execute `pnpm run wasm`.
