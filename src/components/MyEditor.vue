@@ -24,9 +24,8 @@ onMounted(() => {
     '/',
     '/rime/',
     '/usr/',
-    '/usr/local/',
-    '/usr/local/share/',
-    '/usr/local/share/opencc/'
+    '/usr/share/',
+    '/usr/share/opencc/'
   ].forEach(wc.value!.expandFolder)
 })
 </script>

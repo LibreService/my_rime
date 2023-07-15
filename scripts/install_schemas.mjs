@@ -1,9 +1,9 @@
 import { spawnSync } from 'child_process'
-import { readFileSync, writeFileSync, mkdirSync, copyFileSync, readdirSync, cpSync } from 'fs'
+import { readFileSync, writeFileSync, mkdirSync, copyFileSync, readdirSync, cpSync, rmSync } from 'fs'
 import { cwd, chdir, exit } from 'process'
 import yaml from 'js-yaml'
 import { Recipe } from '@libreservice/micro-plum'
-import { utf8, ensure, md5sum } from './util.mjs'
+import { rf, utf8, ensure, md5sum } from './util.mjs'
 
 const root = cwd()
 const { version } = JSON.parse(readFileSync('package.json'))
@@ -20,7 +20,6 @@ const schemaTarget = {} // maps schema to target
 const targetFiles = {} // maps target to files with hash
 const targetVersion = {} // maps target to npm package version
 const dependencyMap = {} // maps schema to dependent schemas
-const openccConfigs = ['t2s.json']
 
 // temp data structures
 const targetManifest = {} // maps target to files downloaded from it
@@ -43,12 +42,6 @@ async function install (recipe, target) {
   }
 }
 
-function loadOpenCC (config) {
-  if (!openccConfigs.includes(config)) {
-    openccConfigs.push(config)
-  }
-}
-
 function parseYaml (schemaId) {
   const content = yaml.load(readFileSync(`${RIME_DIR}/build/${schemaId}.schema.yaml`, utf8))
   for (const [key, value] of Object.entries(content)) {
@@ -62,9 +55,6 @@ function parseYaml (schemaId) {
       if (prism && prism !== dictionary) {
         schemaFiles[schemaId].prism = prism
       }
-    }
-    if (value && typeof value === 'object' && 'opencc_config' in value) {
-      loadOpenCC(value.opencc_config)
     }
   }
 }
@@ -91,6 +81,10 @@ function bumpVersion (oldVersion) {
 
 // Main
 
+for (const fileName of ['rime.lua', 'lua', 'opencc']) {
+  rmSync(`${RIME_DIR}/${fileName}`, rf)
+}
+
 mkdirSync(`${RIME_DIR}/opencc`, { recursive: true })
 for (const fileName of readdirSync('rime-config')) {
   cpSync(`rime-config/${fileName}`, `${RIME_DIR}/${fileName}`, { recursive: true })
@@ -99,10 +93,12 @@ await Promise.all(['prelude', 'essay', 'emoji'].map(target => install(new Recipe
 
 // remove emoji_category as I don't want to visit a zoo when I type 东吴
 const emojiJson = `${RIME_DIR}/opencc/emoji.json`
+const emojiCategory = `${RIME_DIR}/opencc/emoji_category.txt`
 const emojiContent = JSON.parse(readFileSync(emojiJson, utf8))
 const emojiDict = emojiContent.conversion_chain[0].dict
 emojiDict.dicts = emojiDict.dicts.filter(({ file }) => file !== 'emoji_category.txt')
 writeFileSync(emojiJson, JSON.stringify(emojiContent))
+rmSync(emojiCategory, rf)
 
 for (const schema of schemas) {
   const recipe = new Recipe(schema.target, { schemaIds: [schema.id] })
@@ -137,7 +133,6 @@ for (const schema of schemas) {
   }
   await install(recipe, target)
   if (schema.emoji) {
-    loadOpenCC('emoji.json')
     writeFileSync(`${RIME_DIR}/${schema.id}.custom.yaml`,
 `__patch:
   - patch/+:
@@ -249,10 +244,5 @@ writeFileSync('schema-files.json', JSON.stringify(schemaFiles))
 writeFileSync('schema-target.json', JSON.stringify(schemaTarget))
 writeFileSync('dependency-map.json', JSON.stringify(dependencyMap))
 writeFileSync('target-version.json', JSON.stringify(targetVersion))
-writeFileSync('opencc-configs.json', JSON.stringify(openccConfigs.sort()))
-
-for (const fileName of readdirSync(`${RIME_DIR}/opencc`)) {
-  copyFileSync(`${RIME_DIR}/opencc/${fileName}`, `build/sysroot/usr/local/share/opencc/${fileName}`)
-}
 
 console.log("Run 'pnpm run wasm' before 'pnpm run dev' to update rime.data.")

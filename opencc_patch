@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index ee08591..84e8f47 100644
+index ee08591..c347bb8 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -127,12 +127,21 @@ add_definitions(
@@ -10,7 +10,7 @@ index ee08591..84e8f47 100644
 +add_definitions(-ffile-prefix-map=${CMAKE_CURRENT_SOURCE_DIR}=.)
 +
 +if (EMSCRIPTEN)
-+  add_definitions(-I"${CMAKE_CURRENT_SOURCE_DIR}/../../../build/sysroot/usr/local/include")
++  add_definitions(-I"${CMAKE_CURRENT_SOURCE_DIR}/../../../build/sysroot/usr/include")
 +endif()
 +
  if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")

@@ -30,5 +30,5 @@ After making changes, click `Deploy`.
 
 Some conventions:
 * The rime directory is `/rime`.
-* OpenCC files are at `/usr/local/share/opencc`.
+* OpenCC files are at `/usr/share/opencc`.
 * All files in [rime-config](../rime-config/) will be available at `/rime` after you execute `pnpm run wasm`.

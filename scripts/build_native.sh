@@ -2,14 +2,6 @@ set -e
 
 root=$PWD
 
-opencc_blddir=build/opencc_native
-rm -rf $opencc_blddir
-cmake librime/deps/opencc -B $opencc_blddir -G Ninja \
-  -DCMAKE_INSTALL_PREFIX:PATH=/usr/local \
-  -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
-cmake --build $opencc_blddir
-DESTDIR=$root/build/sysroot cmake --install $opencc_blddir
-
 pushd librime
 if [[ -z `git status --porcelain -uno --ignore-submodules` ]]; then
   git apply $root/librime_patch

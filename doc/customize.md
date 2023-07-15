@@ -27,8 +27,8 @@ It's highly recommended to be done BEFORE your customization, in order to locate
 An IME corresponds to a schema id.
 
 * IMEs in different plum-compatible repositories should be placed in different objects, e.g. `luna_pinyin` (in [luna-pinyin](https://github.com/rime/rime-luna-pinyin)) and `jyut6ping3` (in [cantonese](https://github.com/rime/rime-cantonese)), although there's a reverse-lookup dependency between them.
-* IMEs in one repository should be placed in one object if they share dictionary, e.g. `luna_pinyin` and `luna_pinyin_fluency` both use `luna_pinyin.dict.yaml`.
-* IMEs in one repository should be placed in different objects if they don't share dictionary, e.g. you define your own dictionary `fancy.dict.yaml`, but also copy `luna_pinyin.dict.yaml` into your repository for reverse-lookup.
+* IMEs in one repository should be placed in one object if they share variant configurations, e.g. `luna_pinyin` and `luna_pinyin_fluency` both have 简 and 繁.
+* IMEs in one repository should be placed in different objects if they don't share variant configurations, e.g. you have both `luna_pinyin` and `melt_eng`.
 
 For each object, here are key and value definitions:
 * `id: string`, the schema id that you place in `default.yaml` for desktop RIME.

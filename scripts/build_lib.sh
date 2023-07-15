@@ -22,7 +22,7 @@ popd
   --with-system \
   --with-regex \
   --disable-icu \
-  --prefix=$root/build/sysroot/usr/local install -j $n
+  --prefix=$root/build/sysroot/usr install -j $n
 popd
 
 [[ -L librime/plugins/lua ]] || ln -s ../../librime-lua librime/plugins/lua
@@ -30,7 +30,7 @@ mkdir -p librime-lua/thirdparty
 [[ -L librime-lua/thirdparty/lua5.4 ]] || ln -s ../../lua librime-lua/thirdparty/lua5.4
 rm -f lua/onelua.c
 
-PREFIX=/usr/local
+PREFIX=/usr
 CMAKE_DEF="""
   -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX
   -DCMAKE_BUILD_TYPE:STRING=Release
@@ -70,11 +70,11 @@ if [[ -z `git status --porcelain` ]]; then
   git apply $root/opencc_patch
 fi
 popd
-opencc_blddir=build/opencc_wasm
+opencc_blddir=build/opencc
 rm -rf $opencc_blddir
 emcmake cmake librime/deps/opencc -B $opencc_blddir -G Ninja \
   $CMAKE_DEF \
-  -DCMAKE_FIND_ROOT_PATH:PATH=$root/build/sysroot/usr/local \
+  -DCMAKE_FIND_ROOT_PATH:PATH=$root/build/sysroot/usr \
   -DUSE_SYSTEM_MARISA:BOOL=ON
 cmake --build $opencc_blddir 
 DESTDIR=$root/build/sysroot cmake --install $opencc_blddir
@@ -100,7 +100,7 @@ librime_blddir=build/librime_wasm
 rm -rf $librime_blddir
 emcmake cmake librime -B $librime_blddir -G Ninja \
   $CMAKE_DEF \
-  -DCMAKE_FIND_ROOT_PATH:PATH=$root/build/sysroot/usr/local \
+  -DCMAKE_FIND_ROOT_PATH:PATH=$root/build/sysroot/usr \
   -DBUILD_TEST:BOOL=OFF \
   -DBUILD_STATIC:BOOL=ON \
   -DENABLE_LOGGING:BOOL=$ENABLE_LOGGING

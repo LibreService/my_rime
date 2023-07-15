@@ -1,38 +1,12 @@
 import { spawnSync } from 'child_process'
 import { exit } from 'process'
-import { existsSync, readFileSync } from 'fs'
+import { existsSync } from 'fs'
 import { ensure } from './util.mjs'
 
-const OPENCC_TARGET = '/usr/local/share/opencc'
-const OPENCC_HOST = `build/sysroot/${OPENCC_TARGET}`
-const LIB_PATH = 'build/sysroot/usr/local/lib'
+const OPENCC_TARGET = '/usr/share/opencc'
+const LIB_PATH = 'build/sysroot/usr/lib'
 const RIME_PATH = 'build/librime_native/bin'
-
-const preloadFiles = []
-function preload (file) {
-  if (!preloadFiles.includes(file)) {
-    preloadFiles.push(file)
-  }
-}
-
-function collectPreload (config) {
-  const content = JSON.parse(readFileSync(`${OPENCC_HOST}/${config}`, {
-    encoding: 'utf-8'
-  }))
-  preload(config)
-  preload(content.segmentation.dict.file)
-  for (const { dict } of content.conversion_chain) {
-    const { file, dicts } = dict
-    file && preload(file)
-    if (dicts) {
-      for (const { file } of dicts) {
-        preload(file)
-      }
-    }
-  }
-}
-
-JSON.parse(readFileSync('opencc-configs.json', { encoding: 'utf-8' })).map(collectPreload)
+const OPENCC_HOST = `${RIME_PATH}/opencc`
 
 const compileArgs = [
   '-std=c++14',
@@ -40,14 +14,11 @@ const compileArgs = [
   '-s', 'ALLOW_MEMORY_GROWTH=1',
   '-s', 'EXPORTED_FUNCTIONS=_init,_set_schema_name,_set_option,_set_ime,_process,_select_candidate_on_current_page,_deploy',
   '-s', 'EXPORTED_RUNTIME_METHODS=["ccall","FS"]',
+  '--preload-file', `${OPENCC_HOST}@${OPENCC_TARGET}`,
   '--preload-file', `${RIME_PATH}/build/default.yaml@rime/build/default.yaml`,
-  '-I', 'build/sysroot/usr/local/include',
+  '-I', 'build/sysroot/usr/include',
   '-o', 'public/rime.js'
 ]
-
-for (const file of preloadFiles) {
-  compileArgs.push('--preload-file', `${OPENCC_HOST}/${file}@${OPENCC_TARGET}/${file}`)
-}
 
 for (const file of ['rime.lua', 'lua']) {
   const path = `${RIME_PATH}/${file}`
