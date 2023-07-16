@@ -5,7 +5,9 @@ import { WeatherMoon16Regular, Circle16Regular } from '@vicons/fluent'
 import {
   init,
   deployed,
+  loading,
   schemaId,
+  ime,
   selectOptions,
   variants,
   variant,
@@ -15,6 +17,7 @@ import {
   isEnglishPunctuation,
   enableEmoji,
   schemaExtended,
+  setLoading,
   changeLanguage,
   changeVariant,
   changeWidth,
@@ -25,21 +28,9 @@ import {
 } from '../control'
 import { getTextarea, getQueryString } from '../util'
 
-const ime = ref<string>('') // visual vs internal
-
-function displayIME (value: string) {
-  ime.value = value
-}
-
 const showVariant = ref<boolean>(false)
-const loading = ref<boolean>(true)
-
-function setLoading (value: boolean) {
-  loading.value = value
-}
 
 init(getQueryString('schemaId'), getQueryString('variantName')).then(() => {
-  displayIME(schemaId.value)
   showVariant.value = true
   setLoading(false)
 })
@@ -56,9 +47,7 @@ async function selectIME (targetIME: string) {
   resetFocus()
   showVariant.value = false
   setLoading(true)
-  displayIME('')
   await changeIME(targetIME)
-  displayIME(targetIME) // update UI after variant properly set
   showVariant.value = true
   setLoading(false)
 }
@@ -80,8 +69,6 @@ function resetFocus () {
 }
 
 defineExpose({
-  displayIME,
-  setLoading,
   selectIME
 })
 </script>

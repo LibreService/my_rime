@@ -9,7 +9,12 @@ import {
   process,
   selectCandidateOnCurrentPage
 } from '../workerAPI'
-import { hideComment, changeLanguage, syncOptions } from '../control'
+import {
+  loading,
+  hideComment,
+  changeLanguage,
+  syncOptions
+} from '../control'
 import { isMobile, getTextarea } from '../util'
 
 const props = defineProps<{
@@ -208,7 +213,7 @@ watch(text, (acNewText, acText) => {
 // end: code specific to Android Chromium
 
 function onKeydown (e: KeyboardEvent) {
-  if (debugMode.value) {
+  if (debugMode.value || loading.value) {
     return
   }
   const { code, key } = e
@@ -289,7 +294,7 @@ function onKeydown (e: KeyboardEvent) {
 }
 
 function onKeyup (e: KeyboardEvent) {
-  if (debugMode.value) {
+  if (debugMode.value || loading.value) {
     return
   }
   const { key } = e

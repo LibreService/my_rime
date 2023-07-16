@@ -129,7 +129,7 @@ const AsyncEditor = defineAsyncComponent(() => import('../components/MyEditor.vu
       :on-update-schema="menu?.selectIME"
     />
     <my-font />
-    <my-deployer :menu="menu" />
+    <my-deployer />
     <micro-plum />
     <n-space>
       Advanced

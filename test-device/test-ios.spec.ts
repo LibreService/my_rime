@@ -1,12 +1,18 @@
 import { test, expect, devices } from '@playwright/test'
-import { baseURL, textarea, panelBox, input, expectValue } from '../test/util'
+import {
+  init,
+  textarea,
+  panelBox,
+  input,
+  expectValue
+} from '../test/util'
 
 test.use({
   ...devices['iPhone 13 Mini']
 })
 
 test('Panel placement', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page)
 
   await textarea(page).click()
   await input(page, 'zhiding')
@@ -15,7 +21,7 @@ test('Panel placement', async ({ page }) => {
 })
 
 test('Panel overflow', async ({ page }) => {
-  await page.goto(baseURL)
+  await init(page)
 
   await textarea(page).click()
   await input(page, 'aaaaaaaaaaaaaaaaaaaaa ')

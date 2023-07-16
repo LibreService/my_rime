@@ -1,19 +1,12 @@
 <script setup lang="ts">
-import { toRefs } from 'vue'
 import { useNotification } from 'naive-ui'
 import { worker } from '../workerAPI'
 import {
   changeIME,
   deployed,
-  selectOptions
+  selectOptions,
+  setLoading
 } from '../control'
-import type MyMenu from './MyMenu.vue'
-
-const props = defineProps<{
-  menu: InstanceType<typeof MyMenu> | undefined
-}>()
-
-const { menu } = toRefs(props)
 
 const notification = useNotification()
 
@@ -28,14 +21,14 @@ worker.control('deployStatus', async (status: 'start' | 'failure' | 'success', s
         content: 'Deployment started',
         ...options
       })
-      menu.value?.setLoading(true)
+      setLoading(true)
       break
     case 'failure':
       notification.error({
         content: 'Deployment failed',
         ...options
       })
-      menu.value?.setLoading(false)
+      setLoading(false)
       break
     case 'success':
       notification.success({
@@ -57,9 +50,8 @@ worker.control('deployStatus', async (status: 'start' | 'failure' | 'success', s
         }
         const currentSchema = schemasJson[0].id
         await changeIME(currentSchema)
-        menu.value?.displayIME(currentSchema)
       }
-      menu.value?.setLoading(false)
+      setLoading(false)
       break
   }
 })

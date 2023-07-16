@@ -12,6 +12,14 @@ const SIMPLIFICATION = 'simplification'
 const deployed = ref<boolean>(false)
 
 const schemaId = ref<string>(schemas[0].id)
+const ime = ref<string>('') // visual vs internal
+
+const loading = ref<boolean>(true)
+
+function setLoading (value: boolean) {
+  loading.value = value
+  ime.value = value ? '' : schemaId.value
+}
 
 const schemaExtended: string[] = []
 
@@ -273,7 +281,9 @@ function syncOptions (updatedOptions: string[]) {
 export {
   init,
   deployed,
+  loading,
   schemaId,
+  ime,
   selectOptions,
   variants,
   variant,
@@ -284,6 +294,7 @@ export {
   enableEmoji,
   schemaExtended,
   hideComment,
+  setLoading,
   changeLanguage,
   changeVariant,
   changeWidth,
