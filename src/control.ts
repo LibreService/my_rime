@@ -152,6 +152,8 @@ for (const schema of schemas as {
   }
 }
 
+const showVariant = ref<boolean>(false)
+
 const variants = computed(() => schemaVariants[schemaId.value])
 
 const variantIndex = computed({
@@ -176,7 +178,7 @@ async function init (_schemaId: string, variantName: string) {
       break
     }
   }
-  return changeIME(schemaId.value)
+  return selectIME(schemaId.value)
 }
 
 const isEnglish = ref<boolean>(false)
@@ -220,7 +222,9 @@ function changeVariant () {
   return setVariant()
 }
 
-async function changeIME (targetIME: string) {
+async function selectIME (targetIME: string) {
+  showVariant.value = false
+  setLoading(true)
   try {
     await setIME(targetIME)
     schemaId.value = targetIME
@@ -240,6 +244,8 @@ async function changeIME (targetIME: string) {
   } catch (e) {
     console.error(e)
   }
+  showVariant.value = true
+  setLoading(false)
 }
 
 function syncOptions (updatedOptions: string[]) {
@@ -285,6 +291,7 @@ export {
   schemaId,
   ime,
   selectOptions,
+  showVariant,
   variants,
   variant,
   isEnglish,
@@ -301,6 +308,6 @@ export {
   changeCharset,
   changePunctuation,
   changeEmoji,
-  changeIME,
+  selectIME,
   syncOptions
 }

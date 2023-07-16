@@ -56,7 +56,6 @@ async function copyLink () {
   textarea.focus()
 }
 
-const menu = ref<InstanceType<typeof MyMenu>>()
 const panel = ref<InstanceType<typeof MyPanel>>()
 const simulator = ref<InstanceType<typeof MySimulator>>()
 const editor = ref<InstanceType<typeof MyEditor>>()
@@ -87,7 +86,6 @@ const AsyncEditor = defineAsyncComponent(() => import('../components/MyEditor.vu
     class="my-column"
   >
     <my-menu
-      ref="menu"
       :textarea-selector="textareaSelector"
     />
     <n-input
@@ -126,7 +124,6 @@ const AsyncEditor = defineAsyncComponent(() => import('../components/MyEditor.vu
       :text="text"
       :update-text="updateText"
       :debug-mode="simulator?.debugMode"
-      :on-update-schema="menu?.selectIME"
     />
     <my-font />
     <my-deployer />

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watchEffect } from 'vue'
+import { computed, watchEffect } from 'vue'
 import { NButton, NButtonGroup, NIcon, NSpace, NSelect } from 'naive-ui'
 import { WeatherMoon16Regular, Circle16Regular } from '@vicons/fluent'
 import {
@@ -9,6 +9,7 @@ import {
   schemaId,
   ime,
   selectOptions,
+  showVariant,
   variants,
   variant,
   isEnglish,
@@ -17,23 +18,17 @@ import {
   isEnglishPunctuation,
   enableEmoji,
   schemaExtended,
-  setLoading,
   changeLanguage,
   changeVariant,
   changeWidth,
   changeCharset,
   changePunctuation,
   changeEmoji,
-  changeIME
+  selectIME
 } from '../control'
 import { getTextarea, getQueryString } from '../util'
 
-const showVariant = ref<boolean>(false)
-
-init(getQueryString('schemaId'), getQueryString('variantName')).then(() => {
-  showVariant.value = true
-  setLoading(false)
-})
+init(getQueryString('schemaId'), getQueryString('variantName'))
 
 const variantLabel = computed(() => showVariant.value && !deployed.value ? variant.value.name : '')
 const singleVariant = computed(() => !deployed.value && variants.value.length === 1)
@@ -42,15 +37,6 @@ watchEffect(() => {
   localStorage.setItem('schemaId', ime.value)
   localStorage.setItem('variantName', variantLabel.value)
 })
-
-async function selectIME (targetIME: string) {
-  resetFocus()
-  showVariant.value = false
-  setLoading(true)
-  await changeIME(targetIME)
-  showVariant.value = true
-  setLoading(false)
-}
 
 async function switchVariant () {
   showVariant.value = false
@@ -68,9 +54,10 @@ function resetFocus () {
   getTextarea(props.textareaSelector).focus()
 }
 
-defineExpose({
-  selectIME
-})
+function onSelectIME (value: string) {
+  resetFocus()
+  selectIME(value)
+}
 </script>
 
 <template>
@@ -80,7 +67,7 @@ defineExpose({
       :value="ime"
       :options="selectOptions"
       :loading="loading"
-      @update:value="selectIME"
+      @update:value="onSelectIME"
     />
     <n-button-group
       class="square-group"

@@ -13,6 +13,7 @@ import {
   loading,
   hideComment,
   changeLanguage,
+  selectIME,
   syncOptions
 } from '../control'
 import { isMobile, getTextarea } from '../util'
@@ -22,14 +23,12 @@ const props = defineProps<{
   text: string
   debugMode?: boolean
   updateText:(newText: string) => void
-  onUpdateSchema?: (targetIME: string) => Promise<void>
 }>()
 
 const { textareaSelector, updateText } = toRaw(props)
 const {
   text,
-  debugMode,
-  onUpdateSchema
+  debugMode
 } = toRefs(props)
 
 const mouseX = ref<number>(0)
@@ -174,7 +173,7 @@ async function analyze (result: RIME_RESULT, rimeKey: string) {
     editing.value = false
     showMenu.value = false
     if (result.state === 2 && result.updatedSchema) {
-      await onUpdateSchema?.value!(result.updatedSchema.split('/')[0])
+      await selectIME(result.updatedSchema.split('/')[0])
     }
     if (result.state === 3 && isPrintable(rimeKey)) {
       insert(rimeKey)

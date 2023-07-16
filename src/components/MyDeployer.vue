@@ -2,7 +2,7 @@
 import { useNotification } from 'naive-ui'
 import { worker } from '../workerAPI'
 import {
-  changeIME,
+  selectIME,
   deployed,
   selectOptions,
   setLoading
@@ -48,10 +48,8 @@ worker.control('deployStatus', async (status: 'start' | 'failure' | 'success', s
             value: schema.id
           })
         }
-        const currentSchema = schemasJson[0].id
-        await changeIME(currentSchema)
+        selectIME(schemasJson[0].id)
       }
-      setLoading(false)
       break
   }
 })
