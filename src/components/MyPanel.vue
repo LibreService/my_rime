@@ -183,7 +183,7 @@ async function analyze (result: RIME_RESULT, rimeKey: string) {
 }
 
 async function input (rimeKey: string) {
-  const result = JSON.parse(await process(rimeKey)) as RIME_RESULT
+  const result = await process(rimeKey)
   return analyze(result, rimeKey)
 }
 

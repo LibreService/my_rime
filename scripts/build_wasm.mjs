@@ -7,6 +7,7 @@ const OPENCC_TARGET = '/usr/share/opencc'
 const LIB_PATH = 'build/sysroot/usr/lib'
 const RIME_PATH = 'build/librime_native/bin'
 const OPENCC_HOST = `${RIME_PATH}/opencc`
+const RIME_SHARED = '/usr/share/rime-data'
 
 const compileArgs = [
   '-std=c++14',
@@ -15,7 +16,7 @@ const compileArgs = [
   '-s', 'EXPORTED_FUNCTIONS=_init,_set_schema_name,_set_option,_set_ime,_process,_select_candidate_on_current_page,_deploy',
   '-s', 'EXPORTED_RUNTIME_METHODS=["ccall","FS"]',
   '--preload-file', `${OPENCC_HOST}@${OPENCC_TARGET}`,
-  '--preload-file', `${RIME_PATH}/build/default.yaml@/usr/share/rime-data/build/default.yaml`,
+  '--preload-file', `${RIME_PATH}/build/default.yaml@${RIME_SHARED}/build/default.yaml`,
   '-I', 'build/sysroot/usr/include',
   '-o', 'public/rime.js'
 ]
@@ -23,12 +24,13 @@ const compileArgs = [
 for (const file of ['rime.lua', 'lua']) {
   const path = `${RIME_PATH}/${file}`
   if (existsSync(path)) {
-    compileArgs.push('--preload-file', `${path}@rime/${file}`)
+    compileArgs.push('--preload-file', `${path}@${RIME_SHARED}/${file}`)
   }
 }
 
 const linkArgs = [
   '-fexceptions',
+  '-l', 'idbfs.js',
   '-L', LIB_PATH,
   // To include __attribute__((constructor)) in librime-lua, see https://stackoverflow.com/a/842770
   '-Wl,--whole-archive', '-l', 'rime', '-Wl,--no-whole-archive',

@@ -1,5 +1,6 @@
 import { computed, ref, Ref } from 'vue'
 import { setOption, setIME } from './workerAPI'
+import { getQueryString } from './util'
 import schemas from '../schemas.json'
 
 const ASCII_MODE = 'ascii_mode'
@@ -34,7 +35,7 @@ const schemaVariantsIndex: {
   [key: string]: Ref<number>
 } = {}
 
-const selectOptions = ref<(
+const defaultSelectOptions: (
   {
     label: string
   } & ({
@@ -47,7 +48,9 @@ const selectOptions = ref<(
       value: string
     }[]
   })
-)[]>([])
+)[] = []
+
+const selectOptions = ref(defaultSelectOptions)
 
 type Variants = {
   id: string,
@@ -112,7 +115,7 @@ for (const schema of schemas as {
     }
     if (group) {
       let found = false
-      for (const option of selectOptions.value) {
+      for (const option of defaultSelectOptions) {
         if ('children' in option && option.label === group) {
           option.children.push(item)
           found = true
@@ -120,7 +123,7 @@ for (const schema of schemas as {
         }
       }
       if (!found) {
-        selectOptions.value.push({
+        defaultSelectOptions.push({
           type: 'group',
           label: group,
           key: group,
@@ -128,7 +131,7 @@ for (const schema of schemas as {
         })
       }
     } else {
-      selectOptions.value.push(item)
+      defaultSelectOptions.push(item)
     }
     schemaVariantsIndex[id] = ref<number>(0)
     if (extended) {
@@ -167,10 +170,10 @@ const variantIndex = computed({
 
 const variant = computed(() => variants.value[variantIndex.value])
 
-async function init (_schemaId: string, variantName: string) {
-  if (_schemaId in schemaVariants) {
-    schemaId.value = _schemaId
-  }
+async function init () {
+  const _schemaId = getQueryString('schemaId')
+  const variantName = getQueryString('variantName')
+  schemaId.value = _schemaId in schemaVariants ? _schemaId : schemas[0].id
   variantIndex.value = 0
   for (let i = 0; i < variants.value.length; ++i) {
     if (variants.value[i].name === variantName) {
@@ -290,6 +293,7 @@ export {
   loading,
   schemaId,
   ime,
+  defaultSelectOptions,
   selectOptions,
   showVariant,
   variants,

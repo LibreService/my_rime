@@ -26,9 +26,9 @@ import {
   changeEmoji,
   selectIME
 } from '../control'
-import { getTextarea, getQueryString } from '../util'
+import { getTextarea } from '../util'
 
-init(getQueryString('schemaId'), getQueryString('variantName'))
+init()
 
 const variantLabel = computed(() => showVariant.value && !deployed.value ? variant.value.name : '')
 const singleVariant = computed(() => !deployed.value && variants.value.length === 1)

@@ -8,6 +8,13 @@ import {
   NTabs,
   NTabPane
 } from 'naive-ui'
+import { resetUserDirectory } from '../../workerAPI'
+import {
+  init,
+  deployed,
+  selectOptions,
+  defaultSelectOptions
+} from '../../control'
 import InstallPane from './InstallPane.vue'
 import DeployPane from './DeployPane.vue'
 
@@ -61,6 +68,13 @@ function showMicroPlum () {
     ])
   })
 }
+
+async function onReset () {
+  await resetUserDirectory()
+  deployed.value = false
+  selectOptions.value = defaultSelectOptions
+  init()
+}
 </script>
 
 <template>
@@ -72,6 +86,13 @@ function showMicroPlum () {
       @click="showMicroPlum"
     >
       Micro Plum
+    </n-button>
+    <n-button
+      secondary
+      type="error"
+      @click="onReset"
+    >
+      Reset
     </n-button>
   </n-space>
 </template>

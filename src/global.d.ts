@@ -1,10 +1,18 @@
 declare global {
+  const IDBFS: any
   const Module: {
     FS: {
       lookupPath: (path: string) => void
       chdir: (path: string) => void
       mkdir: (path: string) => void
+      readdir: (path: string) => string[]
+      lstat: (path: string) => { mode: number }
+      isDir: (mode: number) => boolean
+      rmdir: (path: string) => void
       writeFile: (path: string, content: Uint8Array) => void
+      unlink: (path: string) => void
+      mount: (type: any, opts: {}, mountPoint: string) => void
+      syncfs: (read: boolean, callback: (err: any) => void) => void
     }
     ccall: (name: string, returnType: string, argsType: string[], args: any[]) => any
   }

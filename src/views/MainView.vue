@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, defineAsyncComponent } from 'vue'
+import { useRoute } from 'vue-router'
 import { NInput, NSpace, NButtonGroup, NButton, NIcon, NSwitch } from 'naive-ui'
 import { Cut20Regular, Copy20Regular, ClipboardLink20Regular } from '@vicons/fluent'
 import MyMenu from '../components/MyMenu.vue'
@@ -10,8 +11,15 @@ import type MySimulator from '../components/MySimulator.vue'
 import type MyEditor from '../components/MyEditor.vue'
 import MicroPlum from '../components/micro-plum/MicroPlum.vue'
 import MyPlatform from '../components/MyPlatform.vue'
-import { getTextarea, getQueryString, isMobile } from '../util'
+import {
+  setQuery,
+  getTextarea,
+  getQueryString,
+  isMobile
+} from '../util'
 import { schemaId, variant } from '../control'
+
+setQuery(useRoute().query)
 
 const textareaSelector = '#container textarea'
 let savedStart = 0

@@ -7,6 +7,9 @@ import dependencyMap from '../dependency-map.json'
 import targetFiles from '../target-files.json'
 import targetVersion from '../target-version.json'
 
+const RIME_USER = '/rime'
+const RIME_SHARED = '/usr/share/rime-data'
+
 function getURL (target: string, name: string) {
   if ('__RIME_CDN__') { // eslint-disable-line no-constant-condition
     return '__RIME_CDN__' + `${target}@${(targetVersion as {[key: string]: string})[target]}/${name}`
@@ -51,7 +54,7 @@ async function fetchPrebuilt (schemaId: string) {
   }
   const files = getFiles(schemaId)
   await Promise.all(files.map(async ({ name, target, md5 }) => {
-    const path = `/usr/share/rime-data/build/${name}`
+    const path = `${RIME_SHARED}/build/${name}`
     try {
       Module.FS.lookupPath(path)
     } catch (e) { // not exists
@@ -68,9 +71,28 @@ async function setIME (schemaId: string) {
   Module.ccall('set_ime', 'null', ['string'], [schemaId])
 }
 
+function syncUserDirectory (direction: 'read' | 'write') {
+  let resolve: (_: any) => void
+  let reject: (err: any) => void
+  const promise = new Promise<void>((_resolve, _reject) => {
+    resolve = _resolve
+    reject = _reject
+  })
+  Module.FS.syncfs(direction === 'read', (err: any) => {
+    if (err) {
+      reject(err)
+    }
+    resolve(null)
+  })
+  return promise
+}
+
 const readyPromise = loadWasm('rime.js', {
   url: '__LIBRESERVICE_CDN__',
-  init () {
+  async init () {
+    Module.FS.mkdir(RIME_USER)
+    Module.FS.mount(IDBFS, {}, RIME_USER)
+    await syncUserDirectory('read')
     Module.ccall('init', 'null', [], [])
     for (const [schema, name] of Object.entries(schemaName)) {
       Module.ccall('set_schema_name', 'null', ['string', 'string'], [schema, name])
@@ -88,8 +110,31 @@ globalThis._deployStatus = (status: 'start' | 'failure' | 'success', schemas: st
   deployStatus(status, schemas)
 }
 
+function rmStar (path: string) {
+  for (const file of Module.FS.readdir(path)) {
+    if (file === '.' || file === '..') {
+      continue
+    }
+    const subPath = `${path}/${file}`
+    const { mode } = Module.FS.lstat(subPath)
+    if (Module.FS.isDir(mode)) {
+      rmStar(subPath)
+      Module.FS.rmdir(subPath)
+    } else {
+      Module.FS.unlink(subPath)
+    }
+  }
+}
+
+async function resetUserDirectory () {
+  rmStar(RIME_USER)
+  await syncUserDirectory('write')
+  deployed = false
+}
+
 expose({
   fsOperate,
+  resetUserDirectory,
   setIME,
   setOption (option: string, value: boolean): void {
     return Module.ccall('set_option', 'null', ['string', 'number'], [option, value])
@@ -97,8 +142,12 @@ expose({
   deploy (): void {
     return Module.ccall('deploy', 'null', [], [])
   },
-  process (input: string): string {
-    return Module.ccall('process', 'string', ['string'], [input])
+  async process (input: string): Promise<RIME_RESULT> {
+    const result = JSON.parse(Module.ccall('process', 'string', ['string'], [input]))
+    if ('committed' in result) {
+      await syncUserDirectory('write') // record frequency
+    }
+    return result
   },
   selectCandidateOnCurrentPage (index: number): string {
     return Module.ccall('select_candidate_on_current_page', 'string', ['number'], [index])
