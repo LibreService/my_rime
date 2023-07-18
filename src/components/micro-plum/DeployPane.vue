@@ -64,7 +64,7 @@ onMounted(async () => {
     _selected = []
   }
   for (const schema of preSelectedSchemas.value) {
-    if (available.includes(schema)) {
+    if (available.includes(schema) && !_selected.includes(schema)) {
       _selected.push(schema)
     }
   }

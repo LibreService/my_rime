@@ -68,6 +68,7 @@ function showMicroPlum () {
 }
 
 async function onReset () {
+  installedPrerequisites.value = false
   setLoading(true)
   localStorage.removeItem('schemaId')
   await resetUserDirectory()
