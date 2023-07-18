@@ -128,8 +128,9 @@ void set_option(const char *option, int value) {
 
 void init() {
   RIME_STRUCT_INIT(RimeTraits, traits);
-  traits.user_data_dir = "/rime";
   traits.shared_data_dir = "/usr/share/rime-data";
+  traits.user_data_dir = "/rime";
+  traits.app_name = "My RIME";
   RimeSetup(&traits);
   startRime();
   session_id = RimeCreateSession();

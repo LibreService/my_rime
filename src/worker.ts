@@ -98,6 +98,22 @@ const readyPromise = loadWasm('rime.js', {
     for (const [schema, name] of Object.entries(schemaName)) {
       Module.ccall('set_schema_name', 'null', ['string', 'string'], [schema, name])
     }
+  },
+  Module: {
+    // Customize for glog
+    printErr (message: string) {
+      const match = message.match(/[EWID]\S+ \S+ \S+ (.*)/)
+      if (match) {
+        ({
+          E: console.error,
+          W: console.warn,
+          I: console.info,
+          D: console.debug
+        })[message[0] as 'E' | 'W' | 'I' | 'D'](match[1])
+      } else {
+        console.error(message)
+      }
+    }
   }
 })
 

@@ -37,7 +37,7 @@
     "@libreservice/lazy-cache": "^0.1.0",
     "@libreservice/micro-plum": "^0.1.5",
     "@libreservice/my-widget": "^0.1.4",
-    "@libreservice/my-worker": "^0.4.1",
+    "@libreservice/my-worker": "^0.4.2",
     "@libreservice/wasm-code": "^0.1.1",
     "@playwright/test": "^1.36.1",
     "@rollup/plugin-json": "^6.0.0",
