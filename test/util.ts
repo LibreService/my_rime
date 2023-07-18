@@ -1,4 +1,4 @@
-import { expect, Request, Page } from '@playwright/test'
+import { test, expect, Request, Page } from '@playwright/test'
 import yaml from 'js-yaml'
 
 const baseURL = 'http://localhost:4173/'
@@ -131,6 +131,11 @@ function copyLink (page: Page) {
   return bottomMenu(page).nth(2).click()
 }
 
+function expectSuccessfulDeployment (page: Page) {
+  test.setTimeout(60000)
+  return expect(page.getByText('Deployment succeeded')).toBeVisible({ timeout: 30000 })
+}
+
 function chain (...callbacks: ((param?: any) => void)[]) {
   return (param?: any) => {
     for (const callback of callbacks) {
@@ -185,6 +190,7 @@ export {
   cut,
   copy,
   copyLink,
+  expectSuccessfulDeployment,
   chain,
   callOnDownload,
   patch

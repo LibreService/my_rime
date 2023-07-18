@@ -8,6 +8,7 @@ import {
   expectValue,
   item,
   selectIME,
+  expectSuccessfulDeployment,
   chain,
   callOnDownload,
   luna
@@ -113,7 +114,7 @@ test('Deploy', async ({ page }) => {
   await page.keyboard.press('Control+s')
 
   await deploy(page)
-  await expect(page.getByText('Deployment succeeded')).toBeVisible()
+  await expectSuccessfulDeployment(page)
   await expect(select(page)).toHaveText('朙月拼音')
 
   await textarea(page).click()

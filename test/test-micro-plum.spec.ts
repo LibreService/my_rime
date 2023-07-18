@@ -1,6 +1,7 @@
 import { test, expect, Page, Locator } from '@playwright/test'
 import {
   expectValue,
+  expectSuccessfulDeployment,
   init,
   select,
   menu,
@@ -26,7 +27,7 @@ function microPlum (page: Page) {
 async function installAndDeploy (page: Page, mp: Locator, ime: string) {
   await mp.getByRole('button').getByText('Install').click()
   await mp.getByRole('button').getByText('Deploy').click()
-  await expect(page.getByText('Deployment succeeded')).toBeVisible()
+  await expectSuccessfulDeployment(page)
   await expect(variantButton(page)).toBeDisabled()
   return newIMEReady(page, ime)
 }
