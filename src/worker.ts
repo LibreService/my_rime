@@ -69,6 +69,7 @@ async function setIME (schemaId: string) {
     await fetchPrebuilt(schemaId)
   }
   Module.ccall('set_ime', 'null', ['string'], [schemaId])
+  return syncUserDirectory('write')
 }
 
 function syncUserDirectory (direction: 'read' | 'write') {
@@ -130,6 +131,7 @@ async function resetUserDirectory () {
   rmStar(RIME_USER)
   await syncUserDirectory('write')
   deployed = false
+  Module.ccall('unset_deployed', 'null', [], [])
 }
 
 expose({

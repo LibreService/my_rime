@@ -9,6 +9,7 @@ namespace my_rime {
 
 enum { COMMITTED, ACCEPTED, REJECTED, UNHANDLED };
 
+RimeTraits traits = {0};
 RimeSessionId session_id;
 RimeCommit commit;
 RimeContext context;
@@ -56,9 +57,6 @@ void handler(void *context_object, RimeSessionId session_id,
 std::string get_schema_name(std::string schema) { return schema_name[schema]; }
 
 void startRime() {
-  RIME_STRUCT(RimeTraits, traits);
-  traits.user_data_dir = "/rime";
-  traits.shared_data_dir = "/usr/share/rime-data";
   RimeInitialize(&traits);
   RimeSetNotificationHandler(handler, NULL);
 }
@@ -129,7 +127,10 @@ void set_option(const char *option, int value) {
 }
 
 void init() {
-  RimeSetup(NULL);
+  RIME_STRUCT_INIT(RimeTraits, traits);
+  traits.user_data_dir = "/rime";
+  traits.shared_data_dir = "/usr/share/rime-data";
+  RimeSetup(&traits);
   startRime();
   session_id = RimeCreateSession();
   RIME_STRUCT_INIT(RimeCommit, commit);
@@ -169,6 +170,8 @@ void deploy() {
   RimeStartMaintenance(true);
   session_id = RimeCreateSession();
 }
+
+void unset_deployed() { deployed = false; }
 }
 
 } // namespace my_rime

@@ -1,6 +1,15 @@
 import { computed, ref, Ref } from 'vue'
-import { setOption, setIME } from './workerAPI'
-import { getQueryString } from './util'
+import {
+  setOption,
+  setIME,
+  resetUserDirectory,
+  FS,
+  deploy
+} from './workerAPI'
+import {
+  getQueryString,
+  getQueryOrStoredString
+} from './util'
 import schemas from '../schemas.json'
 
 const ASCII_MODE = 'ascii_mode'
@@ -18,6 +27,7 @@ const ime = ref<string>('') // visual vs internal
 const loading = ref<boolean>(true)
 
 function setLoading (value: boolean) {
+  showVariant.value = !value
   loading.value = value
   ime.value = value ? '' : schemaId.value
 }
@@ -50,7 +60,7 @@ const defaultSelectOptions: (
   })
 )[] = []
 
-const selectOptions = ref(defaultSelectOptions)
+const selectOptions = ref<typeof defaultSelectOptions>([])
 
 type Variants = {
   id: string,
@@ -170,9 +180,26 @@ const variantIndex = computed({
 
 const variant = computed(() => variants.value[variantIndex.value])
 
+async function hasUserDefaultYaml () {
+  try {
+    await FS.lstat('/rime/build/default.yaml')
+    return true
+  } catch {
+    return false
+  }
+}
+
 async function init () {
-  const _schemaId = getQueryString('schemaId')
-  const variantName = getQueryString('variantName')
+  if (getQueryString('schemaId') in schemaVariants) {
+    await resetUserDirectory()
+  }
+  if (await hasUserDefaultYaml()) {
+    return deploy()
+  }
+  const _schemaId = getQueryOrStoredString('schemaId')
+  const variantName = getQueryOrStoredString('variantName')
+  selectOptions.value = defaultSelectOptions
+  deployed.value = false
   schemaId.value = _schemaId in schemaVariants ? _schemaId : schemas[0].id
   variantIndex.value = 0
   for (let i = 0; i < variants.value.length; ++i) {
@@ -226,7 +253,6 @@ function changeVariant () {
 }
 
 async function selectIME (targetIME: string) {
-  showVariant.value = false
   setLoading(true)
   try {
     await setIME(targetIME)
@@ -247,7 +273,6 @@ async function selectIME (targetIME: string) {
   } catch (e) {
     console.error(e)
   }
-  showVariant.value = true
   setLoading(false)
 }
 

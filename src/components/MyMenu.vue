@@ -34,8 +34,12 @@ const variantLabel = computed(() => showVariant.value && !deployed.value ? varia
 const singleVariant = computed(() => !deployed.value && variants.value.length === 1)
 
 watchEffect(() => {
-  localStorage.setItem('schemaId', ime.value)
-  localStorage.setItem('variantName', variantLabel.value)
+  if (ime.value) {
+    localStorage.setItem('schemaId', ime.value)
+  }
+  if (variantLabel.value) {
+    localStorage.setItem('variantName', variantLabel.value)
+  }
 })
 
 async function switchVariant () {

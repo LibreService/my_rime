@@ -7,6 +7,7 @@ import {
   selectOptions,
   setLoading
 } from '../control'
+import { getQueryOrStoredString } from '../util'
 
 const notification = useNotification()
 
@@ -48,7 +49,8 @@ worker.control('deployStatus', async (status: 'start' | 'failure' | 'success', s
             value: schema.id
           })
         }
-        selectIME(schemasJson[0].id)
+        const schemaId = getQueryOrStoredString('schemaId')
+        selectIME(schemasJson.map(schema => schema.id).includes(schemaId) ? schemaId : schemasJson[0].id)
       }
       break
   }

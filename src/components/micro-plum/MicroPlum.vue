@@ -11,9 +11,7 @@ import {
 import { resetUserDirectory } from '../../workerAPI'
 import {
   init,
-  deployed,
-  selectOptions,
-  defaultSelectOptions
+  setLoading
 } from '../../control'
 import InstallPane from './InstallPane.vue'
 import DeployPane from './DeployPane.vue'
@@ -70,9 +68,9 @@ function showMicroPlum () {
 }
 
 async function onReset () {
+  setLoading(true)
+  localStorage.removeItem('schemaId')
   await resetUserDirectory()
-  deployed.value = false
-  selectOptions.value = defaultSelectOptions
   init()
 }
 </script>

@@ -9,7 +9,8 @@ import {
   item,
   selectIME,
   chain,
-  callOnDownload
+  callOnDownload,
+  luna
 } from './util'
 
 function deploy (page: Page) {
@@ -28,6 +29,7 @@ async function upload (page: Page, files: string[]) {
 
 test('Debug', async ({ page }) => {
   await page.goto(debugURL)
+  await expect(select(page)).toHaveText(luna)
 
   const debugInput = page.locator('input')
 

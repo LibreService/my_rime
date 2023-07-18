@@ -1,5 +1,5 @@
 import { computed } from 'vue'
-import { useRoute, LocationQuery } from 'vue-router'
+import { LocationQuery } from 'vue-router'
 import { useBreakpoint } from 'vooks'
 
 let query: LocationQuery
@@ -15,21 +15,19 @@ function getTextarea (selector: string) {
   return document.querySelector(selector) as HTMLTextAreaElement
 }
 
-let route: ReturnType<typeof useRoute> | undefined
-
 function getQueryString (key: string) {
-  console.log(query)
-  if (!route) {
-    route = useRoute()
-  }
-  const queryValue = route.query[key]
-  const param = typeof queryValue === 'string' ? queryValue : ''
-  return param || localStorage.getItem(key) || ''
+  const queryValue = query[key]
+  return typeof queryValue === 'string' ? queryValue : ''
+}
+
+function getQueryOrStoredString (key: string) {
+  return getQueryString(key) || localStorage.getItem(key) || ''
 }
 
 export {
   isMobile,
   setQuery,
   getTextarea,
-  getQueryString
+  getQueryString,
+  getQueryOrStoredString
 }

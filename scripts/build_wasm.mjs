@@ -9,11 +9,22 @@ const RIME_PATH = 'build/librime_native/bin'
 const OPENCC_HOST = `${RIME_PATH}/opencc`
 const RIME_SHARED = '/usr/share/rime-data'
 
+const exportedFunctions = [
+  'init',
+  'set_schema_name',
+  'set_option',
+  'set_ime',
+  'process',
+  'select_candidate_on_current_page',
+  'deploy',
+  'unset_deployed'
+]
+
 const compileArgs = [
   '-std=c++14',
   '-O2',
   '-s', 'ALLOW_MEMORY_GROWTH=1',
-  '-s', 'EXPORTED_FUNCTIONS=_init,_set_schema_name,_set_option,_set_ime,_process,_select_candidate_on_current_page,_deploy',
+  '-s', `EXPORTED_FUNCTIONS=${exportedFunctions.map(name => '_' + name).join(',')}`,
   '-s', 'EXPORTED_RUNTIME_METHODS=["ccall","FS"]',
   '--preload-file', `${OPENCC_HOST}@${OPENCC_TARGET}`,
   '--preload-file', `${RIME_PATH}/build/default.yaml@${RIME_SHARED}/build/default.yaml`,
