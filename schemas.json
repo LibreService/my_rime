@@ -22,7 +22,7 @@
   {
     "id": "jyut6ping3",
     "name": "粤语拼音",
-    "group": "方言",
+    "group": "非普通話漢語",
     "target": "cantonese",
     "dependencies": ["luna_pinyin", "stroke", "cangjie5"],
     "variants": [
@@ -192,7 +192,7 @@
   {
     "id": "zyenpheng",
     "name": "中古全拼",
-    "group": "方言",
+    "group": "非普通話漢語",
     "target": "middle-chinese",
     "dependencies": ["luna_pinyin"],
     "family": [
@@ -240,7 +240,7 @@
   {
     "id": "wugniu_lopha",
     "name": "上海吴语·老派",
-    "group": "方言",
+    "group": "非普通話漢語",
     "target": "wugniu",
     "dependencies": ["luna_pinyin"],
     "family": [
@@ -254,7 +254,7 @@
   {
     "id": "soutzoe",
     "name": "苏州吴语",
-    "group": "方言",
+    "group": "非普通話漢語",
     "target": "soutzoe",
     "dependencies": ["luna_pinyin"],
     "license": "GPL-3.0-only"
