@@ -14,14 +14,15 @@ RimeSessionId session_id;
 RimeCommit commit;
 RimeContext context;
 std::string json_string;
-bool has_pre_edit;
-bool processing;
 std::vector<std::string> updated_options;
 std::string updated_schema;
+std::unordered_map<std::string, std::string> schema_name;
+bool has_pre_edit;
+bool processing;
+bool rime_started = false;
 // Before a successful deployment, use schema name in schemas.json instead of
 // .schema.yaml.
 bool deployed = false;
-std::unordered_map<std::string, std::string> schema_name;
 
 template <typename T> inline const char *to_json(T &obj) {
   json_string = boost::json::serialize(obj);
@@ -56,9 +57,16 @@ void handler(void *context_object, RimeSessionId session_id,
 
 std::string get_schema_name(std::string schema) { return schema_name[schema]; }
 
-void startRime() {
+void start_rime() {
   RimeInitialize(&traits);
   RimeSetNotificationHandler(handler, NULL);
+  rime_started = true;
+}
+
+void stop_rime() {
+  RimeDestroySession(session_id);
+  RimeFinalize();
+  rime_started = false;
 }
 
 const char *analyze() {
@@ -132,8 +140,6 @@ void init() {
   traits.user_data_dir = "/rime";
   traits.app_name = "My RIME";
   RimeSetup(&traits);
-  startRime();
-  session_id = RimeCreateSession();
   RIME_STRUCT_INIT(RimeCommit, commit);
   RIME_STRUCT_INIT(RimeContext, context);
 }
@@ -157,22 +163,28 @@ const char *select_candidate_on_current_page(int index) {
 }
 
 void set_ime(const char *ime) {
-  // Need to reset session when using F4 to select a schema
-  // not available yet.
-  RimeDestroySession(session_id);
+  if (rime_started) {
+    // Need to reset session when using F4 to select a schema
+    // not available yet.
+    RimeDestroySession(session_id);
+  } else {
+    start_rime();
+  }
   session_id = RimeCreateSession();
   RimeSelectSchema(session_id, ime);
 }
 
 void deploy() {
-  RimeDestroySession(session_id);
-  RimeFinalize();
-  startRime();
+  stop_rime();
+  start_rime();
   RimeStartMaintenance(true);
   session_id = RimeCreateSession();
 }
 
-void unset_deployed() { deployed = false; }
+void reset() {
+  deployed = false;
+  stop_rime();
+}
 }
 
 } // namespace my_rime

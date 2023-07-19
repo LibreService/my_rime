@@ -190,11 +190,12 @@ async function hasUserDefaultYaml () {
 }
 
 async function init () {
-  if (getQueryString('schemaId') in schemaVariants) {
-    await resetUserDirectory()
-  }
   if (await hasUserDefaultYaml()) {
-    return deploy()
+    if (getQueryString('schemaId') in schemaVariants) {
+      await resetUserDirectory()
+    } else {
+      return deploy()
+    }
   }
   const _schemaId = getQueryOrStoredString('schemaId')
   const variantName = getQueryOrStoredString('variantName')
@@ -311,6 +312,8 @@ function syncOptions (updatedOptions: string[]) {
     }
   }
 }
+
+init()
 
 export {
   init,

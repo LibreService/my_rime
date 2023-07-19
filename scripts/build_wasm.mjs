@@ -17,7 +17,7 @@ const exportedFunctions = [
   'process',
   'select_candidate_on_current_page',
   'deploy',
-  'unset_deployed'
+  'reset'
 ]
 
 const compileArgs = [

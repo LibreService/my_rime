@@ -147,7 +147,7 @@ async function resetUserDirectory () {
   rmStar(RIME_USER)
   await syncUserDirectory('write')
   deployed = false
-  Module.ccall('unset_deployed', 'null', [], [])
+  Module.ccall('reset', 'null', [], [])
 }
 
 expose({

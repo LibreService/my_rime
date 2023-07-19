@@ -3,7 +3,6 @@ import { computed, watchEffect } from 'vue'
 import { NButton, NButtonGroup, NIcon, NSpace, NSelect } from 'naive-ui'
 import { WeatherMoon16Regular, Circle16Regular } from '@vicons/fluent'
 import {
-  init,
   deployed,
   loading,
   schemaId,
@@ -27,8 +26,6 @@ import {
   selectIME
 } from '../control'
 import { getTextarea } from '../util'
-
-init()
 
 const variantLabel = computed(() => showVariant.value && !deployed.value ? variant.value.name : '')
 const singleVariant = computed(() => !deployed.value && variants.value.length === 1)
