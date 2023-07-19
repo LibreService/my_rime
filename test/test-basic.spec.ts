@@ -248,8 +248,7 @@ test('Switcher', async ({ page }) => {
 
   await changeVariant(page, '繁')
   await page.keyboard.press('F4')
-  await expect(item(page, '4 粤语拼音')).toBeVisible()
-  await input(page, '4')
+  await item(page, '4 粤语拼音').click()
   await expect(select(page)).toHaveText('粤语拼音')
 
   await page.keyboard.press('Control+`')

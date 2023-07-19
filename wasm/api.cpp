@@ -69,7 +69,14 @@ void stop_rime() {
   rime_started = false;
 }
 
-const char *analyze() {
+void pre_process() {
+  updated_options.clear();
+  updated_schema = "";
+  processing = true;
+}
+
+const char *post_process() {
+  processing = false;
   boost::json::object obj;
   if (updated_options.size()) {
     boost::json::array options;
@@ -149,17 +156,15 @@ void set_schema_name(const char *schema, const char *name) {
 }
 
 const char *process(const char *input) {
-  updated_options.clear();
-  updated_schema = "";
-  processing = true;
+  pre_process();
   RimeSimulateKeySequence(session_id, input);
-  processing = false;
-  return analyze();
+  return post_process();
 }
 
 const char *select_candidate_on_current_page(int index) {
+  pre_process();
   RimeSelectCandidateOnCurrentPage(session_id, index);
-  return analyze();
+  return post_process();
 }
 
 void set_ime(const char *ime) {
