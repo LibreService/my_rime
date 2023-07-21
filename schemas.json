@@ -128,14 +128,14 @@
   {
     "id": "ipa_xsampa",
     "name": "X-SAMPA",
-    "group": "其他",
+    "group": "音标",
     "target": "ipa",
     "license": "LGPL-3.0-only"
   },
   {
     "id": "ipa_yunlong",
     "name": "云龙国际音标",
-    "group": "其他",
+    "group": "音标",
     "target": "ipa",
     "license": "LGPL-3.0-only"
   },
@@ -170,7 +170,7 @@
   {
     "id": "combo_pinyin",
     "name": "宫保拼音·七指禅",
-    "group": "音码",
+    "group": "并击",
     "target": "combo-pinyin",
     "dependencies": ["luna_pinyin"],
     "family": [
@@ -192,7 +192,7 @@
   {
     "id": "zyenpheng",
     "name": "中古全拼",
-    "group": "方言",
+    "group": "古音",
     "target": "middle-chinese",
     "dependencies": ["luna_pinyin"],
     "family": [

@@ -1,0 +1,12 @@
+diff --git a/util/env_posix.cc b/util/env_posix.cc
+index d84cd1e..773c8cd 100644
+--- a/util/env_posix.cc
++++ b/util/env_posix.cc
+@@ -781,6 +781,7 @@ PosixEnv::PosixEnv()
+ void PosixEnv::Schedule(
+     void (*background_work_function)(void* background_work_arg),
+     void* background_work_arg) {
++  return background_work_function(background_work_arg);
+   background_work_mutex_.Lock();
+ 
+   // Start the background thread, if we haven't done so already.

@@ -49,6 +49,11 @@ emcmake cmake librime/deps/yaml-cpp -B $yaml_cpp_blddir -G Ninja \
 cmake --build $yaml_cpp_blddir
 DESTDIR=$root/build/sysroot cmake --install $yaml_cpp_blddir
 
+pushd librime/deps/leveldb
+if [[ -z `git status --porcelain` ]]; then
+  git apply $root/leveldb_patch
+fi
+popd
 leveldb_blddir=build/leveldb
 rm -rf $leveldb_blddir
 emcmake cmake librime/deps/leveldb -B build/leveldb -G Ninja \
