@@ -39,10 +39,34 @@ index a60b6b56..eb521bb4 100644
    compiler->EnumerateResources([&](an<ConfigResource> resource) {
      if (!resource->loaded) {
 diff --git a/src/rime/deployer.cc b/src/rime/deployer.cc
-index 1394679b..37a7951b 100644
+index 1394679b..0d524fae 100644
 --- a/src/rime/deployer.cc
 +++ b/src/rime/deployer.cc
-@@ -108,6 +108,7 @@ bool Deployer::StartWork(bool maintenance_mode) {
+@@ -5,6 +5,7 @@
+ // 2011-12-01 GONG Chen <chen.sst@gmail.com>
+ //
+ #include <chrono>
++#include <exception>
+ #include <utility>
+ #include <boost/date_time/posix_time/posix_time_types.hpp>
+ #include <boost/filesystem.hpp>
+@@ -82,10 +83,15 @@ bool Deployer::Run() {
+   int failure = 0;
+   do {
+     while (auto task = NextTask()) {
++      try {
+       if (task->Run(this))
+         ++success;
+       else
+         ++failure;
++      } catch (const std::exception& ex) {
++        ++failure;
++        LOG(ERROR) << "Error deploying: " << ex.what();
++      }
+       // boost::this_thread::interruption_point();
+     }
+     LOG(INFO) << success + failure << " tasks ran: " << success << " success, "
+@@ -108,6 +114,7 @@ bool Deployer::StartWork(bool maintenance_mode) {
    }
    LOG(INFO) << "starting work thread for " << pending_tasks_.size()
              << " tasks.";

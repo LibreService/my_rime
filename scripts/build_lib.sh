@@ -112,6 +112,8 @@ emcmake cmake librime -B $librime_blddir -G Ninja \
   -DENABLE_LOGGING:BOOL=$ENABLE_LOGGING
 cmake --build $librime_blddir
 DESTDIR=$root/build/sysroot cmake --install $librime_blddir
-# Fix source map for chromium debug
-rm -rf $librime_blddir/src
-ln -s ../../librime/src $librime_blddir/src
+if [[ $BUILD_TYPE == 'Debug' ]]; then
+  # Fix source map for chromium debug
+  rm -rf $librime_blddir/src
+  ln -s ../../librime/src $librime_blddir/src
+fi
