@@ -22,7 +22,7 @@ const exportedFunctions = [
 
 const compileArgs = [
   '-std=c++14',
-  '-O2',
+  process.env.BUILD_TYPE === 'Debug' ? '-g' : '-O2',
   '-s', 'ALLOW_MEMORY_GROWTH=1',
   '-s', `EXPORTED_FUNCTIONS=${exportedFunctions.map(name => '_' + name).join(',')}`,
   '-s', 'EXPORTED_RUNTIME_METHODS=["ccall","FS"]',

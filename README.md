@@ -64,6 +64,7 @@ pnpm run font
 pnpm run native
 pnpm run schema
 export ENABLE_LOGGING=OFF # optional, default ON
+export BUILD_TYPE=Debug # optional, default Release
 pnpm run lib
 pnpm run wasm
 ```

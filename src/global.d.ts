@@ -32,7 +32,7 @@ declare global {
     selectLabels?: string[]
     candidates: {
       text: string
-      comment: string
+      comment?: string
     }[]
   }
   type RIME_REJECTED = {

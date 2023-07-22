@@ -1,6 +1,7 @@
 set -e
 
 : "${ENABLE_LOGGING:=ON}"
+: "${BUILD_TYPE:=Release}"
 
 export CXXFLAGS=-fexceptions
 
@@ -33,7 +34,7 @@ rm -f lua/onelua.c
 PREFIX=/usr
 CMAKE_DEF="""
   -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX
-  -DCMAKE_BUILD_TYPE:STRING=Release
+  -DCMAKE_BUILD_TYPE:STRING=$BUILD_TYPE
   -DBUILD_TESTING:BOOL=OFF
   -DBUILD_SHARED_LIBS:BOOL=OFF
   -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
@@ -67,7 +68,7 @@ marisa_trie_blddir=build/marisa-trie
 rm -rf $marisa_trie_blddir
 emcmake cmake librime/deps -B $marisa_trie_blddir -G Ninja \
   $CMAKE_DEF
-cmake --build $marisa_trie_blddir 
+cmake --build $marisa_trie_blddir
 DESTDIR=$root/build/sysroot cmake --install $marisa_trie_blddir
 
 pushd librime/deps/opencc
@@ -81,7 +82,7 @@ emcmake cmake librime/deps/opencc -B $opencc_blddir -G Ninja \
   $CMAKE_DEF \
   -DCMAKE_FIND_ROOT_PATH:PATH=$root/build/sysroot/usr \
   -DUSE_SYSTEM_MARISA:BOOL=ON
-cmake --build $opencc_blddir 
+cmake --build $opencc_blddir
 DESTDIR=$root/build/sysroot cmake --install $opencc_blddir
 
 if [[ $ENABLE_LOGGING == 'ON' ]]; then
@@ -109,5 +110,8 @@ emcmake cmake librime -B $librime_blddir -G Ninja \
   -DBUILD_TEST:BOOL=OFF \
   -DBUILD_STATIC:BOOL=ON \
   -DENABLE_LOGGING:BOOL=$ENABLE_LOGGING
-cmake --build $librime_blddir 
+cmake --build $librime_blddir
 DESTDIR=$root/build/sysroot cmake --install $librime_blddir
+# Fix source map for chromium debug
+rm -rf $librime_blddir/src
+ln -s ../../librime/src $librime_blddir/src

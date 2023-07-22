@@ -149,7 +149,7 @@ async function analyze (result: RIME_RESULT, rimeKey: string) {
     highlighted.value = result.highlighted
     menuOptions.value = result.candidates.map((candidate, i) => {
       let label = `${result.selectLabels?.[i] || i + 1} ${candidate.text}`
-      if (hideComment.value === false || (hideComment.value === 'emoji' && !isEmoji(candidate.text))) {
+      if (candidate.comment && (hideComment.value === false || (hideComment.value === 'emoji' && !isEmoji(candidate.text)))) {
         label += ' ' + candidate.comment
       }
       return { label, key: i }

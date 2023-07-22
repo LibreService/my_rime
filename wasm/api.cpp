@@ -111,7 +111,9 @@ const char *post_process() {
     for (int i = 0; i < menu.num_candidates; ++i) {
       boost::json::object candidate;
       candidate["text"] = menu.candidates[i].text;
-      candidate["comment"] = menu.candidates[i].comment;
+      if (menu.candidates[i].comment) {
+        candidate["comment"] = menu.candidates[i].comment;
+      }
       candidates.push_back(candidate);
     }
     obj["candidates"] = candidates;
