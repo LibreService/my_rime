@@ -16,9 +16,6 @@ import {
 import InstallPane from './InstallPane.vue'
 import DeployPane from './DeployPane.vue'
 
-const rimePath = '/rime/'
-const schemaPattern = /^[-_a-zA-Z0-9]+$/
-
 const tab = ref<'install' | 'deploy'>('install')
 const source = ref<'GitHub' | 'jsDelivr'>('GitHub')
 const mode = ref<'schema' | 'plum'>('schema')
@@ -27,8 +24,6 @@ const downloading = ref<boolean>(false)
 const preSelectedSchemas = ref<string[]>([])
 
 export {
-  rimePath,
-  schemaPattern,
   tab,
   source,
   mode,

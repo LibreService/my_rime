@@ -14,10 +14,12 @@ import {
 } from 'naive-ui'
 import { Add12Regular } from '@vicons/fluent'
 import { normalizeTarget, Recipe } from '@libreservice/micro-plum'
-import { FS } from '../../workerAPI'
 import {
-  rimePath,
-  schemaPattern,
+  prerequisites,
+  install,
+  schemaPattern
+} from '../../micro-plum'
+import {
   tab,
   source,
   mode,
@@ -31,8 +33,6 @@ const props = defineProps<{
 }>()
 
 const form = ref<InstanceType<typeof NForm>>()
-
-const prerequisites = ['rime/rime-essay', 'rime/rime-prelude', 'rime/rime-emoji']
 
 const schemaURL = ref<string>('')
 const target = ref<string>('')
@@ -89,37 +89,6 @@ const rules = {
   }
 }
 
-async function ensureDir (path: string) {
-  let i = 1
-  while (i = path.indexOf('/', i) + 1, i > 0) { // eslint-disable-line no-sequences
-    const dir = path.slice(0, i)
-    try {
-      await FS.lstat(dir)
-    } catch {
-      await FS.mkdir(dir)
-    }
-  }
-}
-
-async function install (target: string, schemaIds?: string[]) {
-  const recipe = new Recipe(target, {
-    source: source.value,
-    schemaIds,
-    onDownloadFailure (url: string, reason: number | string) {
-      props.message.error(`Fail to download ${url.slice(url.lastIndexOf('/') + 1)}: ${reason}`)
-    }
-  })
-  const manifest = await recipe.load()
-  for (const { file, content } of manifest) {
-    if (content) {
-      const path = rimePath + file
-      await ensureDir(path)
-      await FS.writeFile(path, content)
-    }
-  }
-  preSelectedSchemas.value = recipe.schemaIds
-}
-
 async function onClick () {
   try {
     await form.value!.validate()
@@ -130,12 +99,16 @@ async function onClick () {
   try {
     if (installPrerequisites.value) {
       installedPrerequisites.value = true
-      await Promise.all(prerequisites.map(prerequisite => install(prerequisite, [])))
+      await Promise.all(prerequisites.map(prerequisite => install(prerequisite)))
     }
+    let recipe: Recipe | undefined
     if (mode.value === 'plum' && target.value) {
-      await install(target.value, schemas.value)
+      recipe = await install(target.value, { schemaIds: schemas.value })
     } else if (mode.value === 'schema' && schemaURL.value) {
-      await install(schemaURL.value)
+      recipe = await install(schemaURL.value)
+    }
+    if (recipe) {
+      preSelectedSchemas.value = recipe.schemaIds
     }
     tab.value = 'deploy'
   } catch (e) {

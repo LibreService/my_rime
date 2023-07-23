@@ -10,17 +10,18 @@ import yaml from 'js-yaml'
 import { u2s } from '@libreservice/micro-plum'
 import { FS, deploy } from '../../workerAPI'
 import {
-  rimePath,
-  schemaPattern,
+  RIME_PATH,
+  DEFAULT_CUSTOM,
+  getAvailableSchemas,
+  customizeDefault
+} from '../../micro-plum'
+import {
   preSelectedSchemas
 } from './MicroPlum.vue'
 
 const props = defineProps<{
   dialogInstance: DialogReactive
 }>()
-
-const postfix = '.schema.yaml'
-const custom = 'default.custom.yaml'
 
 const options = ref<{
   label: string
@@ -32,19 +33,10 @@ const selected = ref<string[]>([])
 onMounted(async () => {
   const _options: typeof options.value = []
   let _selected: string[]
-  const available: string[] = []
+  const available = await getAvailableSchemas()
 
-  const files = await FS.readdir(rimePath)
-  for (const file of files) {
-    if (!file.endsWith(postfix)) {
-      continue
-    }
-    const schema = file.slice(0, -postfix.length)
-    if (!schemaPattern.test(schema)) {
-      continue
-    }
-    available.push(schema)
-    const content = u2s(await FS.readFile(rimePath + file))
+  for (const schema of available) {
+    const content = u2s(await FS.readFile(`${RIME_PATH}/${schema}.schema.yaml`))
     const obj = yaml.load(content) as {
       schema?: {
         name?: string
@@ -57,7 +49,7 @@ onMounted(async () => {
     })
   }
   try {
-    const defaultCustomYaml = u2s(await FS.readFile(rimePath + custom))
+    const defaultCustomYaml = u2s(await FS.readFile(DEFAULT_CUSTOM))
     const schemaList: { schema: string }[] = (yaml.load(defaultCustomYaml) as any)?.patch?.schema_list || []
     _selected = schemaList.map(({ schema }) => schema).filter(schema => available.includes(schema))
   } catch {
@@ -75,11 +67,7 @@ onMounted(async () => {
 
 async function onClick () {
   props.dialogInstance.destroy()
-  await FS.writeFile(rimePath + custom, yaml.dump({
-    patch: {
-      schema_list: selected.value.map(schema => ({ schema }))
-    }
-  }))
+  await customizeDefault(selected.value)
   deploy()
 }
 </script>

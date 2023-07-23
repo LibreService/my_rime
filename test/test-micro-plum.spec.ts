@@ -1,5 +1,6 @@
 import { test, expect, Page, Locator } from '@playwright/test'
 import {
+  baseURL,
   expectValue,
   expectSuccessfulDeployment,
   init,
@@ -117,4 +118,12 @@ test('Reset frequency', async ({ page }) => {
   await newIMEReady(page, luna)
   await input(page, 'ci', 'pin')
   await expect(item(page, '2 词频')).toBeVisible()
+})
+
+test('Install from query string', async ({ page }) => {
+  await page.goto(`${baseURL}?plum=rime/rime-double-pinyin@master:double_pinyin_flypy;rime/rime-luna-pinyin:luna_pinyin`)
+  await expectSuccessfulDeployment(page)
+  await newIMEReady(page, '小鶴雙拼')
+  await input(page, 'ul', 'pb ')
+  await expectValue(page, '雙拼')
 })

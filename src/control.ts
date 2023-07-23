@@ -11,6 +11,12 @@ import {
   getQueryOrStoredString
 } from './util'
 import schemas from '../schemas.json'
+import {
+  prerequisites,
+  install,
+  customizeDefault,
+  getAvailableSchemas
+} from './micro-plum'
 
 const ASCII_MODE = 'ascii_mode'
 const FULL_SHAPE = 'full_shape'
@@ -189,7 +195,40 @@ async function hasUserDefaultYaml () {
   }
 }
 
+async function installFromQueryString () {
+  const plum: { target: string, schemaIds: string[] }[] = []
+  let missing = false
+  const available = await getAvailableSchemas()
+  for (const item of getQueryString('plum').split(';')) {
+    const match = item.match(/^([-_a-zA-Z0-9]+\/[-_a-zA-Z0-9]+(@[-_a-zA-Z0-9]+)?):([-_a-zA-Z0-9]+(,[-_a-zA-Z0-9]+)*)$/)
+    if (match) {
+      const target = match[1]
+      const schemaIds = match[3].split(',')
+      plum.push({ target, schemaIds })
+      if (schemaIds.some(schemaId => !available.includes(schemaId))) {
+        missing = true
+      }
+    }
+  }
+  if (plum.length) {
+    if (missing) {
+      await Promise.all(prerequisites.map(prerequisite => install(prerequisite)))
+      for (const { target, schemaIds } of plum) {
+        await install(target, { schemaIds })
+      }
+    }
+    await customizeDefault(plum.flatMap(({ schemaIds }) => schemaIds))
+    await deploy()
+    await selectIME(plum[0].schemaIds[0])
+    return true
+  }
+  return false
+}
+
 async function init () {
+  if (await installFromQueryString()) {
+    return
+  }
   if (await hasUserDefaultYaml()) {
     if (getQueryString('schemaId') in schemaVariants) {
       await resetUserDirectory()
@@ -312,8 +351,6 @@ function syncOptions (updatedOptions: string[]) {
     }
   }
 }
-
-init()
 
 export {
   init,
