@@ -5,6 +5,7 @@ import { NInput, NSpace, NButtonGroup, NButton, NIcon, NSwitch, useMessage } fro
 import { Cut20Regular, Copy20Regular, ClipboardLink20Regular } from '@vicons/fluent'
 import MyMenu from '../components/MyMenu.vue'
 import MyPanel from '../components/MyPanel.vue'
+import MyAppearance from '../components/MyAppearance.vue'
 import MyFont from '../components/MyFont.vue'
 import MyDeployer from '../components/MyDeployer.vue'
 import type MySimulator from '../components/MySimulator.vue'
@@ -140,6 +141,7 @@ const AsyncEditor = defineAsyncComponent(() => import('../components/MyEditor.vu
       :update-text="updateText"
       :debug-mode="simulator?.debugMode"
     />
+    <my-appearance />
     <my-font />
     <my-deployer />
     <micro-plum />

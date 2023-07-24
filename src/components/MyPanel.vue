@@ -10,6 +10,7 @@ import {
   selectCandidateOnCurrentPage
 } from '../workerAPI'
 import {
+  forceVertical,
   loading,
   hideComment,
   changeLanguage,
@@ -404,7 +405,7 @@ defineExpose({
     <n-menu
       v-show="menuOptions.length"
       :options="menuOptions"
-      :mode="isMobile || xOverflow ? 'vertical' : 'horizontal'"
+      :mode="forceVertical || isMobile || xOverflow ? 'vertical' : 'horizontal'"
       :value="highlighted"
       @update:value="onClick"
     />

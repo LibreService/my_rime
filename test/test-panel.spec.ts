@@ -141,3 +141,16 @@ test('Alternative select labels', async ({ page }) => {
   await input(page, 'xuan', 'zi')
   await expect(item(page, '[ 选字')).toBeVisible()
 })
+
+test('Force vertical', async ({ page }) => {
+  await init(page)
+
+  await input(page, 'heng', 'pai')
+  await expect(panel(page).locator('.n-menu')).toHaveClass(/n-menu--horizontal/)
+  await page.getByText('Force vertical').click()
+  await expect(panel(page).locator('.n-menu')).toHaveClass(/n-menu--vertical/)
+
+  await init(page)
+  await input(page, 'shu', 'pai')
+  await expect(panel(page).locator('.n-menu')).toHaveClass(/n-menu--vertical/)
+})

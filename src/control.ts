@@ -1,4 +1,4 @@
-import { computed, ref, Ref } from 'vue'
+import { computed, ref, Ref, watchEffect } from 'vue'
 import {
   setOption,
   setIME,
@@ -26,6 +26,12 @@ const EMOJI_SUGGESTION = 'emoji_suggestion'
 const SIMPLIFICATION = 'simplification'
 
 const deployed = ref<boolean>(false)
+
+const FORCE_VERTICAL = 'forceVertical'
+const forceVertical = ref<boolean>(localStorage.getItem(FORCE_VERTICAL) === 'true')
+watchEffect(() => {
+  localStorage.setItem(FORCE_VERTICAL, forceVertical.value.toString())
+})
 
 const schemaId = ref<string>(schemas[0].id)
 const ime = ref<string>('') // visual vs internal
@@ -355,6 +361,7 @@ function syncOptions (updatedOptions: string[]) {
 export {
   init,
   deployed,
+  forceVertical,
   loading,
   schemaId,
   ime,
