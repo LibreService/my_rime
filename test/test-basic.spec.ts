@@ -74,6 +74,10 @@ test('Punctuation', async ({ page }) => {
   await changePunctuation(page, '.')
   await input(page, '.')
   await expectValue(page, '。.')
+
+  await init(page)
+  await input(page, '.')
+  await expectValue(page, '.')
 })
 
 test('Punctuation restored', async ({ page }) => {

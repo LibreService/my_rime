@@ -27,11 +27,16 @@ const SIMPLIFICATION = 'simplification'
 
 const deployed = ref<boolean>(false)
 
+function savedBooleanRef (key: string, initial: boolean) {
+  const box = ref<boolean>(initial ? localStorage.getItem(key) !== 'false' : localStorage.getItem(key) === 'true')
+  watchEffect(() => {
+    localStorage.setItem(key, box.value.toString())
+  })
+  return box
+}
+
 const FORCE_VERTICAL = 'forceVertical'
-const forceVertical = ref<boolean>(localStorage.getItem(FORCE_VERTICAL) === 'true')
-watchEffect(() => {
-  localStorage.setItem(FORCE_VERTICAL, forceVertical.value.toString())
-})
+const forceVertical = savedBooleanRef(FORCE_VERTICAL, false)
 
 const schemaId = ref<string>(schemas[0].id)
 const ime = ref<string>('') // visual vs internal
@@ -258,10 +263,10 @@ async function init () {
 }
 
 const isEnglish = ref<boolean>(false)
-const isFullWidth = ref<boolean>(false)
-const isExtendedCharset = ref<boolean>(false)
-const isEnglishPunctuation = ref<boolean>(false)
-const enableEmoji = ref<boolean>(true)
+const isFullWidth = savedBooleanRef(FULL_SHAPE, false)
+const isExtendedCharset = savedBooleanRef(EXTENDED_CHARSET, false)
+const isEnglishPunctuation = savedBooleanRef(ASCII_PUNCT, false)
+const enableEmoji = savedBooleanRef(EMOJI_SUGGESTION, true)
 
 const basicOptionMap = {
   [ASCII_MODE]: isEnglish,
