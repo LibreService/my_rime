@@ -157,6 +157,9 @@ expose({
   setOption (option: string, value: boolean): void {
     return Module.ccall('set_option', 'null', ['string', 'number'], [option, value])
   },
+  setPageSize (size: number) {
+    return Module.ccall('set_page_size', 'null', ['number'], [size])
+  },
   deploy (): void {
     return Module.ccall('deploy', 'null', [], [])
   },

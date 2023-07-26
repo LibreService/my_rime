@@ -13,6 +13,7 @@ const exportedFunctions = [
   'init',
   'set_schema_name',
   'set_option',
+  'set_page_size',
   'set_ime',
   'process',
   'select_candidate_on_current_page',

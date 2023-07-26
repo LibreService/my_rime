@@ -10,7 +10,7 @@ function browserName (page: Page) {
 }
 
 function select (page: Page) {
-  return page.locator('.n-select')
+  return page.locator('.n-select').nth(0)
 }
 
 function textarea (page: Page) {

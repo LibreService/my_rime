@@ -4,6 +4,7 @@ import {
   browserName,
   expectValue,
   input,
+  textarea,
   panel,
   item,
   patch
@@ -153,4 +154,25 @@ test('Force vertical', async ({ page }) => {
   await init(page)
   await input(page, 'shu', 'pai')
   await expect(panel(page).locator('.n-menu')).toHaveClass(/n-menu--vertical/)
+})
+
+test('Number of candidates', async ({ page }) => {
+  await init(page)
+
+  await input(page, 'wu', 'ge')
+  await expect(item(page, '1 五个')).toBeVisible()
+  await expect(panel(page).locator('.n-menu-item-content')).toHaveCount(5)
+  await page.keyboard.press('Escape')
+  await expect(panel(page)).not.toBeVisible()
+
+  await page.locator('.n-select').nth(1).click()
+  await page.locator('.n-base-select-option').getByText('3').click()
+  await textarea(page).click()
+  await input(page, 'san', 'ge')
+  await expect(item(page, '1 三个')).toBeVisible()
+  await expect(panel(page).locator('.n-menu-item-content')).toHaveCount(3)
+
+  await init(page)
+  await input(page, 'san', 'ge')
+  await expect(item(page, '1 三个')).toBeVisible()
 })

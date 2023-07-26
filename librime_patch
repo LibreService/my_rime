@@ -110,6 +110,38 @@ index 559cb7a8..9e49a039 100644
      schema_name_ = schema_id_;
    }
    config_->GetInt("menu/page_size", &page_size_);
+diff --git a/src/rime/schema.h b/src/rime/schema.h
+index bb68bcdb..4ef84beb 100644
+--- a/src/rime/schema.h
++++ b/src/rime/schema.h
+@@ -10,6 +10,12 @@
+ #include <rime/common.h>
+ #include <rime/config.h>  // for convenience
+ 
++#ifdef __EMSCRIPTEN__
++namespace my_rime {
++extern int page_size;
++}  // namespace my_rime
++#endif
++
+ namespace rime {
+ 
+ class Schema {
+@@ -25,7 +31,13 @@ class Schema {
+   Config* config() const { return config_.get(); }
+   void set_config(Config* config) { config_.reset(config); }
+ 
+-  int page_size() const { return page_size_; }
++  int page_size() const {
++#ifdef __EMSCRIPTEN__
++    return my_rime::page_size ? my_rime::page_size : page_size_;
++#else
++    return page_size_;
++#endif
++  }
+   bool page_down_cycle() const { return page_down_cycle_; }
+   const string& select_keys() const { return select_keys_; }
+   void set_select_keys(const string& keys) { select_keys_ = keys; }
 diff --git a/tools/CMakeLists.txt b/tools/CMakeLists.txt
 index 18e3407f..b79a0c16 100644
 --- a/tools/CMakeLists.txt

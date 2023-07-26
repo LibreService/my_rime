@@ -145,8 +145,8 @@ const AsyncEditor = defineAsyncComponent(() => import('../components/MyEditor.vu
     <my-font />
     <my-deployer />
     <micro-plum />
-    <n-space>
-      Advanced
+    <n-space style="align-items: center">
+      <h3>Advanced</h3>
       <n-switch
         :value="showAdvanced"
         @update:value="toggleAdvanced"

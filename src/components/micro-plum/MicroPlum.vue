@@ -73,7 +73,7 @@ async function onReset () {
 
 <template>
   <n-space style="align-items: center">
-    Add new schemas
+    <h3>Add new schemas</h3>
     <n-button
       secondary
       type="success"

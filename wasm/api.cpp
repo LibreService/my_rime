@@ -23,6 +23,7 @@ bool rime_started = false;
 // Before a successful deployment, use schema name in schemas.json instead of
 // .schema.yaml.
 bool deployed = false;
+int page_size = 0;
 
 template <typename T> inline const char *to_json(T &obj) {
   json_string = boost::json::serialize(obj);
@@ -156,6 +157,8 @@ void init() {
 void set_schema_name(const char *schema, const char *name) {
   schema_name[schema] = name;
 }
+
+void set_page_size(int size) { page_size = size; }
 
 const char *process(const char *input) {
   pre_process();
