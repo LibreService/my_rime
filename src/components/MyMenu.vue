@@ -47,12 +47,8 @@ async function switchVariant () {
 
 const extendedDisabled = computed(() => ime.value !== schemaId.value || !schemaExtended.includes(ime.value))
 
-const props = defineProps<{
-  textareaSelector: string
-}>()
-
 function resetFocus () {
-  getTextarea(props.textareaSelector).focus()
+  getTextarea().focus()
 }
 
 function onSelectIME (value: string) {

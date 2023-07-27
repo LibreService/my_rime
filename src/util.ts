@@ -11,8 +11,10 @@ function setQuery (_query: LocationQuery) {
 const breakpoint = useBreakpoint()
 const isMobile = computed(() => breakpoint.value === 'xs')
 
-function getTextarea (selector: string) {
-  return document.querySelector(selector) as HTMLTextAreaElement
+const textareaSelector = '#container textarea'
+
+function getTextarea () {
+  return document.querySelector(textareaSelector) as HTMLTextAreaElement
 }
 
 function getQueryString (key: string) {

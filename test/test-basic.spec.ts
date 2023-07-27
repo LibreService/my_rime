@@ -1,4 +1,4 @@
-import { test, Request, expect } from '@playwright/test'
+import { test, Request, Page, expect } from '@playwright/test'
 import {
   baseURL,
   browserName,
@@ -329,6 +329,10 @@ test('IndexedDB cache', async ({ page }) => {
   await Promise.race([expectValue(page, '缓存'), promise])
 })
 
+async function expectClipboard (page: Page, text: string) {
+  while (await page.evaluate(() => navigator.clipboard.readText()) !== text);
+}
+
 test('Cut button', async ({ page }) => {
   test.skip(browserName(page) !== 'chromium')
   await page.context().grantPermissions(['clipboard-read', 'clipboard-write'])
@@ -337,7 +341,7 @@ test('Cut button', async ({ page }) => {
   await input(page, 'jian', 'qie ')
   await expectValue(page, '剪切')
   await cut(page)
-  while (await page.evaluate(() => navigator.clipboard.readText()) !== '剪切');
+  await expectClipboard(page, '剪切')
   await expectValue(page, '')
 })
 
@@ -350,7 +354,7 @@ test('Copy button', async ({ page }) => {
   await expectValue(page, '复制')
   await copy(page)
   await expect(textarea(page)).toBeFocused()
-  while (await page.evaluate(() => navigator.clipboard.readText()) !== '复制');
+  await expectClipboard(page, '复制')
 })
 
 test('Copy link button', async ({ page }) => {
@@ -362,7 +366,19 @@ test('Copy link button', async ({ page }) => {
   await copyLink(page)
   await expect(textarea(page)).toBeFocused()
   const copiedURL = `${baseURL}?schemaId=luna_pinyin&variantName=%E7%B9%81`
-  while (await page.evaluate(() => navigator.clipboard.readText()) !== copiedURL);
+  await expectClipboard(page, copiedURL)
+})
+
+test('Auto copy on commit', async ({ page }) => {
+  test.skip(browserName(page) !== 'chromium')
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write'])
+  await init(page)
+
+  await page.getByLabel('Auto copy on commit').click()
+  await textarea(page).click()
+  await input(page, 'fu', 'zhi ')
+  await expectValue(page, '复制')
+  await expectClipboard(page, '复制')
 })
 
 test('Lua', async ({ page }) => {

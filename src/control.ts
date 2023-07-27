@@ -19,6 +19,8 @@ import {
   getAvailableSchemas
 } from './micro-plum'
 
+const text = ref<string>('')
+
 const ASCII_MODE = 'ascii_mode'
 const FULL_SHAPE = 'full_shape'
 const EXTENDED_CHARSET = 'extended_charset'
@@ -35,6 +37,9 @@ function savedBooleanRef (key: string, initial: boolean) {
   })
   return box
 }
+
+const AUTO_COPY = 'autoCopy'
+const autoCopy = savedBooleanRef(AUTO_COPY, false)
 
 const FORCE_VERTICAL = 'forceVertical'
 const forceVertical = savedBooleanRef(FORCE_VERTICAL, false)
@@ -379,7 +384,9 @@ function syncOptions (updatedOptions: string[]) {
 
 export {
   init,
+  text,
   deployed,
+  autoCopy,
   forceVertical,
   loading,
   schemaId,

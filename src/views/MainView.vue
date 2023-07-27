@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, watch, defineAsyncComponent } from 'vue'
 import { useRoute } from 'vue-router'
-import { NInput, NSpace, NButtonGroup, NButton, NIcon, NSwitch, useMessage } from 'naive-ui'
-import { Cut20Regular, Copy20Regular, ClipboardLink20Regular } from '@vicons/fluent'
+import { NInput, NSpace, NSwitch, useMessage } from 'naive-ui'
 import MyMenu from '../components/MyMenu.vue'
 import MyPanel from '../components/MyPanel.vue'
+import MyBar from '../components/MyBar.vue'
 import MyAppearance from '../components/MyAppearance.vue'
 import MyFont from '../components/MyFont.vue'
 import MyDeployer from '../components/MyDeployer.vue'
@@ -20,8 +20,7 @@ import {
 } from '../util'
 import {
   init,
-  schemaId,
-  variant
+  text
 } from '../control'
 import { setMessage } from '../micro-plum'
 
@@ -29,47 +28,19 @@ setQuery(useRoute().query)
 setMessage(useMessage())
 init()
 
-const textareaSelector = '#container textarea'
 let savedStart = 0
 let savedEnd = 0
-const text = ref<string>('')
-
-function updateText (newText: string) {
-  text.value = newText
-}
 
 function onBlur () {
-  const textarea = getTextarea(textareaSelector)
+  const textarea = getTextarea()
   savedStart = textarea.selectionStart
   savedEnd = textarea.selectionEnd
 }
 
 function onFocus () {
-  const textarea = getTextarea(textareaSelector)
+  const textarea = getTextarea()
   textarea.selectionStart = savedStart
   textarea.selectionEnd = savedEnd
-}
-
-function copy () {
-  const textarea = getTextarea(textareaSelector)
-  textarea.focus()
-  return navigator.clipboard.writeText(text.value)
-}
-
-async function cut () {
-  await copy()
-  text.value = ''
-}
-
-async function copyLink () {
-  const usp = new URLSearchParams({
-    schemaId: schemaId.value,
-    variantName: variant.value.name
-  })
-  const url = `${window.location.origin}${window.location.pathname}?${usp}`
-  await navigator.clipboard.writeText(url)
-  const textarea = getTextarea(textareaSelector)
-  textarea.focus()
 }
 
 const panel = ref<InstanceType<typeof MyPanel>>()
@@ -101,9 +72,7 @@ const AsyncEditor = defineAsyncComponent(() => import('../components/MyEditor.vu
     vertical
     class="my-column"
   >
-    <my-menu
-      :textarea-selector="textareaSelector"
-    />
+    <my-menu />
     <n-input
       id="container"
       v-model:value="text"
@@ -113,32 +82,9 @@ const AsyncEditor = defineAsyncComponent(() => import('../components/MyEditor.vu
       @blur="onBlur"
       @focus="onFocus"
     />
-    <n-button-group class="square-group">
-      <n-button
-        secondary
-        @click="cut"
-      >
-        <n-icon :component="Cut20Regular" />
-      </n-button>
-      <n-button
-        secondary
-        @click="copy"
-      >
-        <n-icon :component="Copy20Regular" />
-      </n-button>
-      <n-button
-        secondary
-        title="Copy link for current IME"
-        @click="copyLink"
-      >
-        <n-icon :component="ClipboardLink20Regular" />
-      </n-button>
-    </n-button-group>
+    <my-bar />
     <my-panel
       ref="panel"
-      :textarea-selector="textareaSelector"
-      :text="text"
-      :update-text="updateText"
       :debug-mode="simulator?.debugMode"
     />
     <my-appearance />
@@ -168,9 +114,3 @@ const AsyncEditor = defineAsyncComponent(() => import('../components/MyEditor.vu
     <my-platform />
   </n-space>
 </template>
-
-<style scoped>
-.n-button-group .n-button {
-  font-size: 24px;
-}
-</style>

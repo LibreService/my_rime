@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, ref, toRefs, toRaw, onMounted, onUnmounted, watch } from 'vue'
+import { nextTick, ref, toRefs, onMounted, onUnmounted, watch } from 'vue'
 import { NPopover, NMenu, MenuOption, NText, NButton, NIcon } from 'naive-ui'
 import { CaretLeft, CaretRight } from '@vicons/fa'
 // @ts-ignore
@@ -10,6 +10,8 @@ import {
   selectCandidateOnCurrentPage
 } from '../workerAPI'
 import {
+  text,
+  autoCopy,
   forceVertical,
   loading,
   hideComment,
@@ -20,15 +22,10 @@ import {
 import { isMobile, getTextarea } from '../util'
 
 const props = defineProps<{
-  textareaSelector: string
-  text: string
   debugMode?: boolean
-  updateText:(newText: string) => void
 }>()
 
-const { textareaSelector, updateText } = toRaw(props)
 const {
-  text,
   debugMode
 } = toRefs(props)
 
@@ -125,16 +122,19 @@ function isEmoji (c: string) {
 }
 
 function insert (toInsert: string) {
-  const textarea = getTextarea(textareaSelector)
+  const textarea = getTextarea()
   const { selectionStart, selectionEnd } = textarea
-  updateText(text.value.slice(0, selectionStart) + toInsert + text.value.slice(selectionEnd))
+  text.value = text.value.slice(0, selectionStart) + toInsert + text.value.slice(selectionEnd)
+  if (autoCopy.value) {
+    navigator.clipboard.writeText(text.value)
+  }
   nextTick(() => {
     textarea.selectionEnd = selectionStart + toInsert.length
   })
 }
 
 async function analyze (result: RIME_RESULT, rimeKey: string) {
-  const textarea = getTextarea(textareaSelector)
+  const textarea = getTextarea()
   if (!('updatedSchema' in result) && result.updatedOptions) {
     syncOptions(result.updatedOptions)
   }
@@ -201,8 +201,8 @@ watch(text, (acNewText, acText) => {
   if (acText.length + 1 === acNewText.length &&
       acText.substring(0, acStart) === acNewText.substring(0, acStart) &&
       acText.substring(acEnd) === acNewText.substring(acEnd + 1)) {
-    const textarea = getTextarea(textareaSelector)
-    updateText(acText)
+    const textarea = getTextarea()
+    text.value = acText
     nextTick(() => {
       editing.value = true
       textarea.selectionEnd = acStart
@@ -217,7 +217,7 @@ function onKeydown (e: KeyboardEvent) {
     return
   }
   const { code, key } = e
-  const textarea = getTextarea(textareaSelector)
+  const textarea = getTextarea()
   // begin: code specific to Android Chromium
   if (key === 'Unidentified') {
     androidChromium = true
