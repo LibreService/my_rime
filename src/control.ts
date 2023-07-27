@@ -10,6 +10,7 @@ import {
   getQueryString,
   getQueryOrStoredString
 } from './util'
+import { getLanguage } from './locale'
 import schemas from '../schemas.json'
 import {
   prerequisites,
@@ -81,7 +82,8 @@ const selectOptions = ref<typeof defaultSelectOptions>([])
 
 type Variants = {
   id: string,
-  name: string
+  name: string,
+  languages?: Language[]
 }[]
 
 type HideComment = boolean | 'emoji'
@@ -116,6 +118,20 @@ function convertVariants (variants: Variants | undefined) {
   ]
 }
 
+const language = getLanguage()
+
+function getDefaultVariantIndex (variants: Variants | undefined): number {
+  if (variants) {
+    for (let i = 0; i < variants.length; ++i) {
+      if (variants[i].languages?.includes(language)) {
+        return i
+      }
+    }
+    return 0
+  }
+  return ['zh-HK', 'zh-TW'].includes(language) ? 1 : 0
+}
+
 for (const schema of schemas as {
   id: string
   name: string
@@ -135,7 +151,7 @@ for (const schema of schemas as {
     continue
   }
 
-  function helper (id: string, name: string, group: string | undefined, extended: boolean | undefined, hideComment: HideComment | undefined) {
+  function helper (id: string, name: string, group: string | undefined, extended: boolean | undefined, hideComment: HideComment | undefined, variants: Variants | undefined) {
     const item = {
       label: name,
       value: id
@@ -160,7 +176,8 @@ for (const schema of schemas as {
     } else {
       defaultSelectOptions.push(item)
     }
-    schemaVariantsIndex[id] = ref<number>(0)
+    schemaVariantsIndex[id] = ref<number>(getDefaultVariantIndex(variants))
+    schemaVariants[id] = convertVariants(variants)
     if (extended) {
       schemaExtended.push(id)
     }
@@ -169,15 +186,13 @@ for (const schema of schemas as {
     }
   }
 
-  helper(schema.id, schema.name, schema.group, schema.extended, schema.hideComment)
-  schemaVariants[schema.id] = convertVariants(schema.variants)
+  helper(schema.id, schema.name, schema.group, schema.extended, schema.hideComment, schema.variants)
   if (schema.family) {
     for (const { id, name, disabled, variants } of schema.family) {
       if (disabled) {
         continue
       }
-      helper(id, name, schema.group, schema.extended, schema.hideComment)
-      schemaVariants[id] = variants ? convertVariants(variants) : schemaVariants[schema.id]
+      helper(id, name, schema.group, schema.extended, schema.hideComment, variants || schema.variants)
     }
   }
 }
@@ -252,7 +267,6 @@ async function init () {
   selectOptions.value = defaultSelectOptions
   deployed.value = false
   schemaId.value = _schemaId in schemaVariants ? _schemaId : schemas[0].id
-  variantIndex.value = 0
   for (let i = 0; i < variants.value.length; ++i) {
     if (variants.value[i].name === variantName) {
       variantIndex.value = i

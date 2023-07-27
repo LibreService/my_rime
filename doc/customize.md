@@ -38,14 +38,15 @@ For each object, here are key and value definitions:
 * `emoji?: boolean`, whether integrate [emoji](https://github.com/rime/rime-emoji). Default `false`.
 * `target: string`, the same argument you use when installing by plum: `bash rime-install <target>`.
 * `dependencies?: string[]`, schema ids that are either a hard dependency (e.g. `luna_pinyin` for `double_pinyin`) or a soft (required by reverse-lookup) dependency (e.g. `stroke` for `luna_pinyin`). Make sure you have them defined in other objects. Default `[]`.
-* `variants?: object[]`, simplified/traditional/... variants. Default `undefined` means the table is traditional, and simplified variant is available by OpenCC using `simplification` option, and you want simplified variant be the default variant, e.g. `luna_pinyin`. An empty `[]` means there are no variants and the variant switch button is disabled, e.g. `stroke`.
+* `variants?: object[]`, simplified/traditional/... variants. Default `undefined` means the table is traditional, and simplified variant is available by OpenCC using `simplification` option, and you want simplified variant be the default variant unless browser's locale is Hong Kong or Taiwan, e.g. `luna_pinyin`. An empty `[]` means there are no variants and the variant switch button is disabled, e.g. `stroke`.
   * `id: string`, the corresponding `option` in `.schema.yaml`.
   * `name: string`, the label you want to show on the switch button.
+  * `languages?: ('zh-CN' | 'zh-HK' | 'zh-TW' | 'zh-SG')[]`, if browser's locale is in the list, use this variant by default.
 
   The first variant will be the default variant, regardless what default value is in `.schema.yaml`.
 Switching to a variant will first set other `option`s to `0`, and then set this variant's `option` to `1`.
 So if there is only one `option` that controls 2 variants, you may use `[{"id": "option"}, {"id": "random stuff"}]` if the default variant should have `option` on, and `[{"id": "random stuff"}, {"id": "option"}]` if the default variant should have `option` off.
-If you can understand this, you should agree that `undefined` is equivalent to `[{"id": "simplification", "name": "简"}, {"id": "233", "name": "繁"}]`.
+If you can understand this, you should agree that `undefined` is equivalent to `[{"id": "simplification", "name": "简"}, {"id": "233", "name": "繁", "languages": ["zh-HK", "zh-TW"]}]`.
 * `extended?: boolean`, whether the `.schema.yaml` supports common/extended charset switch. Default `false`.
 * `hideComment?: boolean | 'emoji'`, whether hide comment after candidate. `'emoji'` means only hide comment after emoji candidate. Default `false`.
 * `family?: object[]`, the other IMEs that share some files. Each shares the same `variants` with the major IME. Default `[]`.

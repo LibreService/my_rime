@@ -46,6 +46,8 @@ declare global {
     updatedOptions?: string[]
   }
   type RIME_RESULT = (RIME_COMMITTED | RIME_ACCEPTED | RIME_REJECTED | RIME_UNHANDLED) & RIME_UPDATED_OPTIONS
+
+  type Language = 'zh-CN' | 'zh-TW' | 'zh-HK' | 'zh-SG'
 }
 
 export {}

@@ -36,11 +36,13 @@
       },
       {
         "id": "variants_hk",
-        "name": "港"
+        "name": "港",
+        "languages": ["zh-HK"]
       },
       {
         "id": "trad_tw",
-        "name": "臺"
+        "name": "臺",
+        "languages": ["zh-TW"]
       }
     ],
     "hideComment": "emoji",
@@ -152,11 +154,13 @@
       },
       {
         "id": "zh_hant_tw",
-        "name": "臺"
+        "name": "臺",
+        "languages": ["zh-TW"]
       },
       {
         "id": "zh_hant",
-        "name": "繁"
+        "name": "繁",
+        "languages": ["zh-HK"]
       }
     ],
     "family": [

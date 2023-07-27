@@ -2,9 +2,8 @@
 import { ref, onMounted } from 'vue'
 import { NSpace, NCheckboxGroup, NCheckbox } from 'naive-ui'
 import { LazyCache } from '@libreservice/lazy-cache'
+import { getLanguage } from '../locale'
 import fonts from '../../fonts.json'
-
-type Language = 'zh-CN' | 'zh-TW' | 'zh-HK' | 'zh-SG'
 
 const UbuntuFontMap = {
   'zh-CN': 'Noto Sans CJK SC',
@@ -25,19 +24,6 @@ const macOSFontMap = {
   'zh-TW': 'PingFang TC',
   'zh-HK': 'PingFang HK',
   'zh-SG': 'PingFang SC'
-}
-
-function getLanguage () {
-  let language: Language | undefined
-  let index = 0
-  for (const lang of ['zh-CN', 'zh-TW', 'zh-HK', 'zh-SG'] as Language[]) {
-    const i = navigator.languages.indexOf(lang)
-    if (i >= 0 && (!language || i < index)) {
-      language = lang
-      index = i
-    }
-  }
-  return language || 'zh-CN'
 }
 
 const language = getLanguage()
