@@ -13,10 +13,15 @@ import {
   init,
   setLoading
 } from '../../control'
+import ManifestPane from './ManifestPane.vue'
 import InstallPane from './InstallPane.vue'
 import DeployPane from './DeployPane.vue'
 
-const tab = ref<'install' | 'deploy'>('install')
+const RPPI = 'https://raw.githubusercontent.com/LibreService/rppi/HEAD/index.json'
+const _rppi = ref<string>(RPPI)
+
+const tab = ref<'rppi' | 'install' | 'deploy'>('install')
+
 const source = ref<'GitHub' | 'jsDelivr'>('GitHub')
 const mode = ref<'schema' | 'plum'>('schema')
 const installedPrerequisites = ref<boolean>(false)
@@ -24,6 +29,8 @@ const downloading = ref<boolean>(false)
 const preSelectedSchemas = ref<string[]>([])
 
 export {
+  RPPI,
+  _rppi,
   tab,
   source,
   mode,
@@ -34,9 +41,31 @@ export {
 </script>
 
 <script setup lang="ts">
-
 const dialog = useDialog()
 const message = useMessage()
+
+async function showRPPI () {
+  tab.value = 'rppi'
+  const dialogInstance = dialog.info({
+    title: 'RPPI',
+    content: () => h(NTabs, {
+      type: 'segment',
+      value: tab.value,
+      'onUpdate:value': newValue => { tab.value = newValue }
+    }, () => [
+      h(NTabPane, {
+        name: 'rppi',
+        tab: 'RPPI'
+      }, () => [h(ManifestPane, { message })]),
+      h(NTabPane, {
+        name: 'deploy',
+        tab: 'Deploy'
+      }, () => [h(DeployPane, {
+        dialogInstance
+      })])
+    ])
+  })
+}
 
 function showMicroPlum () {
   tab.value = 'install'
@@ -74,6 +103,13 @@ async function onReset () {
 <template>
   <n-space style="align-items: center">
     <h3>Add new schemas</h3>
+    <n-button
+      secondary
+      type="info"
+      @click="showRPPI"
+    >
+      RPPI
+    </n-button>
     <n-button
       secondary
       type="success"
