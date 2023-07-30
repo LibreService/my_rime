@@ -2,19 +2,25 @@
   {
     "name": "遍黑体",
     "fontFamily": "Plangothic",
-    "file": "PlangothicP2-Regular.woff2",
-    "version": "0.1.0"
+    "files": [
+      "PlangothicP1-Regular.woff2"
+    ],
+    "version": "0.1.1"
   },
   {
     "name": "花园明朝",
     "fontFamily": "HanaMin",
-    "file": "HanaMinB.woff2",
+    "files": [
+      "HanaMinB.woff2"
+    ],
     "version": "0.2.0"
   },
   {
     "name": "一点明朝",
-    "fontFamily": "I Ming",
-    "file": "I.Ming.woff2",
+    "fontFamily": "I.Ming",
+    "files": [
+      "I.Ming.woff2"
+    ],
     "version": "0.3.0"
   }
 ]

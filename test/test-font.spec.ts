@@ -7,16 +7,16 @@ import fonts from '../fonts.json'
 
 async function expectFirstFont (page: Page, fontFamily: string) {
   while (!await page.evaluate(() => document.fonts.keys().next().value));
-  expect(await page.evaluate(() => document.fonts.keys().next().value.family)).toEqual(fontFamily)
+  expect(await page.evaluate(() => document.fonts.keys().next().value.family)).toMatch(fontFamily)
 }
 
 test('Lazy cache font', async ({ page }) => {
   for (const {
     name,
     fontFamily,
-    file
+    files
   } of fonts) {
-    const resource = new RegExp(`/${file}$`)
+    const resource = new RegExp(`/${files[0]}$`)
     let resolveDownload: (request: Request) => void
     const promise = new Promise(resolve => {
       resolveDownload = callOnDownload(resolve, resource)

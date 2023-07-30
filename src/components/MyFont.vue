@@ -26,6 +26,11 @@ const macOSFontMap = {
   'zh-SG': 'PingFang SC'
 }
 
+const fontMap: { [key: string]: typeof fonts[0] } = {}
+for (const font of fonts) {
+  fontMap[font.fontFamily] = font
+}
+
 const language = getLanguage()
 let defaultFont = ''
 const UbuntuFont = UbuntuFontMap[language]
@@ -36,36 +41,36 @@ const storageKey = 'selectedFonts'
 
 const lazyCache = new LazyCache('font')
 
-async function loadFont (font: string) {
-  if (loadedFonts.includes(font)) {
+async function loadFont (fontFamily: string) {
+  if (loadedFonts.includes(fontFamily)) {
     return
   }
-  loadedFonts.push(font)
+  loadedFonts.push(fontFamily)
 
-  for (const {
-    fontFamily,
-    file,
+  const {
+    files,
     version
-  } of fonts) {
-    if (fontFamily === font) {
-      const url = (
-        '__LIBRESERVICE_CDN__' // eslint-disable-line no-constant-condition
-          ? `https://cdn.jsdelivr.net/npm/@libreservice/font-collection@${version}/dist/`
-          : './'
-      ) + file
-      const buffer = await lazyCache.get(file, version, url)
-      const blob = new Blob([buffer], { type: 'font/woff2' })
-      const blobURL = URL.createObjectURL(blob)
-      const style = document.createElement('style')
-      style.innerHTML = `
+  } = fontMap[fontFamily]
+  const fontFaces: string[] = []
+  for (let i = 0; i < files.length; ++i) {
+    const file = files[i]
+    const url = (
+      '__LIBRESERVICE_CDN__' // eslint-disable-line no-constant-condition
+        ? `https://cdn.jsdelivr.net/npm/@libreservice/font-collection@${version}/dist/`
+        : './'
+    ) + file
+    const buffer = await lazyCache.get(file, version, url)
+    const blob = new Blob([buffer], { type: 'font/woff2' })
+    const blobURL = URL.createObjectURL(blob)
+    fontFaces.push(`
 @font-face {
-  font-family: ${fontFamily};
+  font-family: "${fontFamily} ${i}";
   src: url(${blobURL}) format("woff2")
-}`
-      document.body.appendChild(style)
-      break
-    }
+}`)
   }
+  const style = document.createElement('style')
+  style.innerHTML = fontFaces.join('\n')
+  document.body.appendChild(style)
 }
 
 const loadedFonts: string[] = []
@@ -75,12 +80,13 @@ async function updateFonts (value: (string | number)[]) {
   selectedFonts.value = value as string[]
   localStorage.setItem(storageKey, JSON.stringify(selectedFonts.value))
   await Promise.all(selectedFonts.value.map(loadFont))
+  const expandedFonts = selectedFonts.value.flatMap(fontFamily => Array.from({ length: fontMap[fontFamily].files.length }, (_, i) => `"${fontFamily} ${i}"`))
   document.body.style.fontFamily = [
     defaultFont,
     UbuntuFont,
     WindowsFont,
     macOSFont,
-    ...selectedFonts.value
+    ...expandedFonts
   ].join(', ')
 }
 
