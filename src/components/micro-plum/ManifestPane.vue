@@ -1,6 +1,18 @@
 <script setup lang="ts">
-import { ref, h } from 'vue'
-import { NForm, NFormItem, NInput, NSpace, NTreeSelect, TreeSelectOption, NButton, NTag, NText, useMessage } from 'naive-ui'
+import { ref, h, computed, watch } from 'vue'
+import {
+  NForm,
+  NFormItem,
+  NInput,
+  NSpace,
+  NTreeSelect,
+  TreeSelectOption,
+  NButton,
+  NTag,
+  NCheckboxGroup,
+  NCheckbox,
+  useMessage
+} from 'naive-ui'
 import { LazyCache } from '@libreservice/lazy-cache'
 import {
   prerequisites,
@@ -13,6 +25,7 @@ import {
   downloading,
   installedPrerequisites
 } from './MicroPlum.vue'
+import RepoLink from './RepoLink.vue'
 
 let rppi = _rppi.value
 
@@ -41,6 +54,7 @@ type RECIPE = {
   labels?: (keyof typeof labelMap)[]
   schemas: string[]
   dependencies?: string[]
+  reverseDependencies?: string[]
   license?: string
 }
 
@@ -84,6 +98,12 @@ const rules = {
 }
 
 const selectedKey = ref<string | undefined>()
+const reverseDependencies = computed(() => (selectedKey.value && keyRecipeMap[selectedKey.value].reverseDependencies) || [])
+const selectedReverseDependencies = ref<string[]>([])
+
+watch(selectedKey, () => {
+  selectedReverseDependencies.value = []
+})
 
 async function fetchJson (key: string, time: string) {
   const url = `${rppi.slice(0, rppi.lastIndexOf('/'))}/${key}`
@@ -150,6 +170,12 @@ async function updateIndex () {
 
 updateIndex()
 
+function installRepo (repo: string) {
+  const recipe = keyRecipeMap[repoKeyMap[repo]]
+  const target = recipe.branch ? `${repo}@${recipe.branch}` : repo
+  return install(target, { schemaIds: recipe.schemas })
+}
+
 async function onClick () {
   downloading.value = true
   try {
@@ -157,16 +183,12 @@ async function onClick () {
       await Promise.all(prerequisites.map(prerequisite => install(prerequisite)))
       installedPrerequisites.value = true
     }
-    const { repo, branch, schemas, dependencies } = keyRecipeMap[selectedKey.value!]
+    const { repo, dependencies } = keyRecipeMap[selectedKey.value!]
     if (dependencies) {
-      await Promise.all(dependencies.map(dependency => {
-        const recipe = keyRecipeMap[repoKeyMap[dependency]]
-        const target = recipe.branch ? `${recipe.repo}@${recipe.branch}` : recipe.repo
-        return install(target, { schemaIds: recipe.schemas })
-      }))
+      await Promise.all(dependencies.map(dependency => installRepo(dependency)))
     }
-    const target = branch ? `${repo}@${branch}` : repo
-    await install(target, { schemaIds: schemas })
+    await installRepo(repo)
+    await Promise.all(selectedReverseDependencies.value.map(dependency => installRepo(dependency)))
     tab.value = 'deploy'
   } catch (e) {
     console.error(e)
@@ -184,10 +206,7 @@ function renderSuffix (info: { option: TreeSelectOption }) {
       size: 'small',
       bordered: false
     }, () => [labelMap[label] || label])))
-    nodes.push(h(NText, {
-      type: license ? 'success' : 'warning',
-      title: license ? 'Free' : 'Proprietary'
-    }, () => repo))
+    nodes.push(h(RepoLink, { repo, license }))
     return h(NSpace, {}, () => nodes)
   }
 }
@@ -217,6 +236,27 @@ function renderSuffix (info: { option: TreeSelectOption }) {
         :options="options"
         :render-suffix="renderSuffix"
       />
+    </n-form-item>
+    <n-form-item
+      v-if="reverseDependencies.length"
+      label="Reverse-lookup dependencies"
+    >
+      <n-checkbox-group v-model:value="selectedReverseDependencies">
+        <div
+          v-for="dependency of reverseDependencies"
+          :key="dependency"
+          style="display: flex; justify-content: space-between"
+        >
+          <n-checkbox
+            :label="keyRecipeMap[repoKeyMap[dependency]].name"
+            :value="dependency"
+          />
+          <repo-link
+            :repo="dependency"
+            :license="keyRecipeMap[repoKeyMap[dependency]].license"
+          />
+        </div>
+      </n-checkbox-group>
     </n-form-item>
   </n-form>
   <div style="display: flex; justify-content: end">
