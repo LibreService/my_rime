@@ -109,6 +109,7 @@ emcmake cmake librime -B $librime_blddir -G Ninja \
   -DCMAKE_FIND_ROOT_PATH:PATH=$root/build/sysroot/usr \
   -DBUILD_TEST:BOOL=OFF \
   -DBUILD_STATIC:BOOL=ON \
+  -DENABLE_THREADING:BOOL=OFF \
   -DENABLE_LOGGING:BOOL=$ENABLE_LOGGING
 cmake --build $librime_blddir
 DESTDIR=$root/build/sysroot cmake --install $librime_blddir

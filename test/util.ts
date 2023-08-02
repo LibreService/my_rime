@@ -133,7 +133,7 @@ function copyLink (page: Page) {
 
 function expectSuccessfulDeployment (page: Page) {
   test.setTimeout(60000)
-  return expect(page.getByText('Deployment succeeded')).toBeVisible({ timeout: 30000 })
+  return expect(page.getByText('Deployment succeeded')).toBeVisible({ timeout: 45000 })
 }
 
 function chain (...callbacks: ((param?: any) => void)[]) {

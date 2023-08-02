@@ -1,8 +1,8 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index c36bca2e..99b494f3 100644
+index 5262f168..bd6c9bbe 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -45,6 +45,9 @@ if (ENABLE_ASAN)
+@@ -46,6 +46,9 @@ if (ENABLE_ASAN)
    set(CMAKE_SHARED_LINKER_FLAGS "${asan_lflags} ${CMAKE_SHARED_LINKER_FLAGS}")
  endif()
  
@@ -39,7 +39,7 @@ index a60b6b56..eb521bb4 100644
    compiler->EnumerateResources([&](an<ConfigResource> resource) {
      if (!resource->loaded) {
 diff --git a/src/rime/deployer.cc b/src/rime/deployer.cc
-index 1394679b..0d524fae 100644
+index 2b2169ca..19ac1097 100644
 --- a/src/rime/deployer.cc
 +++ b/src/rime/deployer.cc
 @@ -5,6 +5,7 @@
@@ -66,16 +66,8 @@ index 1394679b..0d524fae 100644
        // boost::this_thread::interruption_point();
      }
      LOG(INFO) << success + failure << " tasks ran: " << success << " success, "
-@@ -108,6 +114,7 @@ bool Deployer::StartWork(bool maintenance_mode) {
-   }
-   LOG(INFO) << "starting work thread for " << pending_tasks_.size()
-             << " tasks.";
-+  return Run();
-   work_ = std::async(std::launch::async, [this] { Run(); });
-   return work_.valid();
- }
 diff --git a/src/rime/schema.cc b/src/rime/schema.cc
-index 559cb7a8..9e49a039 100644
+index 3026dda9..f29629f8 100644
 --- a/src/rime/schema.cc
 +++ b/src/rime/schema.cc
 @@ -4,9 +4,17 @@
