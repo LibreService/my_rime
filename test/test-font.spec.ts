@@ -3,7 +3,7 @@ import {
   init,
   callOnDownload
 } from './util'
-import fonts from '../fonts.json'
+import fonts from '../fonts.json' assert { type: 'json' }
 
 async function expectFirstFont (page: Page, fontFamily: string) {
   while (!await page.evaluate(() => document.fonts.keys().next().value));

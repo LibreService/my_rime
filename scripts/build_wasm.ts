@@ -1,7 +1,7 @@
 import { spawnSync } from 'child_process'
 import { exit } from 'process'
 import { existsSync } from 'fs'
-import { ensure } from './util.mjs'
+import { ensure } from './util.js'
 
 const OPENCC_TARGET = '/usr/share/opencc'
 const LIB_PATH = 'build/sysroot/usr/lib'

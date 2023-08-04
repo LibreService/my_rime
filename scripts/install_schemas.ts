@@ -3,31 +3,30 @@ import { readFileSync, writeFileSync, mkdirSync, copyFileSync, readdirSync, cpSy
 import { cwd, chdir, exit } from 'process'
 import yaml from 'js-yaml'
 import { Recipe } from '@libreservice/micro-plum'
-import { rf, utf8, ensure, md5sum } from './util.mjs'
+import { rf, utf8, ensure, md5sum } from './util.js'
+import packageJson from '../package.json' assert { type: 'json' }
+import schemas from '../schemas.json' assert { type: 'json' }
 
 const root = cwd()
-const { version } = JSON.parse(readFileSync('package.json'))
+const { version } = packageJson
 const RIME_DIR = 'build/librime_native/bin'
 const defaultPath = `${RIME_DIR}/default.yaml`
 
-// input file
-const schemas = JSON.parse(readFileSync('schemas.json'))
-
 // output files
-const schemaName = {} // maps schema to names
-const schemaFiles = {} // maps schema to dict and prism
-const schemaTarget = {} // maps schema to target
-const targetFiles = {} // maps target to files with hash
-const targetVersion = {} // maps target to npm package version
-const dependencyMap = {} // maps schema to dependent schemas
+const schemaName: { [key: string]: string } = {} // maps schema to names
+const schemaFiles: { [key: string]: { dict?: string, prism?: string } } = {} // maps schema to dict and prism
+const schemaTarget: { [key: string]: string } = {} // maps schema to target
+const targetFiles: { [key: string]: { name: string, md5: string }[] } = {} // maps target to files with hash
+const targetVersion: { [key: string]: string } = {} // maps target to npm package version
+const dependencyMap: { [key: string]: string[] } = {} // maps schema to dependent schemas
 
 // temp data structures
-const targetManifest = {} // maps target to files downloaded from it
-const targetLicense = {}
+const targetManifest: { [key: string]: string[] } = {} // maps target to files downloaded from it
+const targetLicense: { [key: string]: string } = {}
 const ids = []
-const disabledIds = []
+const disabledIds: string[] = []
 
-async function install (recipe, target) {
+async function install (recipe: Recipe, target?: string) {
   const manifest = await recipe.load()
   for (const { file, content } of manifest) {
     if (content) {
@@ -42,11 +41,11 @@ async function install (recipe, target) {
   }
 }
 
-function parseYaml (schemaId) {
-  const content = yaml.load(readFileSync(`${RIME_DIR}/build/${schemaId}.schema.yaml`, utf8))
+function parseYaml (schemaId: string) {
+  const content = yaml.load(readFileSync(`${RIME_DIR}/build/${schemaId}.schema.yaml`, utf8)) as { [key: string]: any }
   for (const [key, value] of Object.entries(content)) {
     if (key === 'translator') {
-      const { dictionary, prism } = value
+      const { dictionary, prism } = value as { dictionary: string, prism?: string }
       schemaFiles[schemaId] = {}
       // By default, dictionary equals to schemaId, and prism equals to dictionary (not schemaId, see luna_pinyin_fluency)
       if (dictionary !== schemaId) {
@@ -59,11 +58,11 @@ function parseYaml (schemaId) {
   }
 }
 
-function getPackageDir (target) {
+function getPackageDir (target: string) {
   return `public/ime/${target}`
 }
 
-function readJson (path, defaultValue) {
+function readJson (path: string, defaultValue: any) {
   try {
     return JSON.parse(readFileSync(path, 'utf-8'))
   } catch (e) {
@@ -71,7 +70,7 @@ function readJson (path, defaultValue) {
   }
 }
 
-function bumpVersion (oldVersion) {
+function bumpVersion (oldVersion: string | undefined) {
   if (!oldVersion) {
     return version
   }
@@ -96,19 +95,20 @@ const emojiJson = `${RIME_DIR}/opencc/emoji.json`
 const emojiCategory = `${RIME_DIR}/opencc/emoji_category.txt`
 const emojiContent = JSON.parse(readFileSync(emojiJson, utf8))
 const emojiDict = emojiContent.conversion_chain[0].dict
-emojiDict.dicts = emojiDict.dicts.filter(({ file }) => file !== 'emoji_category.txt')
+emojiDict.dicts = emojiDict.dicts.filter(({ file }: { file: string }) => file !== 'emoji_category.txt')
 writeFileSync(emojiJson, JSON.stringify(emojiContent))
 rmSync(emojiCategory, rf)
 
 for (const schema of schemas) {
   const recipe = new Recipe(schema.target, { schemaIds: [schema.id] })
-  const target = recipe.repo.match(/(rime\/rime-)?(.*)/)[2]
+  const target = recipe.repo.match(/(rime\/rime-)?(.*)/)![2]
   if (!(target in targetManifest)) {
     targetManifest[target] = []
     targetFiles[target] = []
     targetLicense[target] = schema.license
   }
   ids.push(schema.id)
+  // @ts-ignore
   if (schema.disabled) {
     disabledIds.push(schema.id)
   } else {
@@ -119,6 +119,7 @@ for (const schema of schemas) {
     dependencyMap[schema.id] = schema.dependencies
   }
   if (schema.family) {
+    // @ts-ignore
     for (const { id, name, disabled } of schema.family) {
       recipe.schemaIds.push(id)
       ids.push(id)
@@ -203,13 +204,13 @@ for (const [target, manifest] of Object.entries(targetManifest)) {
   }
 }
 
-const oldTargetFiles = readJson('target-files.json', {})
+const oldTargetFiles = readJson('target-files.json', {}) as typeof targetFiles
 
 const updatedTargets = []
 for (const [target, files] of Object.entries(targetFiles)) {
   const packageDir = getPackageDir(target)
   const packageJsonPath = `${packageDir}/package.json`
-  const { version: oldVersion } = readJson(packageJsonPath, {})
+  const { version: oldVersion } = readJson(packageJsonPath, {}) as { version?: string }
   let newVersion = oldVersion || version
   if (JSON.stringify(files) !== JSON.stringify(oldTargetFiles[target])) {
     updatedTargets.push(target)

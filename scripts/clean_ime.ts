@@ -1,6 +1,7 @@
-import { rmSync, readFileSync, readdirSync } from 'fs'
+import { rmSync, readdirSync } from 'fs'
 import { exit } from 'process'
-import { rf } from './util.mjs'
+import { rf } from './util.js'
+import targetFiles from '../target-files.json' assert { type: 'json' }
 
 const imeDir = 'public/ime'
 
@@ -9,11 +10,11 @@ if (process.env.LIBRESERVICE_CDN) {
   exit(0)
 }
 
-function keepPackage (dir, patterns) {
+function keepPackage (dir: string, patterns: string[]) {
   for (const name of readdirSync(dir)) {
     const subDir = `${dir}/${name}`
     let keep = false
-    const subPatterns = []
+    const subPatterns: string[] = []
     for (const pattern of patterns) {
       const i = pattern.indexOf('/')
       const base = i >= 0 ? pattern.substring(0, i) : pattern
@@ -32,5 +33,4 @@ function keepPackage (dir, patterns) {
   }
 }
 
-const targetFiles = JSON.parse(readFileSync('target-files.json'))
 keepPackage(imeDir, Object.keys(targetFiles))
