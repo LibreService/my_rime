@@ -13,6 +13,11 @@ import {
   NCheckbox,
   useMessage
 } from 'naive-ui'
+import {
+  PARENT_INDEX,
+  RECIPE,
+  CHILD_INDEX
+} from 'rppi'
 import { LazyCache } from '@libreservice/lazy-cache'
 import {
   prerequisites,
@@ -39,28 +44,6 @@ const labelMap = {
 }
 
 const loadingIndex = ref<boolean>(false)
-
-type PARENT_INDEX = {
-  categories: {
-    key: string
-    name: string
-  }[]
-}
-
-type RECIPE = {
-  repo: string
-  branch?: string
-  name: string
-  labels?: (keyof typeof labelMap)[]
-  schemas: string[]
-  dependencies?: string[]
-  reverseDependencies?: string[]
-  license?: string
-}
-
-type CHILD_INDEX = {
-  recipes: RECIPE[]
-}
 
 const props = defineProps<{
   message: ReturnType<typeof useMessage>

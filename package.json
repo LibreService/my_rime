@@ -1,6 +1,6 @@
 {
   "name": "@libreservice/my-rime",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "files": [
     "dist"
   ],
@@ -65,6 +65,7 @@
     "naive-ui": "^2.34.4",
     "rollup": "^3.27.0",
     "rollup-plugin-esbuild": "^5.0.0",
+    "rppi": "^0.1.0",
     "textarea-caret": "^3.1.0",
     "tslib": "^2.6.1",
     "typescript": "^5.1.6",
