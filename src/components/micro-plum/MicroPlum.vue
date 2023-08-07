@@ -17,7 +17,7 @@ import ManifestPane from './ManifestPane.vue'
 import InstallPane from './InstallPane.vue'
 import DeployPane from './DeployPane.vue'
 
-const RPPI = 'https://raw.githubusercontent.com/LibreService/rppi/HEAD/index.json'
+const RPPI = 'https://raw.githubusercontent.com/rime/rppi/HEAD/index.json'
 const _rppi = ref<string>(RPPI)
 
 const tab = ref<'rppi' | 'install' | 'deploy'>('install')

@@ -11,6 +11,7 @@ import {
   NTag,
   NCheckboxGroup,
   NCheckbox,
+  NA,
   useMessage
 } from 'naive-ui'
 import {
@@ -218,7 +219,19 @@ function renderSuffix (info: { option: TreeSelectOption }) {
         :filter="filterRepo"
         :options="options"
         :render-suffix="renderSuffix"
-      />
+      >
+        <template
+          v-if="_rppi == RPPI"
+          #action
+        >
+          Submit a PR at <n-a
+            href="https://github.com/rime/rppi"
+            target="_blank"
+          >
+            rime/rppi
+          </n-a> to include more schemas!
+        </template>
+      </n-tree-select>
     </n-form-item>
     <n-form-item
       v-if="reverseDependencies.length"
