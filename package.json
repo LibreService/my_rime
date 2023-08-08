@@ -1,6 +1,6 @@
 {
   "name": "@libreservice/my-rime",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "files": [
     "dist"
   ],
@@ -36,7 +36,7 @@
   "devDependencies": {
     "@codemirror/legacy-modes": "^6.3.3",
     "@libreservice/lazy-cache": "^0.1.1",
-    "@libreservice/micro-plum": "^0.1.8",
+    "@libreservice/micro-plum": "^0.1.9",
     "@libreservice/my-widget": "^0.1.4",
     "@libreservice/my-worker": "^0.4.2",
     "@libreservice/wasm-code": "^0.1.2",
@@ -45,8 +45,8 @@
     "@rollup/plugin-node-resolve": "^15.1.0",
     "@rollup/plugin-replace": "^5.0.2",
     "@types/js-yaml": "^4.0.5",
-    "@typescript-eslint/eslint-plugin": "^6.2.1",
-    "@typescript-eslint/parser": "^6.2.1",
+    "@typescript-eslint/eslint-plugin": "^6.3.0",
+    "@typescript-eslint/parser": "^6.3.0",
     "@vicons/fa": "^0.12.0",
     "@vicons/fluent": "^0.12.0",
     "@vicons/material": "^0.12.0",
@@ -71,7 +71,7 @@
     "ts-node": "^10.9.1",
     "tslib": "^2.6.1",
     "typescript": "^5.1.6",
-    "vite": "^4.4.8",
+    "vite": "^4.4.9",
     "vite-plugin-pwa": "^0.16.4",
     "vite-plugin-run": "^0.4.1",
     "vooks": "^0.2.12",

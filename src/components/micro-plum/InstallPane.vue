@@ -103,9 +103,9 @@ async function onClick () {
     }
     let recipe: Recipe | undefined
     if (mode.value === 'plum' && target.value) {
-      recipe = await install(target.value, { schemaIds: schemas.value })
+      recipe = await install(target.value, { schemaIds: schemas.value, source: source.value })
     } else if (mode.value === 'schema' && schemaURL.value) {
-      recipe = await install(schemaURL.value)
+      recipe = await install(schemaURL.value, { source: source.value })
     }
     if (recipe) {
       preSelectedSchemas.value = recipe.schemaIds
