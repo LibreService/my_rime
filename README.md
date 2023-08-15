@@ -19,7 +19,7 @@ If you want to deploy schemas dynamically (online, like how you deploy in Deskto
 Download latest [artifact](https://github.com/LibreService/my_rime/releases/download/latest/my-rime-dist.zip) built by GitHub Actions.
 
 ## Development workflow
-My RIME can be built on Linux.
+My RIME can be built on Linux and macOS.
 
 ### Install node
 You may use [nvm](https://github.com/nvm-sh/nvm) to install node.
@@ -30,6 +30,7 @@ pnpm i
 ```
 ### Install build and RIME dependencies
 ```sh
+# Ubuntu
 apt install -y \
   cmake \
   ninja-build \
@@ -42,6 +43,9 @@ apt install -y \
   libleveldb-dev \
   libmarisa-dev \
   libopencc-dev
+
+# macOS
+brew install cmake ninja clang-format
 ```
 ### Install emsdk
 https://emscripten.org/docs/getting_started/downloads.html

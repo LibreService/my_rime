@@ -1,12 +1,13 @@
 import { cwd, chdir } from 'process'
 import { spawnSync, SpawnSyncOptionsWithStringEncoding } from 'child_process'
+import { readFileSync } from 'fs'
+import { createHash } from 'crypto'
 
 const utf8: SpawnSyncOptionsWithStringEncoding = { encoding: 'utf-8' }
 const rf = { recursive: true, force: true }
 
 function ensure (result: ReturnType<typeof spawnSync>) {
   if (result.status !== 0) {
-    console.log(result.status, result.error)
     throw new Error('Command fails.')
   }
   return result
@@ -31,7 +32,8 @@ function patch (path: string, patchFile: string) {
 }
 
 function md5sum (path: string) {
-  return ensure(spawnSync('md5sum', [path], utf8)).stdout.slice(0, 32) as string
+  const content = readFileSync(path)
+  return createHash('md5').update(content).digest('hex')
 }
 
 export {

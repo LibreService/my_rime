@@ -1,17 +1,19 @@
 name: build
 
 on:
-  push:
-    branches:
-      - master
-  pull_request:
+  workflow_call:
+    inputs:
+      os:
+        required: true
+        type: string
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.os }}
     steps:
       - uses: actions/checkout@v3
-      - name: Install RIME dependencies
+      - name: Install Ubuntu dependencies
+        if: ${{ inputs.os == 'ubuntu-latest' }}
         run: |
           sudo apt install -y ninja-build \
             clang-format \
@@ -23,6 +25,10 @@ jobs:
             libleveldb-dev \
             libmarisa-dev \
             libopencc-dev
+      - name: Install macOS dependencies
+        if: ${{ inputs.os == 'macos-latest' }}
+        run: |
+          brew install ninja clang-format
       - name: Use Node.js latest
         uses: actions/setup-node@v2
         with:
@@ -46,11 +52,13 @@ jobs:
           cd emsdk
           ./emsdk install latest
           ./emsdk activate latest
+      - name: Build native librime
+        run: pnpm run native
+      - name: Install schemas
+        run: pnpm run schema
       - name: Build wasm
         run: |
           . emsdk/emsdk_env.sh
-          pnpm run native
-          pnpm run schema
           pnpm run lib
           pnpm run wasm
       - name: Check wasm reproducibility
@@ -60,70 +68,11 @@ jobs:
         run: |
           pnpm run build
       - name: Tar files
+        if: ${{ inputs.os == 'ubuntu-latest' }}
         run: tar --exclude=build/librime_native/bin/build -cvf artifact.tar build/librime_native/bin dist
       - name: Upload artifact
+        if: ${{ inputs.os == 'ubuntu-latest' }}
         uses: actions/upload-artifact@v3
         with:
           name: artifact.tar
           path: artifact.tar
-
-  test:
-    needs: build
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest]
-        browser: [chromium, firefox] # webkit
-        include:
-          - os: macos-latest
-            browser: webkit
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js latest
-        uses: actions/setup-node@v2
-        with:
-          node-version: 20.x
-      - name: Install node dependencies
-        run: |
-          npm i -g pnpm
-          pnpm i
-          npx playwright install ${{ matrix.browser }}
-          npx playwright install-deps ${{ matrix.browser }}
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: artifact.tar
-      - name: Untar files
-        run: tar -xvf artifact.tar
-      - name: Test
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: |
-          npx playwright test --browser ${{ matrix.browser }} test/
-      - name: Test device
-        if: ${{ matrix.os == 'macos-latest' }}
-        run: |
-          npx playwright test --browser ${{ matrix.browser }} test-device/
-
-  release:
-    needs: test
-    if: ${{ github.ref == 'refs/heads/master' }}
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v3
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: artifact.tar
-      - name: Untar files
-        run: tar -xvf artifact.tar
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          mv dist my-rime-dist
-          zip -r my-rime-dist.zip my-rime-dist
-          gh release upload latest my-rime-dist.zip --clobber

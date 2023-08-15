@@ -1,0 +1,79 @@
+name: build
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build-ubuntu:
+    uses: ./.github/workflows/build.yml
+    with:
+      os: ubuntu-latest
+
+  build-macos:
+    uses: ./.github/workflows/build.yml
+    with:
+      os: macos-latest
+
+  test:
+    needs: build-ubuntu
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        browser: [chromium, firefox] # webkit
+        include:
+          - os: macos-latest
+            browser: webkit
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js latest
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20.x
+      - name: Install node dependencies
+        run: |
+          npm i -g pnpm
+          pnpm i
+          npx playwright install ${{ matrix.browser }}
+          npx playwright install-deps ${{ matrix.browser }}
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: artifact.tar
+      - name: Untar files
+        run: tar -xvf artifact.tar
+      - name: Test
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+          npx playwright test --browser ${{ matrix.browser }} test/
+      - name: Test device
+        if: ${{ matrix.os == 'macos-latest' }}
+        run: |
+          npx playwright test --browser ${{ matrix.browser }} test-device/
+
+  release:
+    needs: test
+    if: ${{ github.ref == 'refs/heads/master' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: artifact.tar
+      - name: Untar files
+        run: tar -xvf artifact.tar
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mv dist my-rime-dist
+          zip -r my-rime-dist.zip my-rime-dist
+          gh release upload latest my-rime-dist.zip --clobber

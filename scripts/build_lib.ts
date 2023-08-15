@@ -24,7 +24,6 @@ const CMAKE_FIND_ROOT_PATH = `${DESTDIR}/usr`
 const CMAKE_DEF = [
   '-DCMAKE_INSTALL_PREFIX:PATH=/usr',
   `-DCMAKE_BUILD_TYPE:STRING=${BUILD_TYPE}`,
-  '-DBUILD_TESTING:BOOL=OFF',
   '-DBUILD_SHARED_LIBS:BOOL=OFF'
 ]
 
@@ -156,6 +155,7 @@ function buildGlog () {
     '-G', 'Ninja',
     ...CMAKE_DEF,
     '-DWITH_GFLAGS:BOOL=OFF',
+    '-DBUILD_TESTING:BOOL=OFF',
     '-DWITH_UNWIND:BOOL=OFF'
   ], spawnArg))
   ensure(spawnSync('cmake', ['--build', dst], spawnArg))
