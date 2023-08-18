@@ -14,7 +14,7 @@
   },
   "license": "AGPL-3.0-or-later",
   "scripts": {
-    "submodule": "bash scripts/update_submodule.sh",
+    "submodule": "node --loader ts-node/esm scripts/update_submodule.ts",
     "worker": "rollup -c rollup.worker-config.js",
     "font": "node --loader ts-node/esm scripts/download_font.ts",
     "native": "node --loader ts-node/esm scripts/build_native.ts",
