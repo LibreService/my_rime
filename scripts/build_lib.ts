@@ -103,6 +103,7 @@ function buildMarisaTrie () {
   console.log('Building marisa-trie')
   const src = 'librime/deps'
   const dst = 'build/marisa-trie'
+  patch(`${src}/marisa-trie`, 'marisa_patch')
   rmSync(dst, rf)
   ensure(spawnSync('emcmake', [
     'cmake', src,
@@ -126,6 +127,7 @@ function buildOpenCC () {
     '-G', 'Ninja',
     ...CMAKE_DEF,
     `-DCMAKE_FIND_ROOT_PATH:PATH=${CMAKE_FIND_ROOT_PATH}`,
+    '-DENABLE_DARTS:BOOL=OFF',
     '-DUSE_SYSTEM_MARISA:BOOL=ON'
   ], spawnArg))
   ensure(spawnSync('cmake', ['--build', dst], spawnArg))

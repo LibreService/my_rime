@@ -12,3 +12,64 @@ index f5c1e55..c181509 100644
  cmake_dependent_option (WITH_GMOCK "Use Google Mock" ON WITH_GTEST OFF)
  
  set (WITH_FUZZING none CACHE STRING "Fuzzing engine")
+diff --git a/src/glog/logging.h.in b/src/glog/logging.h.in
+index 26fd371..504237a 100644
+--- a/src/glog/logging.h.in
++++ b/src/glog/logging.h.in
+@@ -479,9 +479,9 @@ DECLARE_bool(log_utc_time);
+ 
+ #if GOOGLE_STRIP_LOG == 0
+ #define COMPACT_GOOGLE_LOG_INFO @ac_google_namespace@::LogMessage( \
+-      __FILE__, __LINE__)
++      __FILE_NAME__, __LINE__)
+ #define LOG_TO_STRING_INFO(message) @ac_google_namespace@::LogMessage( \
+-      __FILE__, __LINE__, @ac_google_namespace@::GLOG_INFO, message)
++      __FILE_NAME__, __LINE__, @ac_google_namespace@::GLOG_INFO, message)
+ #else
+ #define COMPACT_GOOGLE_LOG_INFO @ac_google_namespace@::NullStream()
+ #define LOG_TO_STRING_INFO(message) @ac_google_namespace@::NullStream()
+@@ -489,9 +489,9 @@ DECLARE_bool(log_utc_time);
+ 
+ #if GOOGLE_STRIP_LOG <= 1
+ #define COMPACT_GOOGLE_LOG_WARNING @ac_google_namespace@::LogMessage( \
+-      __FILE__, __LINE__, @ac_google_namespace@::GLOG_WARNING)
++      __FILE_NAME__, __LINE__, @ac_google_namespace@::GLOG_WARNING)
+ #define LOG_TO_STRING_WARNING(message) @ac_google_namespace@::LogMessage( \
+-      __FILE__, __LINE__, @ac_google_namespace@::GLOG_WARNING, message)
++      __FILE_NAME__, __LINE__, @ac_google_namespace@::GLOG_WARNING, message)
+ #else
+ #define COMPACT_GOOGLE_LOG_WARNING @ac_google_namespace@::NullStream()
+ #define LOG_TO_STRING_WARNING(message) @ac_google_namespace@::NullStream()
+@@ -499,9 +499,9 @@ DECLARE_bool(log_utc_time);
+ 
+ #if GOOGLE_STRIP_LOG <= 2
+ #define COMPACT_GOOGLE_LOG_ERROR @ac_google_namespace@::LogMessage( \
+-      __FILE__, __LINE__, @ac_google_namespace@::GLOG_ERROR)
++      __FILE_NAME__, __LINE__, @ac_google_namespace@::GLOG_ERROR)
+ #define LOG_TO_STRING_ERROR(message) @ac_google_namespace@::LogMessage( \
+-      __FILE__, __LINE__, @ac_google_namespace@::GLOG_ERROR, message)
++      __FILE_NAME__, __LINE__, @ac_google_namespace@::GLOG_ERROR, message)
+ #else
+ #define COMPACT_GOOGLE_LOG_ERROR @ac_google_namespace@::NullStream()
+ #define LOG_TO_STRING_ERROR(message) @ac_google_namespace@::NullStream()
+@@ -509,9 +509,9 @@ DECLARE_bool(log_utc_time);
+ 
+ #if GOOGLE_STRIP_LOG <= 3
+ #define COMPACT_GOOGLE_LOG_FATAL @ac_google_namespace@::LogMessageFatal( \
+-      __FILE__, __LINE__)
++      __FILE_NAME__, __LINE__)
+ #define LOG_TO_STRING_FATAL(message) @ac_google_namespace@::LogMessage( \
+-      __FILE__, __LINE__, @ac_google_namespace@::GLOG_FATAL, message)
++      __FILE_NAME__, __LINE__, @ac_google_namespace@::GLOG_FATAL, message)
+ #else
+ #define COMPACT_GOOGLE_LOG_FATAL @ac_google_namespace@::NullStreamFatal()
+ #define LOG_TO_STRING_FATAL(message) @ac_google_namespace@::NullStreamFatal()
+@@ -529,7 +529,7 @@ DECLARE_bool(log_utc_time);
+ #define COMPACT_GOOGLE_LOG_DFATAL COMPACT_GOOGLE_LOG_ERROR
+ #elif GOOGLE_STRIP_LOG <= 3
+ #define COMPACT_GOOGLE_LOG_DFATAL @ac_google_namespace@::LogMessage( \
+-      __FILE__, __LINE__, @ac_google_namespace@::GLOG_FATAL)
++      __FILE_NAME__, __LINE__, @ac_google_namespace@::GLOG_FATAL)
+ #else
+ #define COMPACT_GOOGLE_LOG_DFATAL @ac_google_namespace@::NullStreamFatal()
+ #endif

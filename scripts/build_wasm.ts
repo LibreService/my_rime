@@ -23,7 +23,13 @@ const exportedFunctions = [
 
 const compileArgs = [
   '-std=c++14',
-  process.env.BUILD_TYPE === 'Debug' ? '-g' : '-O2',
+  ...(process.env.BUILD_TYPE === 'Debug'
+    ? ['-g']
+    : [
+        '-O2',
+        '-DBOOST_DISABLE_ASSERTS',
+        '-DBOOST_DISABLE_CURRENT_LOCATION'
+      ]),
   '-s', 'ALLOW_MEMORY_GROWTH=1',
   '-s', 'MAXIMUM_MEMORY=4GB',
   '-s', `EXPORTED_FUNCTIONS=${exportedFunctions.map(name => '_' + name).join(',')}`,

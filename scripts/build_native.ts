@@ -83,6 +83,7 @@ function buildLevelDB () {
 
 function buildMarisaTrie () {
   console.log('Building marisa-trie')
+  patch('librime/deps/marisa-trie', 'marisa_patch')
   chdir('librime/deps')
   rmSync(dst, rf)
   ensure(spawnSync('cmake', [
@@ -108,6 +109,7 @@ function buildOpenCC () {
     '-G', 'Ninja',
     ...CMAKE_DEF,
     `-DCMAKE_FIND_ROOT_PATH:PATH=${CMAKE_INSTALL_PREFIX}`,
+    '-DENABLE_DARTS:BOOL=OFF',
     '-DUSE_SYSTEM_MARISA:BOOL=ON'
   ], spawnArg))
   ensure(spawnSync('cmake', ['--build', dst], spawnArg))

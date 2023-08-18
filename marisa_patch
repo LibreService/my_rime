@@ -1,0 +1,15 @@
+diff --git a/include/marisa/exception.h b/include/marisa/exception.h
+index 508c6b8..7f17c0a 100644
+--- a/include/marisa/exception.h
++++ b/include/marisa/exception.h
+@@ -62,8 +62,8 @@ class Exception : public std::exception {
+ // code and an error message. The message format is as follows:
+ //  "__FILE__:__LINE__: error_code: error_message"
+ #define MARISA_THROW(error_code, error_message) \
+-  (throw marisa::Exception(__FILE__, __LINE__, error_code, \
+-       __FILE__ ":" MARISA_LINE_STR ": " #error_code ": " error_message))
++  (throw marisa::Exception(__FILE_NAME__, __LINE__, error_code, \
++       __FILE_NAME__ ":" MARISA_LINE_STR ": " #error_code ": " error_message))
+ 
+ // MARISA_THROW_IF throws an exception if `condition' is true.
+ #define MARISA_THROW_IF(condition, error_code) \
