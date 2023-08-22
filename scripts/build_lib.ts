@@ -4,7 +4,7 @@ import {
   symlinkSync,
   mkdirSync
 } from 'fs'
-import { cpus } from 'os'
+import { cpus, platform } from 'os'
 import { cwd, chdir } from 'process'
 import { spawnSync, SpawnSyncOptionsWithBufferEncoding } from 'child_process'
 import {
@@ -15,6 +15,8 @@ import {
 
 const root = cwd()
 const n = cpus().length
+const PLATFORM = platform()
+const emcmake = PLATFORM === 'win32' ? 'emcmake.bat' : 'emcmake'
 
 const ENABLE_LOGGING = process.env.ENABLE_LOGGING || 'ON'
 const BUILD_TYPE = process.env.BUILD_TYPE || 'Release'
@@ -22,6 +24,7 @@ const CXXFLAGS = '-fexceptions'
 const DESTDIR = `${root}/build/sysroot`
 const CMAKE_FIND_ROOT_PATH = `${DESTDIR}/usr`
 const CMAKE_DEF = [
+  '-G', 'Ninja',
   '-DCMAKE_INSTALL_PREFIX:PATH=/usr',
   `-DCMAKE_BUILD_TYPE:STRING=${BUILD_TYPE}`,
   '-DBUILD_SHARED_LIBS:BOOL=OFF'
@@ -47,11 +50,13 @@ function buildBoost () {
   console.log('Building boost')
   patch('boost/libs/interprocess', 'interprocess_patch')
   chdir('boost')
-  ensure(spawnSync('./bootstrap.sh', [], spawnArg))
+  ensure(spawnSync(PLATFORM === 'win32' ? '.\\bootstrap.bat' : './bootstrap.sh', [], spawnArg))
   ensure(spawnSync('./b2', [
     'toolset=emscripten',
     'link=static',
     'threading=single', // threading defaults to multi on Linux and single on macOS
+    'target-os=linux', // Windows hack
+    '--layout=system',
     '--with-filesystem',
     '--with-system',
     '--with-regex',
@@ -68,10 +73,9 @@ function buildYamlCpp () {
   const src = 'librime/deps/yaml-cpp'
   const dir = 'build/yaml-cpp'
   rmSync(dir, rf)
-  ensure(spawnSync('emcmake', [
+  ensure(spawnSync(emcmake, [
     'cmake', src,
     '-B', dir,
-    '-G', 'Ninja',
     ...CMAKE_DEF,
     '-DYAML_CPP_BUILD_CONTRIB:BOOL=OFF',
     '-DYAML_CPP_BUILD_TESTS:BOOL=OFF',
@@ -87,10 +91,9 @@ function buildLevelDB () {
   const dst = 'build/leveldb'
   patch(src, 'leveldb_patch')
   rmSync(dst, rf)
-  ensure(spawnSync('emcmake', [
+  ensure(spawnSync(emcmake, [
     'cmake', src,
     '-B', dst,
-    '-G', 'Ninja',
     ...CMAKE_DEF,
     '-DLEVELDB_BUILD_BENCHMARKS:BOOL=OFF',
     '-DLEVELDB_BUILD_TESTS:BOOL=OFF'
@@ -105,10 +108,9 @@ function buildMarisaTrie () {
   const dst = 'build/marisa-trie'
   patch(`${src}/marisa-trie`, 'marisa_patch')
   rmSync(dst, rf)
-  ensure(spawnSync('emcmake', [
+  ensure(spawnSync(emcmake, [
     'cmake', src,
     '-B', dst,
-    '-G', 'Ninja',
     ...CMAKE_DEF
   ], spawnArg))
   ensure(spawnSync('cmake', ['--build', dst], spawnArg))
@@ -121,10 +123,9 @@ function buildOpenCC () {
   const dst = 'build/opencc'
   patch(src, 'opencc_patch')
   rmSync(dst, rf)
-  ensure(spawnSync('emcmake', [
+  ensure(spawnSync(emcmake, [
     'cmake', src,
     '-B', dst,
-    '-G', 'Ninja',
     ...CMAKE_DEF,
     `-DCMAKE_FIND_ROOT_PATH:PATH=${CMAKE_FIND_ROOT_PATH}`,
     '-DENABLE_DARTS:BOOL=OFF',
@@ -151,10 +152,9 @@ function buildGlog () {
   chdir(root)
   patch(src, 'glog_patch')
   rmSync(dst, rf)
-  ensure(spawnSync('emcmake', [
+  ensure(spawnSync(emcmake, [
     'cmake', src,
     '-B', dst,
-    '-G', 'Ninja',
     ...CMAKE_DEF,
     '-DWITH_GFLAGS:BOOL=OFF',
     '-DBUILD_TESTING:BOOL=OFF',
@@ -185,10 +185,9 @@ function buildLibrime () {
   const dst = 'build/librime_wasm'
   patch(src, 'librime_patch')
   rmSync(dst, rf)
-  ensure(spawnSync('emcmake', [
+  ensure(spawnSync(emcmake, [
     'cmake', src,
     '-B', dst,
-    '-G', 'Ninja',
     ...CMAKE_DEF,
     `-DCMAKE_FIND_ROOT_PATH:PATH=${CMAKE_FIND_ROOT_PATH}`,
     '-DBUILD_TEST:BOOL=OFF',

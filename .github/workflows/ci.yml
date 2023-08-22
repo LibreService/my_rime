@@ -17,6 +17,11 @@ jobs:
     with:
       os: macos-latest
 
+  build-windows:
+    uses: ./.github/workflows/build.yml
+    with:
+      os: windows-latest
+
   test:
     needs: build-ubuntu
     runs-on: ${{ matrix.os }}

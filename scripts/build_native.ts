@@ -1,4 +1,5 @@
 import {
+  renameSync,
   rmSync
 } from 'fs'
 import { cpus, platform } from 'os'
@@ -15,32 +16,63 @@ const n = cpus().length
 const PLATFORM = platform()
 
 const CMAKE_INSTALL_PREFIX = `${root}/librime`
-const CMAKE_DEF = [
-  `-DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}`,
+
+const CMAKE_DEF_COMMON = [
+  '-G', 'Ninja',
   '-DCMAKE_BUILD_TYPE:STRING=Release',
-  '-DBUILD_SHARED_LIBS:BOOL=ON'
+  ...(PLATFORM === 'win32'
+    ? [
+        '-DCMAKE_C_COMPILER=clang',
+        '-DCMAKE_CXX_COMPILER=clang++',
+        `-DCMAKE_USER_MAKE_RULES_OVERRIDE:PATH=${root}/librime/cmake/c_flag_overrides.cmake`,
+        `-DCMAKE_USER_MAKE_RULES_OVERRIDE_CXX:PATH=${root}/librime/cmake/cxx_flag_overrides.cmake`,
+        '-DCMAKE_EXE_LINKER_FLAGS_INIT:STRING=-llibcmt',
+        '-DCMAKE_MSVC_RUNTIME_LIBRARY:STRING=MultiThreaded'
+      ]
+    : [])
+]
+
+const dst = 'build'
+const dstRime = 'build/librime_native'
+
+const CMAKE_DEF = [
+  '-B', dst,
+  ...CMAKE_DEF_COMMON,
+  `-DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}`,
+  '-DBUILD_SHARED_LIBS:BOOL=OFF'
+]
+
+const CMAKE_DEF_RIME = [
+  '-B', dstRime,
+  ...CMAKE_DEF_COMMON,
+  '-DBUILD_SHARED_LIBS:BOOL=ON',
+  ...(PLATFORM === 'linux' ? [] : ['-DBUILD_STATIC:BOOL=ON']),
+  '-DBUILD_TEST:BOOL=OFF',
+  '-DENABLE_LOGGING:BOOL=OFF'
 ]
 
 const spawnArg: SpawnSyncOptionsWithBufferEncoding = {
   stdio: 'inherit',
-  env: process.env
+  env: {
+    ...(PLATFORM === 'linux' ? {} : { BOOST_ROOT: `${root}/boost` }),
+    ...process.env
+  }
 }
-
-const dst = 'build'
 
 function buildBoost () {
   console.log('Building boost')
-  // headers installed to librime/include is referenced before build/sysroot/usr/include
-  patch('boost/libs/interprocess', 'interprocess_patch')
   chdir('boost')
-  ensure(spawnSync('./bootstrap.sh', [], spawnArg))
+  ensure(spawnSync(PLATFORM === 'win32' ? '.\\bootstrap.bat' : './bootstrap.sh', [], spawnArg))
   ensure(spawnSync('./b2', [
-    'link=shared',
+    ...(PLATFORM === 'win32' ? ['toolset=clang-win'] : []),
+    'address-model=64',
+    'variant=release',
+    'link=static',
+    'stage',
+    'runtime-link=static',
     '--with-filesystem',
     '--with-system',
     '--with-regex',
-    `--prefix=${CMAKE_INSTALL_PREFIX}`,
-    'install',
     '-j', `${n}`
   ], spawnArg))
   chdir(root)
@@ -52,8 +84,6 @@ function buildYamlCpp () {
   rmSync(dst, rf)
   ensure(spawnSync('cmake', [
     '.',
-    '-B', dst,
-    '-G', 'Ninja',
     ...CMAKE_DEF,
     '-DYAML_CPP_BUILD_CONTRIB:BOOL=OFF',
     '-DYAML_CPP_BUILD_TESTS:BOOL=OFF',
@@ -70,9 +100,8 @@ function buildLevelDB () {
   rmSync(dst, rf)
   ensure(spawnSync('cmake', [
     '.',
-    '-B', dst,
-    '-G', 'Ninja',
     ...CMAKE_DEF,
+    '-DCMAKE_CXX_FLAGS:STRING=-Wno-error=deprecated-declarations',
     '-DLEVELDB_BUILD_BENCHMARKS:BOOL=OFF',
     '-DLEVELDB_BUILD_TESTS:BOOL=OFF'
   ], spawnArg))
@@ -88,8 +117,6 @@ function buildMarisaTrie () {
   rmSync(dst, rf)
   ensure(spawnSync('cmake', [
     '.',
-    '-B', dst,
-    '-G', 'Ninja',
     ...CMAKE_DEF
   ], spawnArg))
   ensure(spawnSync('cmake', ['--build', dst], spawnArg))
@@ -105,8 +132,6 @@ function buildOpenCC () {
   rmSync(dst, rf)
   ensure(spawnSync('cmake', [
     '.',
-    '-B', dst,
-    '-G', 'Ninja',
     ...CMAKE_DEF,
     `-DCMAKE_FIND_ROOT_PATH:PATH=${CMAKE_INSTALL_PREFIX}`,
     '-DENABLE_DARTS:BOOL=OFF',
@@ -123,18 +148,16 @@ function buildLibrime () {
   rmSync('librime/plugins/lua', rf)
 
   const src = 'librime'
-  const dst = 'build/librime_native'
   patch(src, 'librime_patch')
-  rmSync(dst, rf)
+  rmSync(dstRime, rf)
   ensure(spawnSync('cmake', [
     src,
-    '-B', dst,
-    '-G', 'Ninja',
-    ...CMAKE_DEF,
-    '-DBUILD_TEST:BOOL=OFF',
-    '-DENABLE_LOGGING:BOOL=OFF'
+    ...CMAKE_DEF_RIME
   ], spawnArg))
-  ensure(spawnSync('cmake', ['--build', dst], spawnArg))
+  ensure(spawnSync('cmake', ['--build', dstRime], spawnArg))
+  if (PLATFORM === 'win32') {
+    renameSync(`${dstRime}/lib/rime.dll`, `${dstRime}/bin/rime.dll`)
+  }
 }
 
 if (PLATFORM !== 'linux') {

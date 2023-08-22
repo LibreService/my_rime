@@ -32,6 +32,12 @@ jobs:
         if: ${{ inputs.os == 'macos-latest' }}
         run: |
           brew install ninja clang-format
+      - name: Install Windows dependencies
+        if: ${{ inputs.os == 'windows-latest' }}
+        run: |
+          choco upgrade -y llvm
+          pip install ninja
+          echo "$env:ProgramFiles\LLVM\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       - name: Use Node.js latest
         uses: actions/setup-node@v2
         with:
@@ -59,7 +65,14 @@ jobs:
         run: pnpm run native
       - name: Install schemas
         run: pnpm run schema
-      - name: Build wasm
+      - name: Build wasm (Windows)
+        if: ${{ inputs.os == 'windows-latest' }}
+        run: |
+          emsdk/emsdk_env
+          pnpm run lib
+          pnpm run wasm
+      - name: Build wasm (POSIX)
+        if: ${{ inputs.os != 'windows-latest' }}
         run: |
           . emsdk/emsdk_env.sh
           pnpm run lib

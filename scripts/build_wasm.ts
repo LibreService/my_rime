@@ -1,13 +1,23 @@
+import { platform } from 'os'
 import { spawnSync } from 'child_process'
 import { exit } from 'process'
-import { existsSync } from 'fs'
-import { ensure } from './util.js'
+import {
+  existsSync,
+  readFileSync,
+  writeFileSync
+} from 'fs'
+import { globSync } from 'glob'
+import { ensure, utf8 } from './util.js'
 
 const OPENCC_TARGET = '/usr/share/opencc'
 const LIB_PATH = 'build/sysroot/usr/lib'
 const RIME_PATH = 'build/librime_native/bin'
+const DEFAULT_PATH = `${RIME_PATH}/build/default.yaml`
 const OPENCC_HOST = `${RIME_PATH}/opencc`
 const RIME_SHARED = '/usr/share/rime-data'
+
+const PLATFORM = platform()
+const empp = PLATFORM === 'win32' ? 'em++.bat' : 'em++'
 
 const exportedFunctions = [
   'init',
@@ -35,7 +45,7 @@ const compileArgs = [
   '-s', `EXPORTED_FUNCTIONS=${exportedFunctions.map(name => '_' + name).join(',')}`,
   '-s', 'EXPORTED_RUNTIME_METHODS=["ccall","FS"]',
   '--preload-file', `${OPENCC_HOST}@${OPENCC_TARGET}`,
-  '--preload-file', `${RIME_PATH}/build/default.yaml@${RIME_SHARED}/build/default.yaml`,
+  '--preload-file', `${DEFAULT_PATH}@${RIME_SHARED}/build/default.yaml`,
   '-I', 'build/sysroot/usr/include',
   '-o', 'public/rime.js'
 ]
@@ -61,12 +71,8 @@ const linkArgs = [
 ]
 
 function isLibRimeBuiltWithGLog () {
-  try {
-    ensure(spawnSync('grep', ['LogMessage', `${LIB_PATH}/librime.a`]))
-    return true
-  } catch {
-    return false
-  }
+  const buffer = readFileSync(`${LIB_PATH}/librime.a`)
+  return buffer.includes('LogMessage')
 }
 
 if (isLibRimeBuiltWithGLog()) {
@@ -74,13 +80,32 @@ if (isLibRimeBuiltWithGLog()) {
 }
 
 try {
-  ensure(spawnSync('em++', ['-v']))
+  ensure(spawnSync(empp, ['-v']))
 } catch {
   console.error('Command em++ not available. Please activate emscripten environment.')
   exit(1)
 }
 
-ensure(spawnSync('em++', [
+function removeCR (path: string) {
+  if (!existsSync(path)) {
+    return
+  }
+  const content = readFileSync(path, utf8)
+  const trimmed = content.replace(/\r\n/g, '\n')
+  if (content !== trimmed) {
+    writeFileSync(path, trimmed)
+  }
+}
+
+if (PLATFORM === 'win32') {
+  removeCR(DEFAULT_PATH)
+  removeCR(`${RIME_PATH}/rime.lua`)
+  for (const path of globSync(`${RIME_PATH}/lua/**/*.lua`)) {
+    removeCR(path)
+  }
+}
+
+ensure(spawnSync(empp, [
   ...compileArgs,
   'wasm/api.cpp',
   ...linkArgs

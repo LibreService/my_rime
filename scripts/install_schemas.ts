@@ -1,3 +1,4 @@
+import { platform } from 'os'
 import { spawnSync } from 'child_process'
 import { readFileSync, writeFileSync, mkdirSync, copyFileSync, readdirSync, cpSync, rmSync } from 'fs'
 import { cwd, chdir, exit } from 'process'
@@ -158,7 +159,7 @@ const updatedContent = defaultContent.replace(/( {2}- schema: \S+\n)+/, patch)
 writeFileSync(defaultPath, updatedContent)
 
 chdir(RIME_DIR)
-ensure(spawnSync('./rime_console', [], {
+ensure(spawnSync(platform() === 'win32' ? '.\\rime_api_console.exe' : './rime_api_console', [], {
   stdio: ['ignore', 'inherit', 'inherit'],
   input: ''
 }))
