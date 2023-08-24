@@ -132,6 +132,7 @@
     "name": "X-SAMPA",
     "group": "音标",
     "target": "ipa",
+    "variants": [],
     "license": "LGPL-3.0-only"
   },
   {
@@ -139,6 +140,7 @@
     "name": "云龙国际音标",
     "group": "音标",
     "target": "ipa",
+    "variants": [],
     "license": "LGPL-3.0-only"
   },
   {

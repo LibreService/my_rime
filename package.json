@@ -1,6 +1,6 @@
 {
   "name": "@libreservice/my-rime",
-  "version": "0.9.7",
+  "version": "0.9.8",
   "files": [
     "dist"
   ],
@@ -43,7 +43,7 @@
   "devDependencies": {
     "@codemirror/legacy-modes": "^6.3.3",
     "@libreservice/lazy-cache": "^0.1.1",
-    "@libreservice/micro-plum": "^0.1.9",
+    "@libreservice/micro-plum": "^0.1.10",
     "@libreservice/my-widget": "^0.1.4",
     "@libreservice/my-worker": "^0.4.2",
     "@libreservice/wasm-code": "^0.1.2",
