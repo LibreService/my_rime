@@ -18,6 +18,7 @@ import {
   customizeDefault,
   getAvailableSchemas
 } from './micro-plum'
+import { GitHubDownloader } from '@libreservice/micro-plum'
 
 const text = ref<string>('')
 
@@ -243,9 +244,9 @@ async function installFromQueryString () {
   }
   if (plum.length) {
     if (missing) {
-      await Promise.all(prerequisites.map(prerequisite => install(prerequisite)))
+      await Promise.all(prerequisites.map(prerequisite => install(new GitHubDownloader(prerequisite))))
       for (const { target, schemaIds } of plum) {
-        await install(target, { schemaIds })
+        await install(new GitHubDownloader(target, schemaIds))
       }
     }
     await customizeDefault(plum.flatMap(({ schemaIds }) => schemaIds))

@@ -3,7 +3,10 @@ import { spawnSync } from 'child_process'
 import { readFileSync, writeFileSync, mkdirSync, copyFileSync, readdirSync, cpSync, rmSync } from 'fs'
 import { cwd, chdir, exit } from 'process'
 import yaml from 'js-yaml'
-import { Recipe } from '@libreservice/micro-plum'
+import {
+  Recipe,
+  GitHubDownloader
+} from '@libreservice/micro-plum'
 import { rf, utf8, ensure, md5sum } from './util.js'
 import packageJson from '../package.json' assert { type: 'json' }
 import schemas from '../schemas.json' assert { type: 'json' }
@@ -89,7 +92,7 @@ mkdirSync(`${RIME_DIR}/opencc`, { recursive: true })
 for (const fileName of readdirSync('rime-config')) {
   cpSync(`rime-config/${fileName}`, `${RIME_DIR}/${fileName}`, { recursive: true })
 }
-await Promise.all(['prelude', 'essay', 'emoji'].map(target => install(new Recipe(target))))
+await Promise.all(['prelude', 'essay', 'emoji'].map(target => install(new Recipe(new GitHubDownloader(target)))))
 
 // remove emoji_category as I don't want to visit a zoo when I type 东吴
 const emojiJson = `${RIME_DIR}/opencc/emoji.json`
@@ -101,8 +104,8 @@ writeFileSync(emojiJson, JSON.stringify(emojiContent))
 rmSync(emojiCategory, rf)
 
 for (const schema of schemas) {
-  const recipe = new Recipe(schema.target, { schemaIds: [schema.id] })
-  const target = recipe.repo.match(/(rime\/rime-)?(.*)/)![2]
+  const recipe = new Recipe(new GitHubDownloader(schema.target, [schema.id]))
+  const target = recipe.loader.repo.match(/(rime\/rime-)?(.*)/)![2]
   if (!(target in targetManifest)) {
     targetManifest[target] = []
     targetFiles[target] = []
@@ -122,7 +125,7 @@ for (const schema of schemas) {
   if (schema.family) {
     // @ts-ignore
     for (const { id, name, disabled } of schema.family) {
-      recipe.schemaIds.push(id)
+      recipe.loader.schemaIds.push(id)
       ids.push(id)
       schemaTarget[id] = target
       if (disabled) {

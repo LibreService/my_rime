@@ -20,6 +20,7 @@ import {
   CHILD_INDEX
 } from 'rppi'
 import { LazyCache } from '@libreservice/lazy-cache'
+import { GitHubDownloader } from '@libreservice/micro-plum'
 import {
   prerequisites,
   install
@@ -157,14 +158,14 @@ updateIndex()
 function installRepo (repo: string) {
   const recipe = keyRecipeMap[repoKeyMap[repo]]
   const target = recipe.branch ? `${repo}@${recipe.branch}` : repo
-  return install(target, { schemaIds: recipe.schemas })
+  return install(new GitHubDownloader(target, recipe.schemas))
 }
 
 async function onClick () {
   downloading.value = true
   try {
     if (!installedPrerequisites.value) {
-      await Promise.all(prerequisites.map(prerequisite => install(prerequisite)))
+      await Promise.all(prerequisites.map(prerequisite => install(new GitHubDownloader(prerequisite))))
       installedPrerequisites.value = true
     }
     const { repo, dependencies } = keyRecipeMap[selectedKey.value!]

@@ -13,7 +13,12 @@ import {
   NIcon
 } from 'naive-ui'
 import { Add12Regular } from '@vicons/fluent'
-import { normalizeTarget, Recipe } from '@libreservice/micro-plum'
+import {
+  normalizeTarget,
+  Recipe,
+  GitHubDownloader,
+  JsDelivrDownloader
+} from '@libreservice/micro-plum'
 import {
   prerequisites,
   install,
@@ -97,18 +102,19 @@ async function onClick () {
   }
   downloading.value = true
   try {
+    const Downloader = source.value === 'jsDelivr' ? JsDelivrDownloader : GitHubDownloader
     if (installPrerequisites.value) {
       installedPrerequisites.value = true
-      await Promise.all(prerequisites.map(prerequisite => install(prerequisite)))
+      await Promise.all(prerequisites.map(prerequisite => install(new Downloader(prerequisite))))
     }
     let recipe: Recipe | undefined
     if (mode.value === 'plum' && target.value) {
-      recipe = await install(target.value, { schemaIds: schemas.value, source: source.value })
+      recipe = await install(new Downloader(target.value, schemas.value))
     } else if (mode.value === 'schema' && schemaURL.value) {
-      recipe = await install(schemaURL.value, { source: source.value })
+      recipe = await install(new Downloader(schemaURL.value))
     }
     if (recipe) {
-      preSelectedSchemas.value = recipe.schemaIds
+      preSelectedSchemas.value = recipe.loader.schemaIds
     }
     tab.value = 'deploy'
   } catch (e) {

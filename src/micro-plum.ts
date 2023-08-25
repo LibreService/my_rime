@@ -1,6 +1,9 @@
 import { useMessage } from 'naive-ui'
 import yaml from 'js-yaml'
-import { Recipe } from '@libreservice/micro-plum'
+import {
+  Downloader,
+  Recipe
+} from '@libreservice/micro-plum'
 import { FS } from './workerAPI'
 
 const RIME_PATH = '/rime'
@@ -28,11 +31,9 @@ async function ensureDir (path: string) {
   }
 }
 
-async function install (target: string, options?: { schemaIds?: string[], source?: 'GitHub' | 'jsDelivr' }) {
-  const recipe = new Recipe(target, {
-    source: options?.source,
-    schemaIds: options?.schemaIds,
-    onDownloadFailure (url: string, reason: number | string) {
+async function install (downloader: Downloader) {
+  const recipe = new Recipe(downloader, {
+    onLoadFailure (url: string, reason: number | string) {
       message.error(`Fail to download ${url.slice(url.lastIndexOf('/') + 1)}: ${reason}`)
     }
   })
