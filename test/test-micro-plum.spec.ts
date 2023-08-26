@@ -25,6 +25,10 @@ function microPlum (page: Page) {
   return page.locator('.n-dialog')
 }
 
+function expand (rppi: Locator, key: string) {
+  return rppi.locator(`[data-key='s-${key}'] > .n-tree-node-switcher`).click()
+}
+
 async function installAndDeploy (page: Page, mp: Locator, ime: string) {
   await mp.getByRole('button').getByText('Install').click()
   await mp.getByRole('button').getByText('Deploy').click()
@@ -124,6 +128,29 @@ test('Install from query string', async ({ page }) => {
   await page.goto(`${baseURL}?plum=rime/rime-double-pinyin@master:double_pinyin_flypy;rime/rime-luna-pinyin:luna_pinyin`)
   await expectSuccessfulDeployment(page)
   await newIMEReady(page, '小鶴雙拼')
+  await input(page, 'ul', 'pb ')
+  await expectValue(page, '雙拼')
+})
+
+test('RPPI', async ({ page }) => {
+  const ime = '小鶴雙拼'
+  await init(page)
+
+  await page.getByText('RPPI').click()
+  const rppi = microPlum(page)
+  await rppi.locator('.n-tree-select').click()
+  await expand(rppi, 'Chinese')
+  await expand(rppi, 'Chinese/Mandarin')
+  await rppi.getByText('双拼').click()
+  await rppi.getByText('Install').click()
+  await rppi.getByText(ime).click()
+  await rppi.getByText('Purge unused').click()
+  await rppi.getByRole('button').getByText('Deploy').click()
+  await expectSuccessfulDeployment(page)
+  await newIMEReady(page, ime)
+  await select(page).click()
+  await expect(page.locator('.n-base-select-option')).toHaveCount(1)
+  await textarea(page).click()
   await input(page, 'ul', 'pb ')
   await expectValue(page, '雙拼')
 })

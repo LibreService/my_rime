@@ -46,7 +46,7 @@
     "@libreservice/micro-plum": "^0.2.0",
     "@libreservice/my-widget": "^0.1.4",
     "@libreservice/my-worker": "^0.4.2",
-    "@libreservice/wasm-code": "^0.1.2",
+    "@libreservice/wasm-code": "^0.1.3",
     "@playwright/test": "^1.37.1",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.2.1",

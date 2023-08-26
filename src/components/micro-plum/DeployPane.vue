@@ -7,11 +7,17 @@ import {
   NButton
 } from 'naive-ui'
 import yaml from 'js-yaml'
-import { u2s } from '@libreservice/micro-plum'
+import {
+  u2s,
+  Recipe,
+  FileLoader
+} from '@libreservice/micro-plum'
+import { traverseFS } from '@libreservice/wasm-code'
 import { FS, deploy } from '../../workerAPI'
 import {
   RIME_PATH,
   DEFAULT_CUSTOM,
+  prerequisites,
   getAvailableSchemas,
   customizeDefault
 } from '../../micro-plum'
@@ -30,12 +36,23 @@ const options = ref<{
 
 const selected = ref<string[]>([])
 
-onMounted(async () => {
-  const _options: typeof options.value = []
-  let _selected: string[]
-  const available = await getAvailableSchemas()
+class LocalLoader implements FileLoader {
+  repo: string
+  schemaIds: string[]
 
-  for (const schema of available) {
+  constructor (repo: string, schemaIds: string[]) {
+    this.repo = repo
+    this.schemaIds = schemaIds
+  }
+
+  loadFile (file: string): Promise<Uint8Array> {
+    return FS.readFile(`${RIME_PATH}/${file}`)
+  }
+}
+
+async function getOptions (schemas: string[]) {
+  const _options: typeof options.value = []
+  for (const schema of schemas) {
     const content = u2s(await FS.readFile(`${RIME_PATH}/${schema}.schema.yaml`))
     const obj = yaml.load(content) as {
       schema?: {
@@ -48,6 +65,14 @@ onMounted(async () => {
       value: schema
     })
   }
+  return _options
+}
+
+onMounted(async () => {
+  let _selected: string[]
+  const available = await getAvailableSchemas()
+  const _options = await getOptions(available)
+
   try {
     const defaultCustomYaml = u2s(await FS.readFile(DEFAULT_CUSTOM))
     const schemaList: { schema: string }[] = (yaml.load(defaultCustomYaml) as any)?.patch?.schema_list || []
@@ -65,7 +90,29 @@ onMounted(async () => {
   selected.value = _selected
 })
 
-async function onClick () {
+async function onTrash () {
+  const keptFiles: string[] = []
+  const add = async (loader: LocalLoader) => {
+    const manifest = await new Recipe(loader).load()
+    for (const { file, content } of manifest) {
+      if (content && !keptFiles.includes(file)) {
+        keptFiles.push(file)
+      }
+    }
+  }
+  await Promise.all(prerequisites.map(prerequisite => add(new LocalLoader(prerequisite, []))))
+  await add(new LocalLoader('', selected.value))
+  await traverseFS(FS, undefined, async (path: string) => {
+    const file = path.slice(6)
+    const match = file.match(/^(\S+)\.userdb\/\S+$/)
+    if (!keptFiles.includes(file) && (!match || !keptFiles.includes(`${match[1]}.dict.yaml`))) {
+      await FS.unlink(path)
+    }
+  }, (path: string) => FS.rmdir(path).catch(() => {}))(RIME_PATH)
+  options.value = await getOptions(await getAvailableSchemas())
+}
+
+async function onDeploy () {
   props.dialogInstance.destroy()
   await customizeDefault(selected.value)
   deploy()
@@ -78,15 +125,23 @@ async function onClick () {
       v-model:value="selected"
       :options="options"
     />
-    <div style="display: flex; justify-content: end">
+    <n-space style="justify-content: end">
+      <n-button
+        :disabled="selected.length === options.length"
+        secondary
+        type="error"
+        @click="onTrash"
+      >
+        Purge unused
+      </n-button>
       <n-button
         :disabled="selected.length === 0"
         secondary
         type="info"
-        @click="onClick"
+        @click="onDeploy"
       >
         Deploy
       </n-button>
-    </div>
+    </n-space>
   </n-space>
 </template>
