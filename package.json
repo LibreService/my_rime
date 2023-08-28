@@ -43,7 +43,7 @@
   "devDependencies": {
     "@codemirror/legacy-modes": "^6.3.3",
     "@libreservice/lazy-cache": "^0.1.1",
-    "@libreservice/micro-plum": "^0.2.0",
+    "@libreservice/micro-plum": "^0.2.1",
     "@libreservice/my-widget": "^0.1.4",
     "@libreservice/my-worker": "^0.4.2",
     "@libreservice/wasm-code": "^0.1.3",

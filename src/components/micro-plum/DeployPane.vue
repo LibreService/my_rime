@@ -9,6 +9,7 @@ import {
 import yaml from 'js-yaml'
 import {
   u2s,
+  getBinaryNames,
   Recipe,
   FileLoader
 } from '@libreservice/micro-plum'
@@ -98,12 +99,28 @@ async function onTrash () {
       if (content && !keptFiles.includes(file)) {
         keptFiles.push(file)
       }
+      if (file.endsWith('.schema.yaml')) {
+        const schemaYaml = `build/${file}`
+        try {
+          const obj = yaml.load(u2s(await FS.readFile(`${RIME_PATH}/${schemaYaml}`))) as object
+          const { dict, prism } = getBinaryNames(obj)
+          if (dict) {
+            const defaultYaml = 'build/default.yaml'
+            const tableBin = `build/${dict}.table.bin`
+            const reverseBin = `build/${dict}.reverse.bin`
+            const prismBin = `build/${prism}.prism.bin`
+            for (const bin of [defaultYaml, schemaYaml, tableBin, reverseBin, prismBin]) {
+              keptFiles.includes(bin) || keptFiles.push(bin)
+            }
+          }
+        } catch {}
+      }
     }
   }
   await Promise.all(prerequisites.map(prerequisite => add(new LocalLoader(prerequisite, []))))
   await add(new LocalLoader('', selected.value))
   await traverseFS(FS, undefined, async (path: string) => {
-    const file = path.slice(6)
+    const file = path.slice(6) // Trim /rime/ prefix
     const match = file.match(/^(\S+)\.userdb\/\S+$/)
     if (!keptFiles.includes(file) && (!match || !keptFiles.includes(`${match[1]}.dict.yaml`))) {
       await FS.unlink(path)

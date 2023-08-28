@@ -5,6 +5,7 @@ import { cwd, chdir, exit } from 'process'
 import yaml from 'js-yaml'
 import {
   Recipe,
+  getBinaryNames,
   GitHubDownloader
 } from '@libreservice/micro-plum'
 import { rf, utf8, ensure, md5sum } from './util.js'
@@ -47,18 +48,14 @@ async function install (recipe: Recipe, target?: string) {
 
 function parseYaml (schemaId: string) {
   const content = yaml.load(readFileSync(`${RIME_DIR}/build/${schemaId}.schema.yaml`, utf8)) as { [key: string]: any }
-  for (const [key, value] of Object.entries(content)) {
-    if (key === 'translator') {
-      const { dictionary, prism } = value as { dictionary: string, prism?: string }
-      schemaFiles[schemaId] = {}
-      // By default, dictionary equals to schemaId, and prism equals to dictionary (not schemaId, see luna_pinyin_fluency)
-      if (dictionary !== schemaId) {
-        schemaFiles[schemaId].dict = dictionary
-      }
-      if (prism && prism !== dictionary) {
-        schemaFiles[schemaId].prism = prism
-      }
-    }
+  schemaFiles[schemaId] = {}
+  const { dict, prism } = getBinaryNames(content)
+  // By default, dictionary equals to schemaId, and prism equals to dictionary (not schemaId, see luna_pinyin_fluency)
+  if (dict !== schemaId) {
+    schemaFiles[schemaId].dict = dict
+  }
+  if (prism !== dict) {
+    schemaFiles[schemaId].prism = prism
   }
 }
 
