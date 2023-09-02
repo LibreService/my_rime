@@ -12,9 +12,13 @@ All computation is performed in browser, thanks to Web Assembly.
 
 It's also a [PWA](https://web.dev/progressive-web-apps/), so you can install it like a native App and use it **OFFLINE**.
 
+## Documentation
 If you want to distribute your own IME, see [customize](doc/customize.md).
 
 If you want to deploy schemas dynamically (online, like how you deploy in Desktop/Mobile platforms), see [deploy](doc/deploy.md).
+
+If you want to develop My RIME or know technical details, see [develop](doc/develop.md).
+
 ## Self host
 Download latest [artifact](https://github.com/LibreService/my_rime/releases/download/latest/my-rime-dist.zip) built by GitHub Actions.
 
