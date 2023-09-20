@@ -1,8 +1,17 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 5262f16..9c5bb5b 100644
+index 3ec4398f..be3a63ce 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -46,6 +46,9 @@ if (ENABLE_ASAN)
+@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.12)
+ project(rime)
+ set(CMAKE_CXX_STANDARD 14)
+ 
+-set(rime_version 1.9.0)
++set(rime_version 1.8.5) # keep 1.8.5 so no need to rehash schemas
+ set(rime_soversion 1)
+ 
+ add_definitions(-DRIME_VERSION="${rime_version}")
+@@ -45,6 +45,9 @@ if (ENABLE_ASAN)
    set(CMAKE_SHARED_LINKER_FLAGS "${asan_lflags} ${CMAKE_SHARED_LINKER_FLAGS}")
  endif()
  
@@ -13,7 +22,7 @@ index 5262f16..9c5bb5b 100644
  set(Gflags_STATIC ${BUILD_STATIC})
  set(Glog_STATIC ${BUILD_STATIC})
 diff --git a/include/darts.h b/include/darts.h
-index 18bf988..4b9bb5d 100644
+index 18bf988b..4b9bb5d2 100644
 --- a/include/darts.h
 +++ b/include/darts.h
 @@ -16,7 +16,7 @@
@@ -26,7 +35,7 @@ index 18bf988..4b9bb5d 100644
  namespace Darts {
  
 diff --git a/src/rime/config/build_info_plugin.cc b/src/rime/config/build_info_plugin.cc
-index a60b6b5..eb521bb 100644
+index a60b6b56..eb521bb4 100644
 --- a/src/rime/config/build_info_plugin.cc
 +++ b/src/rime/config/build_info_plugin.cc
 @@ -19,6 +19,7 @@ bool BuildInfoPlugin::ReviewLinkOutput(ConfigCompiler* compiler,
@@ -38,7 +47,7 @@ index a60b6b5..eb521bb 100644
    compiler->EnumerateResources([&](an<ConfigResource> resource) {
      if (!resource->loaded) {
 diff --git a/src/rime/deployer.cc b/src/rime/deployer.cc
-index 2b2169c..19ac109 100644
+index 2b2169ca..19ac1097 100644
 --- a/src/rime/deployer.cc
 +++ b/src/rime/deployer.cc
 @@ -5,6 +5,7 @@
@@ -66,7 +75,7 @@ index 2b2169c..19ac109 100644
      }
      LOG(INFO) << success + failure << " tasks ran: " << success << " success, "
 diff --git a/src/rime/schema.cc b/src/rime/schema.cc
-index 3026dda..f29629f 100644
+index 3026dda9..f29629f8 100644
 --- a/src/rime/schema.cc
 +++ b/src/rime/schema.cc
 @@ -4,9 +4,17 @@
@@ -102,7 +111,7 @@ index 3026dda..f29629f 100644
    }
    config_->GetInt("menu/page_size", &page_size_);
 diff --git a/src/rime/schema.h b/src/rime/schema.h
-index bb68bcd..4ef84be 100644
+index bb68bcdb..4ef84beb 100644
 --- a/src/rime/schema.h
 +++ b/src/rime/schema.h
 @@ -10,6 +10,12 @@
@@ -134,11 +143,11 @@ index bb68bcd..4ef84be 100644
    const string& select_keys() const { return select_keys_; }
    void set_select_keys(const string& keys) { select_keys_ = keys; }
 diff --git a/tools/CMakeLists.txt b/tools/CMakeLists.txt
-index 18e3407..b79a0c1 100644
+index ab64c52a..9e6e1537 100644
 --- a/tools/CMakeLists.txt
 +++ b/tools/CMakeLists.txt
-@@ -44,18 +44,3 @@ install(TARGETS rime_dict_manager DESTINATION ${BIN_INSTALL_DIR})
- endif()
+@@ -54,18 +54,3 @@ install(TARGETS rime_dict_manager DESTINATION ${BIN_INSTALL_DIR})
+ install(TARGETS rime_table_decompiler DESTINATION ${BIN_INSTALL_DIR})
  
  install(TARGETS rime_patch DESTINATION ${BIN_INSTALL_DIR})
 -

@@ -104,9 +104,9 @@ function buildLevelDB () {
 
 function buildMarisaTrie () {
   console.log('Building marisa-trie')
-  const src = 'librime/deps'
+  const src = 'librime/deps/marisa-trie'
   const dst = 'build/marisa-trie'
-  patch(`${src}/marisa-trie`, 'marisa_patch')
+  patch(src, 'marisa_patch')
   rmSync(dst, rf)
   ensure(spawnSync(emcmake, [
     'cmake', src,
@@ -144,6 +144,7 @@ function buildGlog () {
   const src = 'librime/deps/glog'
   const dst = 'build/glog'
   chdir(src)
+  ensure(spawnSync('git', ['reset', '--hard']))
   ensure(spawnSync('git', [
     'pull',
     'https://github.com/google/glog',

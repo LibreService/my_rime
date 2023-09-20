@@ -112,8 +112,9 @@ function buildLevelDB () {
 
 function buildMarisaTrie () {
   console.log('Building marisa-trie')
-  patch('librime/deps/marisa-trie', 'marisa_patch')
-  chdir('librime/deps')
+  const src = 'librime/deps/marisa-trie'
+  patch(src, 'marisa_patch')
+  chdir(src)
   rmSync(dst, rf)
   ensure(spawnSync('cmake', [
     '.',
