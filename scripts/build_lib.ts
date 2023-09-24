@@ -194,6 +194,7 @@ function buildLibrime () {
     '-DBUILD_TEST:BOOL=OFF',
     '-DBUILD_STATIC:BOOL=ON',
     '-DENABLE_THREADING:BOOL=OFF',
+    '-DENABLE_TIMESTAMP:BOOL=OFF',
     `-DENABLE_LOGGING:BOOL=${ENABLE_LOGGING}`
   ], spawnArg))
   ensure(spawnSync('cmake', ['--build', dst], spawnArg))

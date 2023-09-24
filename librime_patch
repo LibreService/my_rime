@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 3ec4398f..be3a63ce 100644
+index e37430b2..e8755ee9 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.12)
@@ -11,7 +11,7 @@ index 3ec4398f..be3a63ce 100644
  set(rime_soversion 1)
  
  add_definitions(-DRIME_VERSION="${rime_version}")
-@@ -45,6 +45,9 @@ if (ENABLE_ASAN)
+@@ -46,6 +46,9 @@ if (ENABLE_ASAN)
    set(CMAKE_SHARED_LINKER_FLAGS "${asan_lflags} ${CMAKE_SHARED_LINKER_FLAGS}")
  endif()
  
@@ -34,46 +34,6 @@ index 18bf988b..4b9bb5d2 100644
  
  namespace Darts {
  
-diff --git a/src/rime/config/build_info_plugin.cc b/src/rime/config/build_info_plugin.cc
-index a60b6b56..eb521bb4 100644
---- a/src/rime/config/build_info_plugin.cc
-+++ b/src/rime/config/build_info_plugin.cc
-@@ -19,6 +19,7 @@ bool BuildInfoPlugin::ReviewLinkOutput(ConfigCompiler* compiler,
-                                        an<ConfigResource> resource) {
-   auto build_info = (*resource)["__build_info"];
-   build_info["rime_version"] = RIME_VERSION;
-+  return true;
-   auto timestamps = build_info["timestamps"];
-   compiler->EnumerateResources([&](an<ConfigResource> resource) {
-     if (!resource->loaded) {
-diff --git a/src/rime/deployer.cc b/src/rime/deployer.cc
-index 2b2169ca..19ac1097 100644
---- a/src/rime/deployer.cc
-+++ b/src/rime/deployer.cc
-@@ -5,6 +5,7 @@
- // 2011-12-01 GONG Chen <chen.sst@gmail.com>
- //
- #include <chrono>
-+#include <exception>
- #include <utility>
- #include <boost/date_time/posix_time/posix_time_types.hpp>
- #include <boost/filesystem.hpp>
-@@ -82,10 +83,15 @@ bool Deployer::Run() {
-   int failure = 0;
-   do {
-     while (auto task = NextTask()) {
-+      try {
-       if (task->Run(this))
-         ++success;
-       else
-         ++failure;
-+      } catch (const std::exception& ex) {
-+        ++failure;
-+        LOG(ERROR) << "Error deploying: " << ex.what();
-+      }
-       // boost::this_thread::interruption_point();
-     }
-     LOG(INFO) << success + failure << " tasks ran: " << success << " success, "
 diff --git a/src/rime/schema.cc b/src/rime/schema.cc
 index 3026dda9..f29629f8 100644
 --- a/src/rime/schema.cc
