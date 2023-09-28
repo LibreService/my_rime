@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { NButton } from 'naive-ui'
+import { StreamParser } from '@codemirror/language'
 import { json } from '@codemirror/legacy-modes/mode/javascript'
 import { lua } from '@codemirror/legacy-modes/mode/lua'
 import { yaml } from '@codemirror/legacy-modes/mode/yaml'
 import { WasmCode } from '@libreservice/wasm-code'
 import { deploy, FS } from '../workerAPI'
 
-const langParserMap = {
+const langParserMap: {
+  [key: string]: StreamParser<any>
+} = {
   json, lua, yaml
 }
 
@@ -18,6 +21,10 @@ const extLangMap = {
 }
 
 const wc = ref<InstanceType<typeof WasmCode>>()
+
+function hidePath (path: string): boolean {
+  return path.match(/^\/(rime|usr)(\/|$)/) === null
+}
 
 onMounted(() => {
   [
@@ -46,6 +53,7 @@ onMounted(() => {
       height="80vh"
       :lang-parser-map="langParserMap"
       :ext-lang-map="extLangMap"
+      :hide-path="hidePath"
     />
   </div>
 </template>
