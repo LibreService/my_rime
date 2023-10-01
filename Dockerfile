@@ -11,7 +11,6 @@ RUN apt update && apt install -y \
     libboost-dev \
     libboost-filesystem-dev \
     libboost-regex-dev \
-    libboost-system-dev \
     libyaml-cpp-dev \
     libleveldb-dev \
     libmarisa-dev \

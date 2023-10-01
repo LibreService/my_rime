@@ -58,7 +58,6 @@ function buildBoost () {
     'target-os=linux', // Windows hack
     '--layout=system',
     '--with-filesystem',
-    '--with-system',
     '--with-regex',
     '--disable-icu',
     `--prefix=${CMAKE_FIND_ROOT_PATH}`,
