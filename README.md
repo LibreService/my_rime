@@ -42,7 +42,6 @@ apt install -y \
   ninja-build \
   clang-format \
   libboost-dev \
-  libboost-filesystem-dev \
   libboost-regex-dev \
   libyaml-cpp-dev \
   libleveldb-dev \

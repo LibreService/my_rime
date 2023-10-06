@@ -32,7 +32,7 @@ const exportedFunctions = [
 ]
 
 const compileArgs = [
-  '-std=c++14',
+  '-std=c++17',
   ...(process.env.BUILD_TYPE === 'Debug'
     ? ['-g']
     : [
@@ -63,7 +63,6 @@ const linkArgs = [
   '-L', LIB_PATH,
   // To include __attribute__((constructor)) in librime-lua, see https://stackoverflow.com/a/842770
   '-Wl,--whole-archive', '-l', 'rime', '-Wl,--no-whole-archive',
-  '-l:libboost_filesystem.bc',
   '-l', 'yaml-cpp',
   '-l', 'leveldb',
   '-l', 'marisa',

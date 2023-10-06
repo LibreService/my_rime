@@ -71,7 +71,6 @@ function buildBoost () {
     'link=static',
     'stage',
     'runtime-link=static',
-    '--with-filesystem',
     '--with-regex',
     '-j', `${n}`
   ], spawnArg))

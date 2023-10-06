@@ -1,10 +1,10 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 03484ecb..1a493df4 100644
+index aecf5a08..71be3a0b 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.12)
  project(rime)
- set(CMAKE_CXX_STANDARD 14)
+ set(CMAKE_CXX_STANDARD 17)
  
 -set(rime_version 1.9.0)
 +set(rime_version 1.8.5) # keep 1.8.5 so no need to rehash schemas

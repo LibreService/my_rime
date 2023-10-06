@@ -9,7 +9,6 @@ RUN apt update && apt install -y \
     cmake \
     ninja-build \
     libboost-dev \
-    libboost-filesystem-dev \
     libboost-regex-dev \
     libyaml-cpp-dev \
     libleveldb-dev \

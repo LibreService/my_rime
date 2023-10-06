@@ -57,7 +57,6 @@ function buildBoost () {
     'threading=single', // threading defaults to multi on Linux and single on macOS
     'target-os=linux', // Windows hack
     '--layout=system',
-    '--with-filesystem',
     '--with-regex',
     '--disable-icu',
     `--prefix=${CMAKE_FIND_ROOT_PATH}`,
