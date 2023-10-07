@@ -1,6 +1,11 @@
-import { chdir } from 'process'
+import { mkdirSync, cpSync } from 'fs'
+import { cwd, chdir } from 'process'
 import { spawnSync, SpawnSyncOptionsWithBufferEncoding } from 'child_process'
-import { ensure } from './util.js'
+import { ensure, patch } from './util.js'
+
+const root = cwd()
+const includeBoost = `${root}/build/sysroot/usr/include/boost`
+mkdirSync(includeBoost, { recursive: true })
 
 const spawnArg: SpawnSyncOptionsWithBufferEncoding = {
   stdio: 'inherit',
@@ -64,7 +69,7 @@ for (const submodule of [
   'move',
   'mp11',
   'mpl',
-  'numeric',
+  'numeric/conversion',
   'optional',
   'predef',
   'preprocessor',
@@ -87,5 +92,9 @@ for (const submodule of [
   'variant2',
   'winapi'
 ]) {
-  update(submodule, true)
+  update(submodule.split('/')[0], true)
+  if (submodule === 'interprocess') {
+    patch('interprocess', '../../interprocess_patch')
+  }
+  cpSync(`${submodule}/include/boost`, includeBoost, { recursive: true })
 }

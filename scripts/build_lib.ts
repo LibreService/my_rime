@@ -4,7 +4,7 @@ import {
   symlinkSync,
   mkdirSync
 } from 'fs'
-import { cpus, platform } from 'os'
+import { platform } from 'os'
 import { cwd, chdir } from 'process'
 import { spawnSync, SpawnSyncOptionsWithBufferEncoding } from 'child_process'
 import {
@@ -14,7 +14,6 @@ import {
 } from './util.js'
 
 const root = cwd()
-const n = cpus().length
 const PLATFORM = platform()
 const emcmake = PLATFORM === 'win32' ? 'emcmake.bat' : 'emcmake'
 
@@ -44,26 +43,6 @@ const installArg: SpawnSyncOptionsWithBufferEncoding = {
     DESTDIR,
     ...process.env
   }
-}
-
-function buildBoost () {
-  console.log('Building boost')
-  patch('boost/libs/interprocess', 'interprocess_patch')
-  chdir('boost')
-  ensure(spawnSync(PLATFORM === 'win32' ? '.\\bootstrap.bat' : './bootstrap.sh', [], spawnArg))
-  ensure(spawnSync('./b2', [
-    'toolset=emscripten',
-    'link=static',
-    'threading=single', // threading defaults to multi on Linux and single on macOS
-    'target-os=linux', // Windows hack
-    '--layout=system',
-    '--with-regex',
-    '--disable-icu',
-    `--prefix=${CMAKE_FIND_ROOT_PATH}`,
-    'install',
-    '-j', `${n}`
-  ], spawnArg))
-  chdir(root)
 }
 
 function buildYamlCpp () {
@@ -200,7 +179,6 @@ function buildLibrime () {
 }
 
 const targetHandler = {
-  boost: buildBoost,
   'yaml-cpp': buildYamlCpp,
   leveldb: buildLevelDB,
   marisa: buildMarisaTrie,

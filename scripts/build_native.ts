@@ -2,7 +2,7 @@ import {
   renameSync,
   rmSync
 } from 'fs'
-import { cpus, platform } from 'os'
+import { platform } from 'os'
 import { cwd, chdir } from 'process'
 import { spawnSync, SpawnSyncOptionsWithBufferEncoding } from 'child_process'
 import {
@@ -12,7 +12,6 @@ import {
 } from './util.js'
 
 const root = cwd()
-const n = cpus().length
 const PLATFORM = platform()
 
 const CMAKE_INSTALL_PREFIX = `${root}/librime`
@@ -48,6 +47,7 @@ const CMAKE_DEF_RIME = [
   '-DBUILD_SHARED_LIBS:BOOL=ON',
   ...(PLATFORM === 'linux' ? [] : ['-DBUILD_STATIC:BOOL=ON']),
   '-DBUILD_TEST:BOOL=OFF',
+  `-DBoost_INCLUDE_DIR:PATH=${root}/build/sysroot/usr/include`,
   '-DENABLE_TIMESTAMP:BOOL=OFF',
   '-DENABLE_LOGGING:BOOL=OFF'
 ]
@@ -58,23 +58,6 @@ const spawnArg: SpawnSyncOptionsWithBufferEncoding = {
     ...(PLATFORM === 'linux' ? {} : { BOOST_ROOT: `${root}/boost` }),
     ...process.env
   }
-}
-
-function buildBoost () {
-  console.log('Building boost')
-  chdir('boost')
-  ensure(spawnSync(PLATFORM === 'win32' ? '.\\bootstrap.bat' : './bootstrap.sh', [], spawnArg))
-  ensure(spawnSync('./b2', [
-    ...(PLATFORM === 'win32' ? ['toolset=clang-win'] : []),
-    'address-model=64',
-    'variant=release',
-    'link=static',
-    'stage',
-    'runtime-link=static',
-    '--with-regex',
-    '-j', `${n}`
-  ], spawnArg))
-  chdir(root)
 }
 
 function buildYamlCpp () {
@@ -161,7 +144,6 @@ function buildLibrime () {
 }
 
 if (PLATFORM !== 'linux') {
-  buildBoost()
   buildYamlCpp()
   buildLevelDB()
   buildMarisaTrie()

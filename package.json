@@ -20,7 +20,6 @@
     "native": "node --loader ts-node/esm scripts/build_native.ts",
     "schema": "node --loader ts-node/esm scripts/install_schemas.ts",
     "lib": "node --loader ts-node/esm scripts/build_lib.ts",
-    "lib:boost": "pnpm run lib -- boost",
     "lib:yaml-cpp": "pnpm run lib -- yaml-cpp",
     "lib:leveldb": "pnpm run lib -- leveldb",
     "lib:marisa": "pnpm run lib -- marisa",
