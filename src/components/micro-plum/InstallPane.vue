@@ -103,6 +103,7 @@ async function onClick () {
   downloading.value = true
   try {
     const Downloader = source.value === 'jsDelivr' ? JsDelivrDownloader : GitHubDownloader
+    // Allow schemas to overwrite files, e.g. symbols.yaml
     if (installPrerequisites.value) {
       installedPrerequisites.value = true
       await Promise.all(prerequisites.map(prerequisite => install(new Downloader(prerequisite))))
