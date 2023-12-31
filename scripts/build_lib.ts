@@ -127,6 +127,10 @@ function buildGlog () {
     'https://github.com/google/glog',
     'master'
   ])) // TODO: wait for a new release
+  ensure(spawnSync('git', [
+    'checkout',
+    '36ccb159f442a389ab2b48650d8034aa2a301b79'
+  ]))
   chdir(root)
   patch(src, 'glog_patch')
   rmSync(dst, rf)

@@ -401,7 +401,6 @@ defineExpose({
       {{ preEditBody }}
     </n-text>&nbsp;
     {{ preEditTail }}
-    <br>
     <n-menu
       v-show="menuOptions.length"
       :options="menuOptions"
@@ -409,7 +408,6 @@ defineExpose({
       :value="highlighted"
       @update:value="onClick"
     />
-    <br>
     <n-button
       text
       :disabled="prevDisabled"
