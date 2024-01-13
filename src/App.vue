@@ -47,7 +47,7 @@ const osThemeRef = useOsTheme()
           :homepage="homepage"
           commit="__COMMIT__"
           build-date="__BUILD_DATE__"
-          copyright="2022-2023 Qijia Liu and contributors"
+          copyright="2022-2024 Qijia Liu and contributors"
         />
       </template>
     </my-layout>

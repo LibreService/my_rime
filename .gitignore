@@ -23,12 +23,14 @@ pnpm-lock.yaml
 *.njsproj
 *.sln
 *.sw?
+*~
 
 # wasm
 *.wasm
 public/rime.js
 public/rime.data
 public/ime
+*.out.js
 build
 
 *.js.map
