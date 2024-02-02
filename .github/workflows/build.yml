@@ -27,7 +27,7 @@ jobs:
           echo "CC=/usr/bin/clang" >> $GITHUB_ENV
           echo "CXX=/usr/bin/clang++" >> $GITHUB_ENV
       - name: Install macOS dependencies
-        if: ${{ inputs.os == 'macos-latest' }}
+        if: ${{ startsWith(inputs.os, 'macos') }}
         run: |
           brew install ninja clang-format
       - name: Install Windows dependencies

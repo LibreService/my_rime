@@ -12,10 +12,15 @@ jobs:
     with:
       os: ubuntu-latest
 
-  build-macos:
+  build-macos-x86:
     uses: ./.github/workflows/build.yml
     with:
-      os: macos-latest
+      os: macos-13
+
+  build-macos-arm:
+    uses: ./.github/workflows/build.yml
+    with:
+      os: macos-14
 
   build-windows:
     uses: ./.github/workflows/build.yml
@@ -31,7 +36,7 @@ jobs:
         os: [ubuntu-latest]
         browser: [chromium, firefox] # webkit
         include:
-          - os: macos-latest
+          - os: macos-14
             browser: webkit
 
     steps:
@@ -57,7 +62,7 @@ jobs:
         run: |
           npx playwright test --browser ${{ matrix.browser }} test/
       - name: Test device
-        if: ${{ matrix.os == 'macos-latest' }}
+        if: ${{ startsWith(inputs.os, 'macos') }}
         run: |
           npx playwright test --browser ${{ matrix.browser }} test-device/
 
