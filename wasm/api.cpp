@@ -172,6 +172,10 @@ const char *select_candidate_on_current_page(int index) {
   return post_process();
 }
 
+void change_page(bool backward) {
+  rime_get_api()->change_page(session_id, backward);
+}
+
 void set_ime(const char *ime) {
   if (rime_started) {
     // Need to reset session when using F4 to select a schema
