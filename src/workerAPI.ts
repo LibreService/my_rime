@@ -8,6 +8,7 @@ const setPageSize: (size: number) => Promise<void> = worker.register('setPageSiz
 const deploy: () => Promise<void> = worker.register('deploy')
 const process: (input: string) => Promise<RIME_RESULT> = worker.register('process')
 const selectCandidateOnCurrentPage: (index: number) => Promise<string> = worker.register('selectCandidateOnCurrentPage')
+const changePage: (backward: boolean) => Promise<void> = worker.register('changePage')
 const resetUserDirectory: () => Promise<void> = worker.register('resetUserDirectory')
 const FS = asyncFS(worker)
 
@@ -20,5 +21,6 @@ export {
   deploy,
   process,
   selectCandidateOnCurrentPage,
+  changePage,
   setIME
 }

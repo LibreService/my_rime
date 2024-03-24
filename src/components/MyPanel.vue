@@ -7,7 +7,8 @@ import getCaretCoordinates from 'textarea-caret'
 import emojiRegex from 'emoji-regex'
 import {
   process,
-  selectCandidateOnCurrentPage
+  selectCandidateOnCurrentPage,
+  changePage
 } from '../workerAPI'
 import {
   text,
@@ -186,6 +187,10 @@ async function analyze (result: RIME_RESULT, rimeKey: string) {
 async function input (rimeKey: string) {
   const result = await process(rimeKey)
   return analyze(result, rimeKey)
+}
+
+async function onPageChange (backward: boolean) {
+  await changePage(backward)
 }
 
 // begin: code specific to Android Chromium
@@ -414,7 +419,7 @@ defineExpose({
     >
       <n-icon
         :component="CaretLeft"
-        @click="input('-')"
+        @click="onPageChange(false)"
       />
     </n-button>
     <n-button
@@ -423,7 +428,7 @@ defineExpose({
     >
       <n-icon
         :component="CaretRight"
-        @click="input('=')"
+        @click="onPageChange(true)"
       />
     </n-button>
   </n-popover>
