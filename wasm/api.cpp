@@ -172,8 +172,10 @@ const char *select_candidate_on_current_page(int index) {
   return post_process();
 }
 
-void change_page(bool backward) {
-  rime_get_api()->change_page(session_id, backward);
+const char *change_page(bool backward) {
+  pre_process();
+  RimeChangePage(session_id, backward);
+  return post_process();
 }
 
 void set_ime(const char *ime) {

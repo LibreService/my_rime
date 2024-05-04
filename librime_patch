@@ -102,6 +102,19 @@ index bb68bcdb..4ef84beb 100644
    bool page_down_cycle() const { return page_down_cycle_; }
    const string& select_keys() const { return select_keys_; }
    void set_select_keys(const string& keys) { select_keys_ = keys; }
+diff --git a/src/rime_api.h b/src/rime_api.h
+index 44b2ea3f..d106a197 100644
+--- a/src/rime_api.h
++++ b/src/rime_api.h
+@@ -422,6 +422,8 @@ RIME_API const char* RimeGetSyncDir(void);
+ 
+ RIME_API const char* RimeGetUserId(void);
+ 
++RIME_API Bool RimeChangePage(RimeSessionId session_id, Bool backward);
++
+ /*! The API structure
+  *  RimeApi is for rime v1.0+
+  */
 diff --git a/tools/CMakeLists.txt b/tools/CMakeLists.txt
 index 090a0fc0..a24cd51f 100644
 --- a/tools/CMakeLists.txt

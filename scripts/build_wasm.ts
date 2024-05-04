@@ -27,6 +27,7 @@ const exportedFunctions = [
   'set_ime',
   'process',
   'select_candidate_on_current_page',
+  'change_page',
   'deploy',
   'reset'
 ]

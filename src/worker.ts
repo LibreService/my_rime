@@ -174,6 +174,6 @@ expose({
     return Module.ccall('select_candidate_on_current_page', 'string', ['number'], [index])
   },
   changePage (backward: boolean): void {
-    return Module.ccall('change_page', 'null', ['boolean'], [backward])
+    return Module.ccall('change_page', 'string', ['boolean'], [backward])
   }
 }, readyPromise)
