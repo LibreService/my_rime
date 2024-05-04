@@ -138,9 +138,6 @@ function buildLibrime () {
     ...CMAKE_DEF_RIME
   ], spawnArg))
   ensure(spawnSync('cmake', ['--build', dstRime], spawnArg))
-  if (PLATFORM === 'win32') {
-    renameSync(`${dstRime}/lib/rime.dll`, `${dstRime}/bin/rime.dll`)
-  }
 }
 
 if (PLATFORM !== 'linux') {
