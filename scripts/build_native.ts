@@ -1,5 +1,4 @@
 import {
-  renameSync,
   rmSync
 } from 'fs'
 import { platform } from 'os'
