@@ -1,17 +1,17 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index e4b4e855..64dfdba1 100644
+index 53f9d537..64dfdba1 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.12)
  project(rime)
  set(CMAKE_CXX_STANDARD 17)
  
--set(rime_version 1.10.0)
+-set(rime_version 1.11.2)
 +set(rime_version 1.8.5) # keep 1.8.5 so no need to rehash schemas
  set(rime_soversion 1)
  
  add_definitions(-DRIME_VERSION="${rime_version}")
-@@ -45,6 +45,9 @@ if (ENABLE_ASAN)
+@@ -46,6 +46,9 @@ if (ENABLE_ASAN)
    set(CMAKE_SHARED_LINKER_FLAGS "${asan_lflags} ${CMAKE_SHARED_LINKER_FLAGS}")
  endif()
  
@@ -35,7 +35,7 @@ index 18bf988b..4b9bb5d2 100644
  namespace Darts {
  
 diff --git a/src/rime/schema.cc b/src/rime/schema.cc
-index 3026dda9..f29629f8 100644
+index 8f60625c..c3397559 100644
 --- a/src/rime/schema.cc
 +++ b/src/rime/schema.cc
 @@ -4,9 +4,17 @@
@@ -107,7 +107,7 @@ index 090a0fc0..a24cd51f 100644
 --- a/tools/CMakeLists.txt
 +++ b/tools/CMakeLists.txt
 @@ -52,18 +52,3 @@ if(NOT WIN32 OR NOT BUILD_SHARED_LIBS)
-
+ 
    install(TARGETS rime_table_decompiler DESTINATION ${BIN_INSTALL_DIR})
  endif()
 -
