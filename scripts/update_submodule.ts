@@ -1,7 +1,7 @@
 import { mkdirSync, cpSync } from 'fs'
 import { cwd, chdir } from 'process'
 import { spawnSync, SpawnSyncOptionsWithBufferEncoding } from 'child_process'
-import { ensure, patch } from './util.js'
+import { ensure } from './util.js'
 
 const root = cwd()
 const includeBoost = `${root}/build/sysroot/usr/include/boost`
@@ -53,6 +53,7 @@ for (const submodule of [
   'date_time',
   'describe',
   'detail',
+  'endian',
   'format',
   'function',
   'function_types',
@@ -93,8 +94,5 @@ for (const submodule of [
   'winapi'
 ]) {
   update(submodule.split('/')[0], true)
-  if (submodule === 'interprocess') {
-    patch('interprocess', '../../interprocess_patch')
-  }
   cpSync(`${submodule}/include/boost`, includeBoost, { recursive: true })
 }

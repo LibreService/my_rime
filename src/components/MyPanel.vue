@@ -7,6 +7,7 @@ import getCaretCoordinates from 'textarea-caret'
 import emojiRegex from 'emoji-regex'
 import {
   process,
+  changePage,
   selectCandidateOnCurrentPage
 } from '../workerAPI'
 import {
@@ -312,6 +313,11 @@ async function onClick (key: number) {
   return analyze(result, '')
 }
 
+async function onPageChange (backward: boolean) {
+  const result = JSON.parse(await changePage(backward))
+  return analyze(result, '')
+}
+
 function singleTouch (e: TouchEvent) {
   return e.touches.length === 1 ? e.touches[0] : undefined
 }
@@ -414,7 +420,7 @@ defineExpose({
     >
       <n-icon
         :component="CaretLeft"
-        @click="input('-')"
+        @click="onPageChange(true)"
       />
     </n-button>
     <n-button
@@ -423,7 +429,7 @@ defineExpose({
     >
       <n-icon
         :component="CaretRight"
-        @click="input('=')"
+        @click="onPageChange(false)"
       />
     </n-button>
   </n-popover>
