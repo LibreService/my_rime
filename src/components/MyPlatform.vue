@@ -26,24 +26,33 @@ const platforms: {
     icon: Linux,
     title: 'Linux',
     content: () => [
-      h('div', {}, generateContent('ibus-rime', '中州韵', 'https://github.com/rime/ibus-rime')),
-      h('div', {}, generateContent('fcitx5-rime', '小企鹅5·rime', 'https://github.com/fcitx/fcitx5-rime'))
+      h('div', {}, generateContent('fcitx5-rime', '小企鹅', 'https://github.com/fcitx/fcitx5-rime')),
+      h('div', {}, generateContent('ibus-rime', '中州韵', 'https://github.com/rime/ibus-rime'))
     ]
   },
   {
     icon: Windows,
     title: 'Windows',
-    content: () => generateContent('Weasel', '小狼毫', 'https://github.com/rime/weasel')
+    content: () => [
+      h('div', {}, generateContent('Weasel', '小狼毫', 'https://github.com/rime/weasel')),
+      h('div', {}, generateContent('Rabbit', '玉兔毫', 'https://github.com/amorphobia/rabbit'))
+    ]
   },
   {
     icon: Apple,
     title: 'macOS',
-    content: () => generateContent('Squirrel', '鼠须管', 'https://github.com/rime/squirrel')
+    content: () => [
+      h('div', {}, generateContent('fcitx5-macos', '小企鹅', 'https://github.com/fcitx-contrib/fcitx5-macos')),
+      h('div', {}, generateContent('Squirrel', '鼠须管', 'https://github.com/rime/squirrel'))
+    ]
   },
   {
     icon: Android,
     title: 'Android',
-    content: () => generateContent('Trime', '同文', 'https://github.com/osfans/trime')
+    content: () => [
+      h('div', {}, generateContent('fcitx5-android', '小企鹅', 'https://github.com/fcitx5-android/fcitx5-android')),
+      h('div', {}, generateContent('Trime', '同文', 'https://github.com/osfans/trime'))
+    ]
   },
   {
     icon: AppStoreIos,
