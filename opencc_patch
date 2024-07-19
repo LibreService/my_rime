@@ -1,8 +1,8 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index ee08591..24da933 100644
+index 1acb75a..b9b49da 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -127,12 +127,23 @@ add_definitions(
+@@ -152,12 +152,23 @@ add_definitions(
    -DPACKAGE_NAME="${PACKAGE_NAME}"
  )
  
@@ -27,7 +27,7 @@ index ee08591..24da933 100644
    if (CMAKE_BUILD_TYPE MATCHES Debug)
      add_definitions(-O0 -g3)
    endif ()
-@@ -196,9 +207,6 @@ endif()
+@@ -221,9 +232,6 @@ endif()
  ######## Subdirectories
  
  add_subdirectory(src)
@@ -37,11 +37,24 @@ index ee08591..24da933 100644
  
  ######## Testing
  
+diff --git a/deps/rapidjson-1.1.0/rapidjson/document.h b/deps/rapidjson-1.1.0/rapidjson/document.h
+index e3e20df..ad362a6 100644
+--- a/deps/rapidjson-1.1.0/rapidjson/document.h
++++ b/deps/rapidjson-1.1.0/rapidjson/document.h
+@@ -322,7 +322,7 @@ struct GenericStringRef {
+     operator const Ch *() const { return s; }
+ 
+     const Ch* const s; //!< plain CharType pointer
+-    const SizeType length; //!< length of the string (excluding the trailing NULL terminator)
++    SizeType length; //!< length of the string (excluding the trailing NULL terminator)
+ 
+ private:
+     //! Disallow construction from non-const array
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index c0a0b10..b8cdc73 100644
+index 75eda02..c7bb8c5 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
-@@ -184,5 +184,3 @@ if (ENABLE_BENCHMARK)
+@@ -204,5 +204,3 @@ if (ENABLE_BENCHMARK)
  endif()
  
  # Subdir

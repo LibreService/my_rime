@@ -9,6 +9,8 @@ namespace my_rime {
 
 enum { COMMITTED, ACCEPTED, REJECTED, UNHANDLED };
 
+auto api = rime_get_api();
+
 RimeTraits traits = {0};
 RimeSessionId session_id;
 RimeCommit commit;
@@ -42,14 +44,14 @@ void handler(void *context_object, RimeSessionId session_id,
     if (std::string(message_value) == "success") {
       deployed = true;
       RimeSchemaList schemas;
-      RimeGetSchemaList(&schemas);
+      api->get_schema_list(&schemas);
       for (size_t i = 0; i < schemas.size; ++i) {
         boost::json::object obj;
         obj["id"] = schemas.list[i].schema_id;
         obj["name"] = schemas.list[i].name;
         schema_array.push_back(obj);
       }
-      RimeFreeSchemaList(&schemas);
+      api->free_schema_list(&schemas);
     }
     EM_ASM(_deployStatus(UTF8ToString($0), UTF8ToString($1)), message_value,
            to_json(schema_array));
@@ -59,14 +61,14 @@ void handler(void *context_object, RimeSessionId session_id,
 std::string get_schema_name(std::string schema) { return schema_name[schema]; }
 
 void start_rime() {
-  RimeInitialize(&traits);
-  RimeSetNotificationHandler(handler, NULL);
+  api->initialize(&traits);
+  api->set_notification_handler(handler, NULL);
   rime_started = true;
 }
 
 void stop_rime() {
-  RimeDestroySession(session_id);
-  RimeFinalize();
+  api->destroy_session(session_id);
+  api->finalize();
   rime_started = false;
 }
 
@@ -89,13 +91,13 @@ const char *post_process() {
   if (updated_schema.size()) {
     obj["updatedSchema"] = updated_schema;
   }
-  RimeFreeCommit(&commit);
-  Bool has_committed = RimeGetCommit(session_id, &commit);
+  api->free_commit(&commit);
+  Bool has_committed = api->get_commit(session_id, &commit);
   if (has_committed) {
     obj["committed"] = commit.text;
   }
-  RimeFreeContext(&context);
-  RimeGetContext(session_id, &context);
+  api->free_context(&context);
+  api->get_context(session_id, &context);
   if (context.composition.length > 0) {
     auto &composition = context.composition;
     std::string pre_edit = composition.preedit;
@@ -141,7 +143,7 @@ const char *post_process() {
 
 extern "C" {
 void set_option(const char *option, int value) {
-  RimeSetOption(session_id, option, value);
+  api->set_option(session_id, option, value);
 }
 
 void init() {
@@ -149,7 +151,7 @@ void init() {
   traits.shared_data_dir = "/usr/share/rime-data";
   traits.user_data_dir = "/rime";
   traits.app_name = "My RIME";
-  RimeSetup(&traits);
+  api->setup(&traits);
   RIME_STRUCT_INIT(RimeCommit, commit);
   RIME_STRUCT_INIT(RimeContext, context);
 }
@@ -162,19 +164,19 @@ void set_page_size(int size) { page_size = size; }
 
 const char *process(const char *input) {
   pre_process();
-  RimeSimulateKeySequence(session_id, input);
+  api->simulate_key_sequence(session_id, input);
   return post_process();
 }
 
 const char *select_candidate_on_current_page(int index) {
   pre_process();
-  RimeSelectCandidateOnCurrentPage(session_id, index);
+  api->select_candidate_on_current_page(session_id, index);
   return post_process();
 }
 
 const char *change_page(bool backward) {
   pre_process();
-  RimeChangePage(session_id, backward);
+  api->change_page(session_id, backward);
   return post_process();
 }
 
@@ -182,19 +184,19 @@ void set_ime(const char *ime) {
   if (rime_started) {
     // Need to reset session when using F4 to select a schema
     // not available yet.
-    RimeDestroySession(session_id);
+    api->destroy_session(session_id);
   } else {
     start_rime();
   }
-  session_id = RimeCreateSession();
-  RimeSelectSchema(session_id, ime);
+  session_id = api->create_session();
+  api->select_schema(session_id, ime);
 }
 
 void deploy() {
   stop_rime();
   start_rime();
-  RimeStartMaintenance(true);
-  session_id = RimeCreateSession();
+  api->start_maintenance(true);
+  session_id = api->create_session();
 }
 
 void reset() {
